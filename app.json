@@ -1,0 +1,41 @@
+{
+  "addons": [],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "description": "review-app",
+  "env": {
+    "HOST": {
+      "required": true
+    },
+    "NODE_ENV": {
+      "required": true
+    },
+    "NPM_CONFIG_PRODUCTION": {
+      "required": true
+    },
+    "CTF_SPACE_ID": {
+      "required": true
+    },
+    "CTF_CDA_ACCESS_TOKEN": {
+      "required": true
+    },
+    "AUTH_EMAIL_SALT": {
+      "required": true
+    },
+    "POINT_CALCULATOR_ENABLED": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "opr-web-companion",
+  "scripts": {
+  },
+  "stack": "heroku-20"
+}

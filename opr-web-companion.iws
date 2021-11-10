@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="96b6cd08-a51e-4b2a-954b-37d3cf435621" name="Default Changelist" comment="Initial commit">
+      <change afterPath="$PROJECT_DIR$/.editorconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.eslintrc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.eslintrc.js.bak" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Procfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/db/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/express.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/repos/ArmyManCombatRepository.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/repos/BattleBrothersRepository.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/repos/DoubleTabRepository.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/repos/GfArenaRepository.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/repos/GfFirefightRepository.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/repos/WarStuffRepository.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/repos/WarfleetsFtlRepository.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/repos/_rules.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/repos/_utility.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/army-book-service.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/create-army-book-detachment.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/create-army-book.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/delete-army-book.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/import-army-book.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/is-owner-army-book.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/list-army-books.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/list-mine-army-books.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/point-calculator-service.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/read-army-book.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/read-mine-army-book.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/specialRules/create-special-rule.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/specialRules/delete-special-rule.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/specialRules/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/specialRules/list-special-rules.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/specialRules/read-special-rule.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/specialRules/update-special-rule.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/spells/create-spell.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/spells/delete-spell.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/spells/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/spells/list-spells.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/spells/read-spell.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/spells/update-spell.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/calculate-and-update-unit.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/calculate-unit.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/calculate-units.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/clone-units.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/create-unit.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/delete-unit.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/list-units.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/read-unit.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/resync.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/sort-units.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/update-unit.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/units/update-units.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/update-army-book.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/upgradePackages/create-upgrade-package.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/upgradePackages/delete-upgrade-package.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/upgradePackages/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/upgradePackages/list-upgrade-packages.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/upgradePackages/read-upgrade-package.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/upgradePackages/update-upgrade-package.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyBooks/utility.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/armyManCombat.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/admin-regenerate-email-hash.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/create-user-account.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/login-user.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/logout-user.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/mailService.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/read-user.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/reset-password-request.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/reset-password.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/auth/user-account-service.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/authProvider.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/content/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/doubleTab.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/gameSystems/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/gameSystems/list-game-systems.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/gameSystems/read-game-system-special-rules.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/gameSystems/read-game-system.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/gfArena.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/gfFirefight.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/warStuff.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/warfleetsFtl.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/arc-sides.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/img/circle-slice-2-2.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/img/circle-slice-2.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/img/gamepad-left.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/img/gamepad-none.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/img/gamepad-sides.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBook.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBookDefense.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBookItem.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBookMultiWeapon.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBookRule.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBookUnit.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBookUnitAttachment.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBookUpgradeOption.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBookUpgradeSection.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/ArmyBookWeapon.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/CustomArmyRulesService.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/PointCalculatorService.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/variables.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FtlAddShipCard.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FtlNewFleetCard.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FtlShipPreviewCard.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/Logo.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/OprDialogCard.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/OprFooter.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/OprRulesSnippet.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/OprUnitCard.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/OprUnitListItem.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/OprUnitWeaponStat.vue_" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/VuetifyLogo.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookSpecialRuleEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookSpellEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookUnitEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookUnitWeaponRow.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookUpgradeOptionBuilder.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookUpgradeOptionEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookUpgradeOptionRow.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookUpgradePackageCreateDialog.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookUpgradePackageEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookUpgradeSectionBuilder.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookUpgradeSectionCardText.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/army-book/OprArmyBookWeaponEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/armymancombat/AmcUnitEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/doubletab/DtRangeBand.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/doubletab/DtRangeBandHeader.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/doubletab/DtRangeBandRow.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/doubletab/DtUnitEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/gf-arena/OprGfArenaUpgradeCard.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/gf-firefight/OprFirefightUnitEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/AuthForm.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/OprArmyBookList.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/OprArmyBookTable.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/OprBreadcrumbsRow.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/OprDialog.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/OprSectionCard.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/OprUnitSpecialRulesString.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/print/OprArmyBookUnitPage.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/print/OprPage.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/print/OprPrintGlues.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/print/OprPrintUnitRow.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/shared/print/OprPrintUpgradeOptionRow.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/warfleets-ftl/OprFtlArcIcon.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/warfleets-ftl/OprFtlShipEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/warstuff/WarstuffUnitCard.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/armymancombat-rules.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/armymancombat.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/default.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/doubletab-rules.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/doubletab.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/error.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/gf-arena.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/gf-firefight.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/print.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/warfleets-ftl-2.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/warfleets-ftl.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/warstuff-rules.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/layouts/warstuff.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/middleware/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mixins/GrimdarkSpecialRules.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mixins/OprUtils.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mixins/WarfleetsFtlNames.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nuxt.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/opr-grimdark.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/opr-web-companion.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/opr-web-companion.ipr" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/opr-web-companion.iws" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/about.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/account/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/_slug/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/_slug/index/homebrew.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/_slug/index/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/index/army.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/index/flavor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/index/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/index/rules.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/index/settings.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/index/spells.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/index/upgrades.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/special-rules/_specialrule.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/units/_unit.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/_id/upgrades/_upgrade.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/builder/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/my-creations.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/view/_slug/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-books/view/_slug/print.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-man-combat/build/builder/_id/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-man-combat/build/builder/_id/print.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-man-combat/build/builder/_id/units/_unit.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-man-combat/build/builder/_id/view.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-man-combat/build/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-man-combat/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/army-man-combat/rules/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/auth/create-account.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/auth/request-password-reset.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/auth/reset-password.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/auth/sign-in.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/builder/army-book/choose.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/builder/roster/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/double-tab/build/builder/_id/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/double-tab/build/builder/_id/print.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/double-tab/build/builder/_id/units/_unit.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/double-tab/build/builder/_id/view.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/double-tab/build/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/double-tab/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/double-tab/rules/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/fan-content/_slug.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/game-systems/_slug/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/game-systems/_slug/index/homebrew.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/game-systems/_slug/index/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/game-systems/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/gf-arena/reference/upgrades.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/gf-firefight/build/builder/_id/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/gf-firefight/build/builder/_id/units/_unit.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/gf-firefight/build/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/gf-firefight/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/index.vue.stash" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/index.vue_wc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/rules/_slug/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/rules/_slug/print.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/rules/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/war-stuff/build/builder/_id/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/war-stuff/build/builder/_id/print.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/war-stuff/build/builder/_id/view.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/war-stuff/build/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/war-stuff/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/war-stuff/rules/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/warfleets-ftl/build/builder/_id/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/warfleets-ftl/build/builder/_id/plain.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/warfleets-ftl/build/builder/_id/print.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/warfleets-ftl/build/builder/_id/ships/_ship.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/warfleets-ftl/build/builder/_id/view.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/warfleets-ftl/build/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/warfleets-ftl/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/warfleets-ftl/reference/rules.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/warfleets-ftl/reference/ships.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugins/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugins/contentful.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugins/opr-point-calculator.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugins/persistedState.client.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugins/vue-draggable.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugins/vuex-persist.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/android-chrome-192x192.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/android-chrome-256x256.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/android-icon-144x144.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/android-icon-192x192.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/android-icon-36x36.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/android-icon-48x48.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/android-icon-72x72.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/android-icon-96x96.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-114x114.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-120x120.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-144x144.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-152x152.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-180x180.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-57x57.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-60x60.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-72x72.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-76x76.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon-precomposed.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/apple-touch-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/favicon-16x16.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/favicon-32x32.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/favicon-96x96.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/favicon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/BKANT.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/BKANT.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/BKANT.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/MagistralC-Bold.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/MagistralC-Bold.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/MagistralC.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/MagistralC.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/Optima-Bold.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/Optima.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/TeutonFett.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/caslon-antique.regular.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/caslon-antique.regular.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/caslon-antique.regular.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-bold-webfont.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-bold-webfont.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-bold-webfont.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-bold-webfont.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-bold-webfont.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-light-webfont.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-medium-webfont.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-medium-webfont.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-medium-webfont.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-medium-webfont.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-medium-webfont.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-regular-webfont.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-regular-webfont.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-regular-webfont.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-regular-webfont.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/din-alternate/din-alternate-regular-webfont.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-bold-webfont.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-bold-webfont.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-bold-webfont.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-bold-webfont.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-bold-webfont.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-webfont.otf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-webfont.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-webfont.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-webfont.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/magistralc/magistralc-webfont.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/fonts/provided/DIN-RegularAlternate.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/google4ebeff73595f4fea.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/Ko-fi_Icon_RGB_rounded.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books-age-of-fantasy-tile.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books-age-of-fantasy.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books-grimdark-future-tile.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books-grimdark-future.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/Grimdark-Brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/Grimdark-Detachments.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/alien-hives.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/battle-brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/battle-sisters.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/custodian-brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/dark-elf-raiders.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/dwarf-guilds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/elven-jesters.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/feudal-guard.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/gangs-of-hive-city.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/havoc-brother-disciples.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/havoc-brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/high-elf-fleets.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/human-defense-force.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/human-inquisition.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/infected-colonies.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/machine-cult.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/orc-marauders.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/prime-brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/ratmen-clans.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/rebel-guerrillas.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/robot-legions.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/soul-snatcher-cults.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/tao-coalition.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/titan-lords.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/400/wormhole-daemons.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/Grimdark-Brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/Grimdark-Detachments.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/alien-hives.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/alien-hives_400.avif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/alien-hives_400.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/battle-brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/battle-sisters.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/border-age-of-fantasy.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/border-grimdark-future.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/browse-army-books.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/custodian-brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/dark-elf-raiders.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/dwarf-guilds.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/elven-jesters.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/feudal-guard.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/gangs-of-hive-city.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/havoc-brother-disciples.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/havoc-brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/high-elf-fleets.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/human-defense-force.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/human-inquisition.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/infected-colonies.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/machine-cult.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/orc-marauders.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/prime-brothers.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/ratmen-clans.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/rebel-guerrillas.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/robot-legions.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/soul-snatcher-cults.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/tao-coalition.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/titan-lords.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-books/wormhole-daemons.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/army-man-combat/hero.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/border-warfleets-ftl.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/double-tab/doubletab-build.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/double-tab/doubletab-hero.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/double-tab/doubletab-learn.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/double-tab/doubletab-play.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/double-tab/doubletab-toolbar-slice.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/double-tab/doubletab-twitter-wide.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/eel-avatar.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/eel-avatar_320.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/ftl-border.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/age-of-fantasy-avatar.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/age-of-fantasy-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/age-of-fantasy-regiments-avatar.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/age-of-fantasy-regiments-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/age-of-fantasy-skirmish-avatar.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/age-of-fantasy-skirmish-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/grimdark-future-avatar.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/grimdark-future-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/grimdark-future-firefight-avatar.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/game-systems/grimdark-future-firefight-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/gf-arena/gf-arena-twitter-wide.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/gf-arena/gf-arena-upgrade-card-template-weapon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/gf-arena/gf-arena-upgrade-card-template.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/gf-firefight/gf-border.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/gf-firefight/gf-firefight-twitter-wide.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/home-twitter-wide.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/home-twitter-wide.xcf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/icon-plain.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/ofg-cover-1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules/ftl-alliance.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules/ftl-common.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules/ftl-empire.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules/ftl-freighter.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules/ftl-marauders.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules/ftl-nomads.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules/ftl-progenitors.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules/ftl-xenos.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/onepagerules_square.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/opr-previews-ftl-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/opr-warfleets-ftl-2-twitter-wide.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/opr-warfleets-ftl-3-twitter-wide.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/opr-warfleets-ftl-twitter-wide.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/origins/age-of-fantasy-avatar.xcf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/origins/age-of-fantasy-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/origins/age-of-fantasy-regiments-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/origins/age-of-fantasy-skirmish-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/origins/grimdark-future-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/origins/grimdark-future-firefight-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/origins/mockup-schnickers-fantasy.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/origins/mockup-schnickers-grimdark.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/origins/warfleets-ftl-cover.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/print/opr-writing-jam-2-background.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/product-warfleets-ftl-parallax.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/product-warfleets-ftl.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/shared/build-list.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/shared/build.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/shared/create-armybook.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/shared/learn.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/shared/play.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/stash/warstuff-hero-2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/war-stuff/warstuff-build.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/war-stuff/warstuff-hero.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/war-stuff/warstuff-learn.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/war-stuff/warstuff-play.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/war-stuff/warstuff-twitter-wide.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/warfleet-ftl-faction-alliance.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/warfleet-ftl-faction-common.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/warfleet-ftl-faction-empire.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/warfleet-ftl-faction-marauders.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/warfleet-ftl-faction-nomads.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/warfleet-ftl-faction-progenitors.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/warfleet-ftl-faction-xenos.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/warfleets-ftl-cover.PNG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/img/warfleets-ftl/opr-warfleets-ftl-2-twitter-wide.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/manifest.doubletab.webmanifest" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/manifest.warfleets-ftl.webmanifest" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/manifest.warstuff.webmanifest" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/manifest.webmanifest" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/ms-icon-144x144.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/ms-icon-150x150.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/ms-icon-310x310.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/ms-icon-70x70.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/mstile-150x150.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/robots.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/armyBooks.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/armyManCombat.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/doubleTab.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/fleets.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/gfFirefight.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/settings.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/warStuff.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <annotation-enable>false</annotation-enable>
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="nonRecursive" value="true" />
+        <option name="outputLevel" value="DEBUG" />
+        <option name="pluginUpdatePolicy" value="UPDATE" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="PackageJsonUpdateNotifier">
+    <dismissed value="$PROJECT_DIR$/package.json" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../divisio" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="$PROJECT_DIR$/../../../Program Files/nodejs/node" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RebelAgentSelection">
+    <selection>jr</selection>
+  </component>
+  <component name="RunManager" selected="npm.install">
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="WIDTH" value="400" />
+      <module />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file enabled="true" id="idea.log" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="dev" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="install" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="install" />
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="npm.install" />
+      <item itemvalue="npm.dev" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="96b6cd08-a51e-4b2a-954b-37d3cf435621" name="Default Changelist" comment="" />
+      <created>1636561572443</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1636561572443</updated>
+      <workItem from="1636561575362" duration="174000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>

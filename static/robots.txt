@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://opr-list-builder.herokuapp.com/sitemap.xml
