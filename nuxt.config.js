@@ -1,6 +1,6 @@
-import colors from 'vuetify/lib/util/colors';
+const colors = require('vuetify/es5/util/colors').default;
 
-export default {
+module.exports = {
   /*
   ** Nuxt rendering mode
   ** See https://nuxtjs.org/api/configuration-mode
