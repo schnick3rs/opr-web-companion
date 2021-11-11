@@ -81,6 +81,8 @@ dist
 
 # IDE / Editor
 .idea
+.ideaDataSources
+dataSources
 
 # Service worker
 sw.*
