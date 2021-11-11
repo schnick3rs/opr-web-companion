@@ -1,6 +1,6 @@
-const colors = require('vuetify/es5/util/colors').default;
+import colors from 'vuetify/lib/util/colors';
 
-module.exports = {
+export default {
   /*
   ** Nuxt rendering mode
   ** See https://nuxtjs.org/api/configuration-mode
@@ -123,7 +123,7 @@ module.exports = {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      options: { customProperties: true },
+      options: {customProperties: true},
       dark: false,
       themes: {
         dark: {
@@ -133,10 +133,10 @@ module.exports = {
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: colors.green.accent3
-        }
-      }
-    }
+          success: colors.green.accent3,
+        },
+      },
+    },
   },
   /*
   ** Build configuration

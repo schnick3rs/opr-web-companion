@@ -12,7 +12,7 @@
         <template v-slot:img="{ props }">
           <v-img
             v-bind="props"
-            gradient="to top right, rgba(212,0,0,.7), rgba(0,149,47,.7)"
+            gradient="to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)"
           ></v-img>
         </template>
 
@@ -24,7 +24,7 @@
             </v-avatar>
           </nuxt-link>
 
-          <v-toolbar-title class="ml-4" v-if="$vuetify.breakpoint.smAndUp">Web Companion</v-toolbar-title>
+          <v-toolbar-title class="ml-4" v-if="$vuetify.breakpoint.smAndUp">Web Companion - V2 - Beta</v-toolbar-title>
 
           <v-spacer />
 

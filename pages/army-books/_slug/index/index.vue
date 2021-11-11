@@ -76,7 +76,7 @@
           <v-btn
             text
             small
-            color="error"
+            color="primary"
             target="_blank"
             :href="`https://opr-army-forge.vercel.app/files?gameSystem=${armyBook.aberration}&armyId=${armyBook.uid}`"
           >
