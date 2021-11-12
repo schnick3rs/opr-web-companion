@@ -173,6 +173,9 @@ export default {
 }
 </script>
 
-<style scoped>
 
+<style scoped lang="scss">
+.inverted {
+  filter: invert(1);
+}
 </style>

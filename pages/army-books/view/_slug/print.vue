@@ -76,11 +76,13 @@
                 persistent-hint hint="force wrap on special rules section"
               ></v-checkbox>
               <v-checkbox
+                v-if="false"
                 v-model="showAllSpecialRules"
                 label="print all army wide special rules"
                 persistent-hint hint="[beta] disable to let the app decide which rules to print"
               ></v-checkbox>
               <v-checkbox
+                v-if="false"
                 v-model="showSpellsOnAllPages"
                 label="print spells on each page"
                 persistent-hint hint="[beta] disable to let the app decide when spells are to print"
