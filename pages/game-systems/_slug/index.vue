@@ -53,7 +53,7 @@ export default {
         {text: gameSystem.fullname, to: `/game-systems/${gameSystem.slug}`, exact: false},
       ],
       tabs: [
-        { key: 'opr', name: 'Army Books', to: `/army-books/${gameSystem.slug}` },
+        { key: 'opr', name: 'Army Books', to: `/game-systems/${gameSystem.slug}` },
         //{ key: 'opr', name: 'Rules', disabled: true, },
         //{ key: 'homebrew', name: 'Fan Army Books', disabled: false, to: `/army-books/${gameSystem.slug}/homebrew` },
       ],

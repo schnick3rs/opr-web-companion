@@ -109,7 +109,7 @@
           >
             <v-icon left>$forge</v-icon>
             <span v-show="$vuetify.breakpoint.smAndUp">army forge</span>
-            <v-icon right>mdi-launch</v-icon>
+            <v-icon v-show="$vuetify.breakpoint.smAndUp" right>mdi-launch</v-icon>
           </v-btn>
         </v-card-actions>
       </v-card>
