@@ -1,6 +1,6 @@
 <template>
   <div
-    class="page page--din-a-4"
+    class="page"
     :class="pageClass"
   >
     <header class="page-headline">
@@ -17,11 +17,15 @@ export default {
   props: {
     dimension: {
       type: String,
-      default: 'dina4',
+      default: 'din-a4',
     },
     universe: {
       type: String,
       default: 'Grimdark Future',
+    },
+    paperSize: {
+      type: String,
+      default: 'dina4',
     },
     pageNumber: {
       type: [String, Number],
@@ -31,7 +35,7 @@ export default {
   computed: {
     pageClass() {
       const universeSlug = this.universe.toLowerCase().replace(/\W/gm, '-');
-      return `page--${universeSlug}`;
+      return `page--${universeSlug} page--${this.paperSize}`;
     },
   },
 }
@@ -141,12 +145,26 @@ $font-size-block-headline: 3.52778mm;
   //  page-break-inside: avoid;
   position: relative;
 
-  &--din-a-4 {
+  &--din-a4 {
     height: 296mm; // use 297-1 to get 2+ pages printed correctly
     width: 210mm;
     overflow: hidden;
     //margin: 5mm 10mm;
     padding: 6mm 10mm;
+
+    background-size: auto;
+
+    font-size: $font-size-text--dense;
+  }
+
+  &--letter-us {
+    height: calc(274mm - 1mm);
+    width: 215mm;
+    overflow: hidden;
+    //margin: 5mm 10mm;
+    padding: 6mm 10mm;
+
+    background-size: 215.9mm 278.4mm;
 
     font-size: $font-size-text--dense;
   }
@@ -166,7 +184,6 @@ $font-size-block-headline: 3.52778mm;
 
   &--grimdark-future {
     background-image: url('/img/army-books/border-grimdark-future.png');
-    background-size: auto;
     background-position: center;
 
     font-family: GrimdarkText, sans-serif;
@@ -181,7 +198,6 @@ $font-size-block-headline: 3.52778mm;
 
   &--age-of-fantasy {
     background-image: url('/img/army-books/border-age-of-fantasy.png');
-    background-size: auto;
     background-position: center;
 
     font-family: AgeOfFantasyText, serif;
@@ -210,7 +226,7 @@ $font-size-block-headline: 3.52778mm;
 }
 
 @page {
-  size: A4;
+  //size: A4;
   margin: 0;
 }
 

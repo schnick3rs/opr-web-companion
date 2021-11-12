@@ -2,6 +2,7 @@
   <opr-page
     :universe="universe"
     :page-number="pageNumber"
+    :paper-size="paperSize"
   >
 
     <template v-slot:headline>
@@ -160,6 +161,10 @@ export default {
     specialRules: Array,
     spells: Array,
     armyWideRule: Object,
+    paperSize: {
+      type: String,
+      default: 'din-a4',
+    },
     eagerColumnWrap: {
       type: Boolean,
       default: false,
@@ -181,9 +186,10 @@ export default {
   computed: {
     upgradesContainerHeightMm() {
       if (this.unitsContainerHeight) {
+        const height = this.paperSize === 'din-a4'  ? 296 : 274;
         return {
           // 296 (page height) -12 (padding) -(headline-padding) -(headline-font-size) - (units)
-          height: `calc(296mm - 12mm - 8mm - 8mm - ${this.unitsContainerHeight} - 8mm)`,
+          height: `calc(${height}mm - 12mm - 8mm - 8mm - ${this.unitsContainerHeight} - 8mm)`,
         };
       }
       return {};

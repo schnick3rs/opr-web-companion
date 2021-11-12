@@ -8,7 +8,7 @@
       </v-btn>
 
     </v-toolbar>
-    <div class="page page--din-a-4">
+    <div class="page page--din-a4">
 
       <h1 class="page__headline">Fleet Roster</h1>
 
@@ -319,7 +319,7 @@ export default {
 .page {
 //  page-break-inside: avoid;
 
-  &--din-a-4 {
+  &--din-a4 {
     width: 220mm;
     overflow: hidden;
     //margin: 5mm 10mm;
@@ -360,7 +360,7 @@ export default {
 }
 
 @media screen {
-  .page--din-a-4 {
+  .page--din-a4 {
     border-style: dashed;
     border-width: 1px;
   }

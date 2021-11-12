@@ -15,7 +15,7 @@
 
     </v-toolbar>
 
-    <div class="page page--din-a-4">
+    <div class="page page--din-a4">
 
       <h1 class="page__headline">Army Roster</h1>
 
@@ -116,7 +116,7 @@ export default {
 .page {
 //  page-break-inside: avoid;
 
-&--din-a-4 {
+&--din-a4 {
  //height: 297mm;
    width: 220mm;
    overflow: hidden;
@@ -147,7 +147,7 @@ export default {
 }
 
 @media screen {
-  .page--din-a-4 {
+  .page--din-a4 {
     border-style: dashed;
     border-width: 1px;
   }

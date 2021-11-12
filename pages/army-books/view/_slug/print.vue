@@ -3,6 +3,7 @@
 
     <opr-page
       :universe="armyBook.universe"
+      :paper-size="paperSize"
       pageNumber="1"
     >
 
@@ -70,6 +71,12 @@
               <v-icon class="float-right" @click="expand = !expand">mdi-window-restore</v-icon>
             </v-card-subtitle>
             <v-card-text>
+              <v-select
+                v-model="paperSize"
+                label="Paper Size"
+                outlined dense
+                :items="[{text: 'DIN A4', value: 'din-a4'},{text: 'Letter', value: 'letter-us'}]"
+              ></v-select>
               <v-checkbox
                 v-model="eagerColumnWrap"
                 label="force column wrap"
@@ -110,6 +117,7 @@
       <opr-army-book-unit-page
         v-if="page.units.length > 0"
         :universe="armyBook.universe"
+        :paper-size="paperSize"
         :headline="`${armyBook.aberration} - ${armyBook.name}`"
         :version-string="armyBook.versionString"
         :page-number="2+index"
@@ -156,6 +164,7 @@ export default {
   data() {
     return {
       expand: false,
+      paperSize: 'din-a4',
       eagerColumnWrap: false,
       showAllSpecialRules: false,
       showSpellsOnAllPages: false,
@@ -295,7 +304,7 @@ $font-size-block-headline: 3.52778mm;
   position: relative;
   line-height: 1.15;
 
-  &--din-a-4 {
+  &--din-a4 {
     //height: 842.08pt;
     //width: 595.41pt;
     height: calc(297mm - 1mm);
@@ -307,9 +316,21 @@ $font-size-block-headline: 3.52778mm;
     font-size: $font-size-default-text;
   }
 
+  &--letter-us {
+    //height: 842.08pt;
+    //width: 595.41pt;
+    height: calc(274mm - 1mm);
+    width: 215mm;
+    overflow: hidden;
+    //margin: 5mm 10mm;
+    padding: 6mm 10mm;
+
+    font-size: $font-size-default-text;
+  }
+
   &--grimdark-future {
     background-image: url('/img/army-books/border-grimdark-future.png');
-    background-size: auto;
+    //background-size: auto;
     background-position: center;
 
     font-family: GrimdarkText, sans-serif;
@@ -323,7 +344,7 @@ $font-size-block-headline: 3.52778mm;
 
   .page--age-of-fantasy {
     background-image: url('/img/army-books/border-age-of-fantasy.png');
-    background-size: auto;
+    //background-size: auto;
     background-position: center;
 
     font-family: AgeOfFantasyText, serif;
@@ -387,7 +408,7 @@ $font-size-block-headline: 3.52778mm;
 
 
 @page {
-  size: A4;
+  //size: A4;
   margin: 0;
 }
 
@@ -413,7 +434,12 @@ $font-size-block-headline: 3.52778mm;
 }
 
 @media screen {
-  .page--din-a-4 {
+  .page--din-a4 {
+    border-style: dashed;
+    border-width: 1px;
+  }
+
+  .page--letter-us {
     border-style: dashed;
     border-width: 1px;
   }
