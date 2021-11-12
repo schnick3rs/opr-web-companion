@@ -16,7 +16,7 @@
       </v-dialog>
     </v-row>
 
-    <v-row justify-sm="center" align-content="center">
+    <v-row justify-sm="center" align-content="center" v-if="false">
       <v-col cols="12" :sm="8" :md="6" lg="4">
         <auth-form
           title="Create Account"

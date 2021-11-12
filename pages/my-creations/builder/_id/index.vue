@@ -52,7 +52,7 @@
               :key="child.label"
               nuxt
               exact
-              :to="`/army-books/builder/${armyBookId}/${child.to}`"
+              :to="`/my-creations/builder/${armyBookId}/${child.to}`"
             >
               <v-icon left small>{{child.icon}}</v-icon>
               {{ child.label }}
@@ -139,13 +139,12 @@ export default {
     breadcrumbItems() {
       const breadcrumbItems = [
         { text: '', to: '/', exact: true },
-        { text: 'Army Books', to: '/army-books', exact: true },
-        { text: 'My Creations', to: '/army-books/my-creations', exact: true },
+        { text: 'My Creations', to: '/my-creations', exact: true },
       ];
       if (this.armyBookName) {
         const item = {
           text: `${this.armyBookName}`,
-          to: `/army-books/builder/${this.armyBookId}`,
+          to: `/my-creations/builder/${this.armyBookId}`,
           exact: true,
         };
         breadcrumbItems.push(item);

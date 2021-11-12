@@ -73,7 +73,44 @@
           </template>
           <v-btn v-else text small color="primary" nuxt :to="`/army-books/view/${armyBook.uid}/print`"><v-icon left>mdi-printer</v-icon>pdf</v-btn>
           <v-spacer></v-spacer>
-          <v-btn text small color="error" href="https://opr-army-forge.vercel.app/"><v-icon left>mdi-wrench</v-icon><span v-show="$vuetify.breakpoint.smAndUp">army forge</span></v-btn>
+          <template v-if="armyBook._type === 'faction'">
+            <v-menu offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  text
+                  small
+                  color="primary"
+                  v-bind="attrs" v-on="on"
+                >
+                  <v-icon left>$forge</v-icon>
+                  <span v-show="$vuetify.breakpoint.smAndUp">army forge</span>
+                  <v-icon right>mdi-chevron-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="(item, index) in armyBook.items"
+                  :key="index"
+                  target="_blank"
+                  :href="`https://army-forge.onepagerules.com/files?gameSystem=${item.aberration.toLowerCase()}&armyId=${item.uid}`"
+                >
+                  <v-list-item-title>{{ item.name }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
+          <v-btn
+            v-else
+            text
+            small
+            color="primary"
+            target="_blank"
+            :href="`https://army-forge.onepagerules.com/files?gameSystem=${armyBook.aberration.toLowerCase()}&armyId=${armyBook.uid}`"
+          >
+            <v-icon left>$forge</v-icon>
+            <span v-show="$vuetify.breakpoint.smAndUp">army forge</span>
+            <v-icon right>mdi-launch</v-icon>
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-col>

@@ -84,7 +84,7 @@
           block outlined large
           color="primary"
           nuxt
-          to="/army-books/builder"
+          to="/my-creations/builder"
         >
           <v-icon left>mdi-file-multiple</v-icon>
           New Detachment
@@ -270,7 +270,7 @@
 
           <template v-slot:item.actions="{ item }">
             <v-btn
-              nuxt :to="`/army-books/builder/${item.uid}`"
+              nuxt :to="`/my-creations/builder/${item.uid}`"
               icon small
               color="success"
             >
@@ -343,8 +343,7 @@ export default {
     return {
       breadcrumbItems: [
         { text: '', to: '/', exact: true },
-        { text: 'Army Books', to: '/army-books', exact: true },
-        { text: 'My Creations', to: '/army-books/my-creations', exact: true },
+        { text: 'My Creations', to: '/my-creations', exact: true },
       ],
       headers: [
         {text: 'Name', align: 'start', value: 'name'},

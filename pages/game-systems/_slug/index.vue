@@ -49,7 +49,7 @@ export default {
       armyBooks,
       breadcrumbItems: [
         {text: '', to: '/', exact: true},
-        {text: 'Game Systems', to: '/game-systems', exact: true},
+        //{text: 'Game Systems', to: '/game-systems', exact: true},
         {text: gameSystem.fullname, to: `/game-systems/${gameSystem.slug}`, exact: false},
       ],
       tabs: [

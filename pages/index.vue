@@ -1,9 +1,30 @@
 <template>
   <div>
 
-    <v-row justify-sm="center">
+    <v-row justify="center">
       <v-col
-        cols="12" :sm="6" :md="6"
+        cols="6" :sm="4" :md="2"
+        v-for="gameSystem in gameSystems" :key="gameSystem.shortname"
+      >
+        <v-card
+          :disabled="gameSystem.aberration !== 'GF'"
+          nuxt :to="`/game-systems/${gameSystem.slug}`"
+        >
+          <v-img
+            :src="`/img/game-systems/${gameSystem.slug}-cover.jpg`"
+            min-height="178"
+            :class="{ 'img--greyscale': gameSystem.aberration !== 'GF'}"
+          ></v-img>
+          <v-card-text class="text-center">
+            {{gameSystem.shortname}}
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row justify-sm="center" v-if="isAdmin">
+      <v-col
+        :cols="10"
         v-for="(section, index) in cloudSections" :key="index"
       >
         <v-card nuxt :to="section.link.route" max-height="200">
@@ -11,62 +32,29 @@
           <span
             style="position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);"
           >
-            <v-btn :color="section.color">{{ section.title }}</v-btn>
-          </span>
+          <v-btn :color="section.color">{{ section.title }}</v-btn>
+        </span>
         </v-card>
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col cols="12"><v-divider></v-divider></v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12">
-        <v-alert color="success" elevation="4" text class="text-center">
-          <strong>Check out the Core rules for the different systems</strong>
-        </v-alert>
-      </v-col>
-    </v-row>
-
-    <v-row justify="center">
+    <v-row justify="center" v-if="false">
       <v-col
         cols="6" :sm="4" :md="2"
-        v-for="gameSystem in gameSystems" :key="gameSystem.fields.id"
+        v-for="gameSystem in oneOffSystems" :key="gameSystem.name"
       >
-        <v-card nuxt :to="`/rules/${gameSystem.fields.slug}`">
+        <v-card nuxt :to="gameSystem.link.route">
           <v-img
-            v-if="gameSystem.fields.cover && gameSystem.fields.cover.fields.file"
-            :src="`${gameSystem.fields.cover.fields.file.url}?h=356`"
+            v-if="gameSystem.imageSrc"
+            :src="gameSystem.imageSrc"
             min-height="178"
+            height="178"
+            max-height="178"
           ></v-img>
           <v-card-text class="text-center">
-            {{gameSystem.fields.shortname}}
+            {{gameSystem.shortname}}
           </v-card-text>
         </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12"><v-divider></v-divider></v-col>
-    </v-row>
-
-    <v-row>
-      <v-col cols="12">
-        <v-alert color="primary" elevation="4" text class="text-center">
-          <strong>
-            The sections below can be used without having an account. Their respective data is stored in the local storage or your browser.
-          </strong>
-        </v-alert>
-      </v-col>
-    </v-row>
-
-    <v-row justify-sm="center">
-      <v-col
-        cols="12" :sm="6" :md="4"
-        v-for="(section, index) in sections" :key="index"
-      >
-        <opr-section-card :section="section"></opr-section-card>
       </v-col>
     </v-row>
 
@@ -79,8 +67,8 @@ import OprSectionCard from "@/components/shared/OprSectionCard";
 export default {
   name: "home",
   async asyncData({ $axios }) {
-    const { data } = await $axios.get(`/api/content/game-systems/`);
-    const gameSystems = data;
+    const { data } = await $axios.get(`/api/game-systems/`);
+    const gameSystems = data.filter(gs => gs.armyBookBuilderEnabled);
     return {
       gameSystems,
     }
@@ -108,29 +96,19 @@ export default {
     return {
       cloudSections: [
         {
-          title: 'Browse Army Books',
-          subtitle: '',
-          imageSrc: '/img/army-books-grimdark-future-tile.jpg',
-          htmlText: '',
-          link: { text: 'Browse', route: '/army-books' },
-          isActive: true,
-          classes: [],
-          color: 'orange lighten-2',
-        },
-        {
           title: 'Create an Army Book',
           subtitle: '',
           imageSrc: '/img/army-books-age-of-fantasy-tile.jpg',
           htmlText: '',
-          link: { text: 'Create', route: '/army-books/my-creations' },
+          link: { text: 'Create', route: '/my-creations' },
           isActive: this.$auth.loggedIn,
           classes: [],
           color: 'green lighten-2',
         },
       ],
-      sections: [
+      oneOffSystems: [
         {
-          title: 'Warfleets: FTL',
+          shortname: 'Warfleets: FTL',
           subtitle: '',
           imageSrc: '/img/warfleets-ftl/opr-warfleets-ftl-2-twitter-wide.jpg',
           htmlText: '',
@@ -140,7 +118,7 @@ export default {
           color: 'blue lighten-2',
         },
         {
-          title: 'WarStuff',
+          shortname: 'WarStuff',
           subtitle: '',
           imageSrc: '/img/war-stuff/warstuff-hero.jpg',
           htmlText: '',
@@ -149,7 +127,7 @@ export default {
           color: 'red lighten-2',
         },
         {
-          title: 'Double Tab',
+          shortname: 'Double Tab',
           subtitle: '',
           imageSrc: '/img/double-tab/doubletab-hero.jpg',
           htmlText: '',
@@ -159,7 +137,7 @@ export default {
           color: 'purple lighten-2',
         },
         {
-          title: 'Army Man Combat',
+          shortname: 'Army Man Combat',
           subtitle: '',
           imageSrc: '/img/army-man-combat/hero.jpg',
           htmlText: '',
@@ -168,34 +146,19 @@ export default {
           classes: [],
           color: 'green lighten-2',
         },
-        {
-          title: 'GF: Firefight',
-          subtitle: '',
-          imageSrc: '/img/gf-firefight/gf-firefight-twitter-wide.jpg',
-          htmlText: '',
-          link: { text: 'Gang Builder', route: '/gf-firefight/' },
-          isActive: true,
-          beta: true,
-          classes: [],
-          color: 'orange lighten-2',
-        },
-        {
-          title: 'GF: Arena',
-          subtitle: '',
-          imageSrc: '/img/gf-arena/gf-arena-twitter-wide.jpg',
-          htmlText: '',
-          link: { text: 'Card Library', route: '/gf-arena/reference/upgrades' },
-          isActive: true,
-          beta: true,
-          classes: [],
-          color: 'cyan lighten-2',
-        },
       ]
     }
-  }
+  },
+  computed: {
+    isAdmin() {
+      return this.$store.state.auth?.user?.isAdmin;
+    },
+  },
 }
 </script>
 
-<style scoped>
-
+<style scoped class="scss">
+.img--greyscale {
+  filter: grayscale(100%);
+}
 </style>

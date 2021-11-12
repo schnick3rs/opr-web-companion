@@ -24,7 +24,7 @@
             </v-avatar>
           </nuxt-link>
 
-          <v-toolbar-title class="ml-4" v-if="$vuetify.breakpoint.smAndUp">Web Companion - V2 - Beta</v-toolbar-title>
+          <v-toolbar-title class="ml-4" v-if="$vuetify.breakpoint.smAndUp">Web Companion</v-toolbar-title>
 
           <v-spacer />
 
@@ -60,7 +60,7 @@
             <v-btn color="blue" small nuxt to="/auth/sign-in" :disabled="maintenance">
               sign in
             </v-btn>
-            <v-btn color="blue" small nuxt to="/auth/create-account" :disabled="maintenance">
+            <v-btn v-if="false" color="blue" small nuxt to="/auth/create-account" :disabled="maintenance">
               register
             </v-btn>
           </div>

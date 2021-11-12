@@ -10,6 +10,7 @@ module.exports = async (request, response) => {
       'game_systems.universe, ' +
       'game_systems."portfolioLink", ' +
       'game_systems.shortname, ' +
+      'game_systems.aberration, ' +
       'game_systems."armyBookBuilderEnabled" ' +
     'FROM opr_companion.game_systems ' +
     'ORDER BY sort_order ASC '

@@ -262,7 +262,7 @@ export default {
       if (this.$vuetify.breakpoint.mdAndUp) {
         this.selectedUnitId = unit.id;
       } else {
-        this.$router.push(`/army-books/builder/${this.armyBookId}/units/${unit.id}`);
+        this.$router.push(`/my-creations/builder/${this.armyBookId}/units/${unit.id}`);
       }
     },
     openSyncUnitDialog() {

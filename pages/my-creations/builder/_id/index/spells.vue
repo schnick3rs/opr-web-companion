@@ -166,7 +166,7 @@ export default {
         this.selectedSpecialRuleId = undefined;
         this.selectedSpellId = spell.id;
       } else {
-        this.$router.push(`/army-books/builder/${this.armyBookId}/spells/${spell.id}`);
+        this.$router.push(`/my-creations/builder/${this.armyBookId}/spells/${spell.id}`);
       }
     },
     deleteSpell(spellUid) {

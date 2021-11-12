@@ -206,7 +206,7 @@ export default {
         this.selectedSpecialRuleId = specialRule.id;
         this.selectedSpellId = undefined;
       } else {
-        this.$router.push(`/army-books/builder/${this.armyBookId}/special-rules/${specialRule.id}`);
+        this.$router.push(`/my-creations/builder/${this.armyBookId}/special-rules/${specialRule.id}`);
       }
     },
     openCreateSpecialRuleDialog() {
