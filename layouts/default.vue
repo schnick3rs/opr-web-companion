@@ -24,7 +24,7 @@
             </v-avatar>
           </nuxt-link>
 
-          <v-toolbar-title class="ml-4" v-if="$vuetify.breakpoint.smAndUp">Web Companion</v-toolbar-title>
+          <v-toolbar-title class="ml-4" v-if="$vuetify.breakpoint.smAndUp">WebApp</v-toolbar-title>
 
           <v-spacer />
 
