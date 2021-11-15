@@ -20,6 +20,7 @@ import OprDialog from "@/components/shared/OprDialog";
 import DtRangeBandRow from "@/components/doubletab/DtRangeBandRow";
 import DtRangeBandHeader from "@/components/doubletab/DtRangeBandHeader";
 import DtUnitEditor from "@/components/doubletab/DtUnitEditor";
+
 export default {
   name: "army-unit",
   components: {DtUnitEditor, DtRangeBandHeader, DtRangeBandRow, OprDialog, DtRangeBand},
