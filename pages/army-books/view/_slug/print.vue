@@ -252,7 +252,10 @@ export default {
       return this?.armyBook.universe.toLowerCase().replace(/\W/gm, '-');
     },
     introImageSrc() {
-      const slug = this.armyBook.name.toLowerCase().replace(/\W/gm, '-');
+      let slug = this.armyBook.name.toLowerCase().replace(/\W/gm, '-');
+      if (this.armyBook.factionName) {
+        slug = this.armyBook.factionName.toLowerCase().replace(/\W/gm, '-');
+      }
       return `/img/army-books/${slug}.png`;
     },
   },
