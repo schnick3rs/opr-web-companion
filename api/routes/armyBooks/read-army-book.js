@@ -32,6 +32,8 @@ module.exports = async (request, response) => {
     'army_books.cover_image_path AS "coverImagePath", ' +
     'army_books.cover_image_credit AS "coverImageCredit", ' +
     'army_books.is_live AS "isLive", ' +
+    'army_books.faction_name AS "factionName", ' +
+    'army_books.faction_relation AS "factionRelation", ' +
     'user_accounts.username, ' +
     'game_systems.slug "gameSystemSlug", ' +
     'game_systems.fullname, ' +
