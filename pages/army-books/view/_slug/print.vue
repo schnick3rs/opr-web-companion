@@ -367,6 +367,7 @@ $font-size-block-headline: 3.52778mm;
   &__image {
     width: 50%;
     margin: 0 auto;
+    padding-top: 8mm;
     padding-bottom: 8mm;
   }
 
