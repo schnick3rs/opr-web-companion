@@ -497,7 +497,7 @@ export default {
         this.importArmyForm.official = armyJson.official;
         if (this.importArmyForm.official) {
           const slug = this.importArmyForm.name.toLowerCase().replace(/\W/gm, '-');
-          this.importArmyForm.coverImagePath = `https://opr-list-builder.herokuapp.com/img/army-books/${slug}.png`;
+          this.importArmyForm.coverImagePath = `https://webapp.onepagerules.com/img/army-books/${slug}.png`;
         }
         this.importArmyForm.costModeAutomatic = true;
       } catch (e) {

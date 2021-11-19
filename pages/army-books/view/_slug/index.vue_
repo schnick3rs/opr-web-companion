@@ -140,7 +140,7 @@ export default {
     const title = `${this.armyBook.name} ${this.armyBook.versionString} | ${this.armyBook.aberration} Army Book`;
     const description = this.armyBook.hint;
     const slug = this.armyBook.name.toLowerCase().replace(/\W/gm, '-');
-    const image = `https://opr-list-builder.herokuapp.com/img/gf-firefight/gf-firefight-twitter-wide.jpg`;
+    const image = `https://webapp.onepagerules.com/img/gf-firefight/gf-firefight-twitter-wide.jpg`;
 
     return {
       title: title,

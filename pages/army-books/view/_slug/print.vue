@@ -60,7 +60,7 @@
         <div><strong>Illustrations:</strong> Brandon Gillam</div>
         <div v-if="!armyBook.official"><strong>Army Book by:</strong> {{ armyBook.username }}</div>
         <div v-if="armyBook.coverImageCredit"><strong>Cover Image by:</strong> <span v-html="markdownInline(armyBook.coverImageCredit)"></span></div>
-        <div v-if="!armyBook.official"><strong>Created with:</strong> <a target="_blank" href="https://opr-list-builder.herokuapp.com/">OPR Web Companion</a></div>
+        <div v-if="!armyBook.official"><strong>Created with:</strong> <a target="_blank" href="https://webapp.onepagerules.com/">OPR Web Companion</a></div>
       </div>
 
       <div class="config d-print-none">
@@ -177,9 +177,11 @@ export default {
     const slug = this.armyBook.name.toLowerCase().replace(/\W/gm, '-');
 
     const universeSlug = this.armyBook.universe.toLowerCase().replace(/\W/gm, '-');
-    let image = this.armyBook.coverImagePath || `https://opr-list-builder.herokuapp.com/img/army-books-${this.universeSlug}-tile.jpg`;
-    if (this.armyBook.official) {
-      image = `https://opr-list-builder.herokuapp.com/img/army-books/${slug}.png`;
+    let image = `https://webapp.onepagerules.com/img/army-books-${this.universeSlug}-tile.jpg`;
+    if (this.armyBook.coverImagePath) {
+      image = this.armyBook.coverImagePath;
+    } else if (this.armyBook.official) {
+      image = `https://webapp.onepagerules.com/img/army-books/${slug}.png`;
     }
 
     return {

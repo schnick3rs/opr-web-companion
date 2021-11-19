@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://opr-list-builder.herokuapp.com/sitemap.xml
+Sitemap: https://webapp.onepagerules.com/sitemap.xml

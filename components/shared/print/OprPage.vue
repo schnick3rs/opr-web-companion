@@ -222,7 +222,6 @@ $font-size-block-headline: 3.52778mm;
     }
   }
 
-
 }
 
 @page {
