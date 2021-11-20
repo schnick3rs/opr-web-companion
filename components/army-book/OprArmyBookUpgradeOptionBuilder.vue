@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import * as ArmyBook from '~/assets/js/ArmyBook';
+import { ArmyBook } from 'opr-army-book-helper';
 const OprDialog = () => import(/* webpackChunkName: "OprDialog" */ "~/components/shared/OprDialog");
 import OprArmyBookUpgradeOptionEditor from "./OprArmyBookUpgradeOptionEditor";
 

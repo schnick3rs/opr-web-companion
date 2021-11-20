@@ -151,7 +151,7 @@ import OprDialog from "~/components/shared/OprDialog";
 import OprArmyBookUpgradeSectionCardText from "./OprArmyBookUpgradeSectionCardText";
 import OpaArmyBookUpgradeSectionBuilder from "./OprArmyBookUpgradeSectionBuilder";
 import OprUtils from "~/mixins/OprUtils";
-import * as ArmyBook from '~/assets/js/ArmyBook';
+import { ArmyBook } from 'opr-army-book-helper';
 
 export default {
   name: 'OprArmyBookUpgradePackageEditor',

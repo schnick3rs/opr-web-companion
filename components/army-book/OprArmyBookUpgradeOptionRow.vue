@@ -120,7 +120,7 @@
 
 <script>
 const OprDialog = () => import(/* webpackChunkName: "OprDialog" */ "~/components/shared/OprDialog");
-import * as ArmyBook from '~/assets/js/ArmyBook';
+import { ArmyBook } from 'opr-army-book-helper';
 import OprArmyBookUpgradeOptionEditor from "./OprArmyBookUpgradeOptionEditor";
 
 export default {

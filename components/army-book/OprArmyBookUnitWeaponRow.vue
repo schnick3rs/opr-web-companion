@@ -62,7 +62,7 @@
 
 <script>
 import { normalizeWeapon } from '~/assets/js/PointCalculatorService';
-import * as ArmyBook from '~/assets/js/ArmyBook';
+import { ArmyBook } from 'opr-army-book-helper';
 
 export default {
   name: 'OprArmyBookUnitWeaponRow',

@@ -1,5 +1,4 @@
-import calc from 'opr-point-calculator-lib';
-import * as ArmyBook from "assets/js/ArmyBook";
+import * as ArmyBook from "ArmyBook";
 
 const normalizeWeapon = (weapon) => {
   if (weapon === undefined) return undefined
@@ -76,12 +75,7 @@ const normalizeUnit = (unit) => {
   return calculatableUnit;
 }
 
-const calculateUnit = (unit) => {
-  return calc.unitCost(unit);
-}
-
 export {
   normalizeWeapon,
   normalizeUnit,
-  calculateUnit,
 }

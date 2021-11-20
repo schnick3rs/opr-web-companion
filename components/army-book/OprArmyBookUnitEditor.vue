@@ -382,7 +382,7 @@ import OprArmyBookWeaponEditor from '~/components/army-book/OprArmyBookWeaponEdi
 import OprDialog from "~/components/shared/OprDialog";
 import OprUtils from "~/mixins/OprUtils";
 import marked from 'marked';
-import * as ArmyBook from '~/assets/js/ArmyBook';
+import { ArmyBook } from 'opr-army-book-helper';
 import { toCustomRule } from '~/assets/js/CustomArmyRulesService';
 import { normalizeUnit } from '~/assets/js/PointCalculatorService';
 import OprArmyBookUnitWeaponRow from "./OprArmyBookUnitWeaponRow";

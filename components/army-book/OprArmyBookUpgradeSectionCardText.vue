@@ -65,7 +65,7 @@
 <script>
 import OprArmyBookUpgradeOptionRow from "./OprArmyBookUpgradeOptionRow";
 import OprArmyBookUpgradeOptionBuilder from "./OprArmyBookUpgradeOptionBuilder";
-import * as ArmyBook from "assets/js/ArmyBook";
+import { ArmyBook } from 'opr-army-book-helper';
 
 export default {
   name: 'OprArmyBookUpgradeSectionCardText',

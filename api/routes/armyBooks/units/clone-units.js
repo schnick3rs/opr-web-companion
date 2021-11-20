@@ -10,63 +10,146 @@ module.exports = async (request, response) => {
   const toClone = request.body;
 
   // fetch units from army books
-  const clonedAndSyncedUnits = toClone.map(async (clone) => {
+  let units = [];
+  for (let i = 0; i < toClone.length; i++) {
+    const clone = toClone[i];
     const { parentArmyBookId, unitId } = clone;
-    let unit = await getUnit(parentArmyBookId, userId, unitId);
+    let parentUnit = await getUnit(parentArmyBookId, userId, unitId);
     let newUnit = {
-      ...unit,
+      ...parentUnit,
       id: nanoid(),
       clone: {
         parentArmyBookId,
-        unitId: unit.id,
+        unitId: parentUnit.id,
       },
     };
     if (clone.sync) {
       newUnit.sync = {
         parentArmyBookId,
-        unitId: unit.id,
+        unitId: parentUnit.id,
         syncAutomatic: true,
       };
     }
-    await addUnit(armyBookUid, userId, unit);
+    await addUnit(armyBookUid, userId, newUnit);
+    units.push(newUnit);
+  }
 
-    // add upgrade packages
-    const parentUpgradePackages = await getUpgradePackages(parentArmyBookId, userId);
-    console.info('parentUpgradePackages', parentUpgradePackages);
+  // add upgrade packages
+  let newUpgradePackages = [];
+  for (let i = 0; i < units.length; i++) {
+    const unit = units[i];
+    const parentUpgradePackages = await getUpgradePackages(unit.clone.parentArmyBookId, userId);
     const targetUpgradePackages = await getUpgradePackages(armyBookUid, userId);
-    console.info('targetUpgradePackages', targetUpgradePackages);
     const unitUpgradePackages = unit.upgrades.map(uid => {
       return parentUpgradePackages.find(u => u.uid === uid);
     });
     const newPackages = unitUpgradePackages.filter(parentUnitPck => {
-      return targetUpgradePackages.every(targetPck => targetPck.uid !== parentUnitPck);
+      return !targetUpgradePackages.some(targetPck => targetPck.uid === parentUnitPck.uid);
     });
-    console.info('Add Packages', newPackages);
-    //await Promise.all(newPackages.forEach(async (pck) => await addUpgradePackage(armyBookUid, userId, pck)));
+    for (let j = 0; j < newPackages.length; j++) {
+      const newPackage = newPackages[j];
+      await addUpgradePackage(armyBookUid, userId, newPackage);
+      newUpgradePackages.push(newPackage);
+    }
+  }
 
-    // add special rules
-    /**
-     * 1. fetch parent special rules
-     * 2. fetch target special rules
-     * 3. check which rules this unit uses and
-     */
-    const parentUnitSpecialRules = unit.specialRules;
-    const parentSpecialRules = await getSpecialRules(parentArmyBookId, userId);
-    console.info('parentSpecialRules', parentSpecialRules);
+  // add special rules
+  /**
+   * 1. fetch parent special rules
+   * 2. fetch target special rules
+   * 3. check which rules this unit uses and
+   */
+  let newSpecialRules = [];
+  for (let i = 0; i < units.length; i++) {
+    const unit = units[i];
+    const unitSpecialRules = unit.specialRules;
+    const parentSpecialRules = await getSpecialRules(unit.clone.parentArmyBookId, userId);
     const targetSpecialRules = await getSpecialRules(armyBookUid, userId);
-    console.info('targetSpecialRules', targetSpecialRules);
-    const newRules = parentSpecialRules.filter(parentRule => {
-      return targetSpecialRules.every(targetRule => targetRule.name !== parentRule);
-    })
-    console.info('Add rule', newRules);
-    //await Promise.all(newRules.forEach(async (rule) => await addSpecialRule(armyBookUid, userId, rule)));
+    const newRules = parentSpecialRules.filter((parentRule) => {
+      // only rules that the unit uses
+      return unitSpecialRules.some((unitRule) => unitRule.key === parentRule.key);
+    }).filter((unitRule) => {
+      return !targetSpecialRules.some((targetRule) => targetRule.key === unitRule.key);
+    });
 
-    return newUnit;
-  });
+    for (let j = 0; j < newRules.length; j++) {
+      let newRule = newRules[j];
+      await addSpecialRule(armyBookUid, userId, newRule);
+      newSpecialRules.push(newRule);
+    }
 
-  const units = await Promise.all(clonedAndSyncedUnits);
+    /**
+     * we iterate over each upgrade package and extract all special rules
+     * 2. remove duplicates
+     * 3. check missing
+     * 4. add to army book
+     */
+    const newPackageRules = [];
+    let upgradesSpecialRules = [];
+    newUpgradePackages.forEach(up => {
+      up.sections.forEach(section => {
+        section.options.forEach(option => {
+          if (option.gains) {
+            option.gains.forEach(gain => {
+              switch (gain.type) {
 
-  response.status(200).json(units);
+                case 'ArmyBookRule':
+                  upgradesSpecialRules.push(gain);
+                  break;
+
+                case 'ArmyBookMultiWeapon':
+                  gain.profiles.forEach(weapon =>
+                    weapon.specialRules.forEach(weaponRule =>
+                      upgradesSpecialRules.push(weaponRule)
+                    )
+                  );
+                  break;
+
+                case 'ArmyBookWeapon':
+                  gain.specialRules.forEach(weaponRule => upgradesSpecialRules.push(weaponRule));
+                  break;
+
+                case 'ArmyBookItem':
+                  gain.content?.forEach(content => {
+                    switch (content.type) {
+                      case 'ArmyBookRule':
+                        upgradesSpecialRules.push(content);
+                        break;
+                      case 'ArmyBookWeapon':
+                        content.specialRules.forEach(weaponRule=> upgradesSpecialRules.push(weaponRule));
+                        break;
+                    }
+                  });
+                  break;
+                default:
+                  console.info(`Unexpected type ${gain.type}`);
+              }
+            });
+          }
+        });
+      });
+    });
+    // remove duplicates
+    upgradesSpecialRules = upgradesSpecialRules.filter((thing, index, self) => self.findIndex(t => t.name === thing.name) === index);
+
+    const freshTargetSpecialRules = await getSpecialRules(armyBookUid, userId);
+    parentSpecialRules.filter((parentRule) => {
+      // only rules that the unit uses
+      return unitSpecialRules.some((unitRule) => unitRule.key === parentRule.key);
+    }).filter((unitRule) => {
+      return !freshTargetSpecialRules.some((targetRule) => targetRule.key === unitRule.key);
+    });
+
+    for (let j = 0; j < newPackageRules.length; j++) {
+      let newRule = newPackageRules[j];
+      await addSpecialRule(armyBookUid, userId, newRule);
+      newSpecialRules.push(newRule);
+    }
+
+  }
+
+
+  response.status(200).json({units, upgradePackages: newUpgradePackages, specialRules: newSpecialRules});
 
   // response.status(400).json({message: 'Could not clone units.'});
 }

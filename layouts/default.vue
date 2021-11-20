@@ -92,7 +92,7 @@
 
           <v-alert type="warning" prominent outlined v-if="maintenance">
             <p>
-              <strong>Maintenance</strong> <em>(April 2)</em>: Login and army book edit might experience some hiccups as the feature is merged into the main application. This process might take 1-2 days (April 4) to be completed. <strong>Once this is merged, this url will be gone and you can find all <a href="https://opr-list-builder.herokuapp.com/">here</a>.</strong>
+              <strong>Maintenance</strong> <em>(April 2)</em>: Login and army book edit might experience some hiccups as the feature is merged into the main application. This process might take 1-2 days (April 4) to be completed. <strong>Once this is merged, this url will be gone and you can find all <a href="https://webapp.onepagerules.com/">here</a>.</strong>
             </p>
           </v-alert>
 

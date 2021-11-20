@@ -228,7 +228,7 @@ async function setUpgradePackages(armyBookUid, userId, upgradePackages) {
 
 async function addUpgradePackage(armyBookUid, userId, upgradePackage) {
   await pool.query(
-    'UPDATE opr_companion.upgrade_packages SET upgrade_packages = upgrade_packages || $1::jsonb WHERE uid = $2 AND user_id = $3',
+    'UPDATE opr_companion.army_books SET upgrade_packages = upgrade_packages || $1::jsonb WHERE uid = $2 AND user_id = $3',
     [`[${JSON.stringify(upgradePackage)}]`, armyBookUid, userId],
   );
 }
@@ -240,13 +240,13 @@ async function getUpgradePackages(armyBookUid, userId) {
     'WHERE uid = $1 AND ( public = true OR user_id = $2 )',
     [ armyBookUid, userId ],
   );
-  return rows;
+  return rows[0].upgradePackages;
 }
 
 
 async function addSpecialRule(armyBookUid, userId, specialRule) {
   await pool.query(
-    'UPDATE opr_companion.special_rules SET special_rules = special_rules || $1::jsonb WHERE uid = $2 AND user_id = $3',
+    'UPDATE opr_companion.army_books SET special_rules = special_rules || $1::jsonb WHERE uid = $2 AND user_id = $3',
     [`[${JSON.stringify(specialRule)}]`, armyBookUid, userId],
   );
 }
@@ -258,7 +258,7 @@ async function getSpecialRules(armyBookUid, userId) {
     'WHERE uid = $1 AND ( public = true OR user_id = $2 )',
     [ armyBookUid, userId ],
   );
-  return rows;
+  return rows[0].specialRules;
 }
 
 async function setSpecialRules(armyBookUid, userId, specialRules) {

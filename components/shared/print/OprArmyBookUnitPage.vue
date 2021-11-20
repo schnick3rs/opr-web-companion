@@ -141,7 +141,7 @@ import OprPage from "@/components/shared/print/OprPage";
 import OprPrintUpgradeOptionRow from "@/components/shared/print/OprPrintUpgradeOptionRow";
 import OprUnitSpecialRulesString from "../OprUnitSpecialRulesString";
 import OprPrintUnitRow from "./OprPrintUnitRow";
-import * as ArmyBook from "assets/js/ArmyBook";
+import { ArmyBook } from 'opr-army-book-helper';
 
 export default {
   name: 'OprArmyBookUnitPage',

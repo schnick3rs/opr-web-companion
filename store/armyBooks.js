@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import * as ArmyBook from '~/assets/js/ArmyBook';
+import { ArmyBook } from 'opr-army-book-helper';
 import pluralize from 'pluralize';
 
 export const state = () => ({
@@ -801,7 +801,7 @@ export const actions = {
     const { armyBookUid, units } = payload;
     let { data, status } = await this.$axios.post(`/api/army-books/${armyBookUid}/units/clone`, units);
     if (status === 200) {
-      let units = data;
+      let { units } = data;
       units.forEach((unit) => {
         commit('LOADING', { status: true, message: `Adding ${unit.name}...` });
         commit('ADD_UNIT', { armyBookUid, unit });
