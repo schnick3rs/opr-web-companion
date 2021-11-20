@@ -61,8 +61,7 @@
 </template>
 
 <script>
-import { normalizeWeapon } from '~/assets/js/PointCalculatorService';
-import { ArmyBook } from 'opr-army-book-helper';
+import { ArmyBook, CalcHelper } from 'opr-army-book-helper';
 
 export default {
   name: 'OprArmyBookUnitWeaponRow',
@@ -119,7 +118,7 @@ export default {
       return this.$oprPointCalculator ? this.$oprPointCalculator.weaponBaseCost(this.calculatableWeapon) : null;
     },
     calculatableWeapon() {
-      return normalizeWeapon(this.weapon);
+      return CalcHelper.normalizeWeapon(this.weapon);
     },
   },
   methods: {

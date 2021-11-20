@@ -1,15 +1,15 @@
-import * as ArmyBook from "ArmyBook";
+import ArmyBookRule from './ArmyBookRule';
 
 const normalizeWeapon = (weapon) => {
   if (weapon === undefined) return undefined
 
   const specialRules = weapon.specialRules.map(sr => {
-    if (typeof sr === 'string') return ArmyBook.Rule.FromString(sr);
+    if (typeof sr === 'string') return ArmyBookRule.FromString(sr);
     return sr;
   });
   let weaponz = {
     name: weapon.label,
-    range: weapon.range > 0 ? weapon.range : undefined,
+    range: weapon.range > 0 ? weapon.range : 'melee',
     attacks: weapon.attacks,
     rules: specialRules.map(sr => sr.name),
   };

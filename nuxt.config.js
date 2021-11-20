@@ -127,6 +127,7 @@ module.exports = {
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {
+    transpile: ['opr-army-book-helper'],
   },
 
   serverMiddleware: [
