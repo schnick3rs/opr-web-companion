@@ -1,10 +1,7 @@
-const Router = require('express-promise-router');
-
-const repository = require('../repos/GfFirefightRepository');
+import Router from 'express-promise-router';
+import repository from '../repos/GfFirefightRepository';
 
 const router = new Router();
-
-module.exports = router;
 
 router.get('/assets/', (request, response) => {
   let items = repository.assets;
@@ -28,3 +25,5 @@ router.get('/army-books/:slug', (request, response) => {
   response.set('Cache-Control', 'public, max-age=3600'); // one hour
   response.status(200).json(item);
 });
+
+export default router;

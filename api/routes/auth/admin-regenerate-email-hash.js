@@ -1,6 +1,6 @@
-const { getAllUsersWithoutHash, updateUserEmailHash } = require('./user-account-service');
+import { getAllUsersWithoutHash, updateUserEmailHash } from './user-account-service';
 
-module.exports = async (request, response) => {
+export default async (request, response) => {
 
   try {
     const users = await getAllUsersWithoutHash();

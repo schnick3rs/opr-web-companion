@@ -1,14 +1,15 @@
+import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+  dotenv.config();
 }
 
 const salt = process.env.AUTH_EMAIL_SALT;
 
-const { hashSync } = require('bcrypt');
-const { nanoid } = require('nanoid');
-const { pbkdf2Sync } = require('pbkdf2')
+import { hashSync } from 'bcrypt';
+import { nanoid } from 'nanoid';
+import { pbkdf2Sync } from 'pbkdf2';
 
-const { pool } = require('../../db');
+import { pool } from '../../db';
 
 async function getUserByEmail(email) {
   //const { rows } = await pool.query('SELECT * FROM opr_companion.user_accounts WHERE email = $1', [email]);

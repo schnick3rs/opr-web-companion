@@ -1,10 +1,7 @@
-const Router = require('express-promise-router');
-
-const repository = require('../repos/DoubleTabRepository');
+import Router from 'express-promise-router';
+import repository from '../repos/DoubleTabRepository';
 
 const router = new Router();
-
-module.exports = router;
 
 /**
  * /system -> return information of the system
@@ -44,4 +41,4 @@ router.get('/codex', (request, response) => {
   response.status(200).json(item.codex);
 });
 
-
+export default router;

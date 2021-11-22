@@ -1,14 +1,14 @@
-const Router = require('express-promise-router');
-const cors = require('cors');
-const router = new Router();
-module.exports = router;
+import Router from 'express-promise-router';
+import cors from 'cors';
+import { createClient } from 'contentful';
 
-const contentful = require('contentful')
+const router = new Router();
+
 const config = {
   space: process.env.CTF_SPACE_ID,
   accessToken: process.env.CTF_CDA_ACCESS_TOKEN
 }
-const client = contentful.createClient(config);
+const client = createClient(config);
 
 router.get('/game-systems/', cors(), async (request, response) => {
 
@@ -80,3 +80,5 @@ router.get('/rule-books/:id', async (request, response) => {
 
   response.status(200).json(ruleBook);
 });
+
+export default router;

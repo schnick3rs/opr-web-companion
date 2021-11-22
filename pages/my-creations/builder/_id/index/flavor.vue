@@ -59,10 +59,6 @@
             ></v-textarea>
           </v-col>
 
-          <v-col :cols="12" v-if="armyBookCoverImagePath">
-            <v-img :src="armyBookCoverImagePath" class="elevation-2"></v-img>
-          </v-col>
-
         </v-row>
       </v-col>
 

@@ -1,5 +1,9 @@
 import ArmyBookRule from './ArmyBookRule';
 
+const round = (preciseCost) => {
+  return Math.round(preciseCost/5)*5;
+}
+
 const normalizeWeapon = (weapon) => {
   if (weapon === undefined) return undefined
 
@@ -75,7 +79,64 @@ const normalizeUnit = (unit) => {
   return calculatableUnit;
 }
 
+const toCustomRule = (rule) => {
+  let customRule = undefined;
+  if (rule.cost) {
+    if (isNaN(rule.cost)) {
+      const parts = rule.cost.split(' ').map(i => i.trim());
+      const func = (unit) => {
+        let cost = 0;
+        let next = 0;
+        let operation = null;
+        parts.forEach(part => {
+          switch (part) {
+            case '*': operation = (a, b) => a*b; break;
+            case '/': operation = (a, b) => a/b; break;
+            case '+': operation = (a, b) => a+b; break;
+            case '-': operation = (a, b) => a-b; break;
+            default:
+              if (typeof part === 'string') {
+                if (isNaN(part)) {
+                  next = parseInt(unit[part]) || 1;
+                } else {
+                  next = parseInt(part);
+                }
+                if (typeof operation === 'function') {
+                  cost = operation(cost, next);
+                  operation = null;
+                } else {
+                  cost  = next;
+                }
+              }
+          }
+          console.info('use func -> ', part, cost, next, operation);
+        });
+        return cost;
+      };
+      customRule = {cost: func};
+    } else {
+      customRule = {cost: rule.cost};
+    }
+  }
+  return customRule;
+}
+
+function toCustomRules(specialRules) {
+  let customRules = {};
+  specialRules.forEach(rule => {
+    const ruleCost = toCustomRule(rule);
+    if (ruleCost) {
+      customRules[rule.name] = ruleCost;
+    }
+  });
+  return customRules;
+}
+
+
 export {
   normalizeWeapon,
   normalizeUnit,
+  toCustomRule,
+  toCustomRules,
+  round,
 }

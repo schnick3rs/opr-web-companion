@@ -1,17 +1,15 @@
 // https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
+import dotenv from 'dotenv';
+
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+  dotenv.config();
 }
 
-const { Pool } = require('pg');
+import { Pool } from 'pg';
 
-const pool = new Pool({
+export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
 });
-
-module.exports = {
-  pool,
-};

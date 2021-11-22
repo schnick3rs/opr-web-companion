@@ -1,10 +1,7 @@
-const Router = require('express-promise-router');
-
-const repository = require('../repos/WarfleetsFtlRepository');
+import Router from 'express-promise-router';
+import repository from '../repos/WarfleetsFtlRepository';
 
 const router = new Router();
-
-module.exports = router;
 
 router.get('/', (request, response) => {
   let items = repository;
@@ -39,3 +36,5 @@ router.get('/optional-rules/:slug', (request, response) => {
   response.set('Cache-Control', 'public, max-age=3600'); // one hour
   response.status(200).json(item);
 });
+
+export default router;

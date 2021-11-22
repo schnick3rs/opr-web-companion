@@ -141,7 +141,7 @@ import OprPage from "@/components/shared/print/OprPage";
 import OprPrintUpgradeOptionRow from "@/components/shared/print/OprPrintUpgradeOptionRow";
 import OprUnitSpecialRulesString from "../OprUnitSpecialRulesString";
 import OprPrintUnitRow from "./OprPrintUnitRow";
-import { ArmyBook } from 'opr-army-book-helper';
+import { ArmyBook, ArmyBookHelper } from 'opr-army-book-helper';
 
 export default {
   name: 'OprArmyBookUnitPage',
@@ -263,49 +263,7 @@ export default {
     upgradesSpecialRules() {
       let upgradesSpecialRules = [];
       if (this.sortedUpgradePackages) {
-        this.sortedUpgradePackages.forEach(up => {
-          up.sections.forEach(section => {
-            section.options.forEach(option => {
-              if (option.gains) {
-                option.gains.forEach(gain => {
-                  switch (gain.type) {
-
-                    case 'ArmyBookRule':
-                      upgradesSpecialRules.push(gain);
-                      break;
-
-                    case 'ArmyBookMultiWeapon':
-                      gain.profiles.forEach(weapon =>
-                        weapon.specialRules.forEach(weaponRule =>
-                          upgradesSpecialRules.push(weaponRule)
-                        )
-                      );
-                      break;
-
-                    case 'ArmyBookWeapon':
-                      gain.specialRules.forEach(weaponRule => upgradesSpecialRules.push(weaponRule));
-                      break;
-
-                    case 'ArmyBookItem':
-                      gain.content?.forEach(content => {
-                        switch (content.type) {
-                          case 'ArmyBookRule':
-                            upgradesSpecialRules.push(content);
-                            break;
-                          case 'ArmyBookWeapon':
-                            content.specialRules.forEach(weaponRule=> upgradesSpecialRules.push(weaponRule));
-                            break;
-                        }
-                      });
-                      break;
-                    default:
-                      console.info(`Unexpected type ${gain.type}`);
-                  }
-                });
-              }
-            });
-          });
-        });
+        upgradesSpecialRules = ArmyBookHelper.getAllSpecialRulesFromUpgradePackages(this.sortedUpgradePackages);
       }
       upgradesSpecialRules = upgradesSpecialRules.filter((thing, index, self) => self.findIndex(t => t.name === thing.name) === index);
       return upgradesSpecialRules;

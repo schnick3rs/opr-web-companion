@@ -840,6 +840,7 @@ export const actions = {
         cover_image_path: armyBook.coverImagePath,
         cover_image_credit: armyBook.coverImageCredit,
         is_live: armyBook.isLive,
+        official: armyBook.official,
       };
       const { data } = await this.$axios.patch(`/api/army-books/${armyBookUid}/`, patch);
     }
