@@ -211,7 +211,7 @@ router.get('/:unitId', async (request, response) => {
   const { armyBookUid, unitId } = request.params;
 
   try {
-    const unit = await unitService.getUnit(armyBookUid, unitId, request.me.userId);
+    const unit = await unitService.getUnit(armyBookUid, request.me.userId, unitId);
     response.status(200).json(unit);
   } catch (e) {
     console.error(e);
@@ -224,7 +224,7 @@ router.patch('/:unitId', async (request, response) => {
   const unit = request.body;
 
   try {
-    await unitService.updateUnit(armyBookUid, unitId, unit, request.me.userId);
+    await unitService.updateUnit(armyBookUid, request.me.userId, unitId, unit);
     response.status(200).json(unit);
   } catch (e) {
     console.error(e);
@@ -237,7 +237,7 @@ router.delete('/:unitId', async (request, response) => {
   const { armyBookUid, unitId } = request.params;
 
   try {
-    await unitService.deleteUnit(armyBookUid, unitId, request.me.userId);
+    await unitService.deleteUnit(armyBookUid, request.me.userId, unitId);
     response.status(204).json();
   } catch (e) {
     console.error(e);
@@ -334,7 +334,7 @@ router.patch('/:unitId/resync', async (request, response) => {
 
   const currentUnit = await unitService.getUnit(armyBookUid, request.me.userId, unitId);
   if (!currentUnit.sync) {
-    response.status(404).json({message: 'Unit has no sync.'});
+    response.status(404).json({message: 'Unit has no sync config.'});
     return;
   }
 

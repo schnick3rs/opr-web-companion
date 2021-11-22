@@ -63,7 +63,7 @@ export const getUnits = async (armyBookUid, userId) => {
   return rows ? rows[0].units : null;
 }
 
-export const getUnit = async (armyBookUid, unitId, userId) => {
+export const getUnit = async (armyBookUid, userId, unitId) => {
   const { rows } = await pool.query(
     'SELECT units ' +
     'FROM opr_companion.army_books ' +
@@ -73,7 +73,7 @@ export const getUnit = async (armyBookUid, unitId, userId) => {
   return rows[0].units.find(unit => unit.id === unitId);
 }
 
-export const updateUnit = async(armyBookUid, unitId, unit, userId) => {
+export const updateUnit = async(armyBookUid, userId, unitId, unit) => {
   await pool.query(
     'UPDATE opr_companion.army_books ab SET units = jsonb_set( ' +
     'units, ' +
@@ -96,7 +96,7 @@ export const updateUnits = async(armyBookUid, userId, units) => {
   );
 }
 
-export const deleteUnit = async(armyBookUid, unitId, userId) => {
+export const deleteUnit = async(armyBookUid, userId, unitId) => {
   await pool.query(
     'UPDATE opr_companion.army_books ab SET units = units #- ' +
     'array( ' +
