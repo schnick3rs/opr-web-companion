@@ -181,7 +181,7 @@ export default {
   data() {
     return {
       unitsContainerHeight: undefined,
-      unitContainerStartHeight: {
+      upgradesSectionStartHeight: {
         'din-a4': 296,
         'letter-us': 278,
       },
@@ -190,7 +190,7 @@ export default {
   computed: {
     upgradesContainerHeightMm() {
       if (this.unitsContainerHeight) {
-        const height = this.unitContainerStartHeight[this.paperSize];
+        const height = this.upgradesSectionStartHeight[this.paperSize];
         return {
           // 296 (page height) -12 (padding) -(headline-padding) -(headline-font-size) - (units)
           height: `calc(${height}mm - 12mm - 8mm - 8mm - ${this.unitsContainerHeight} - 8mm)`,
