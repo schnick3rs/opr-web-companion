@@ -57,7 +57,7 @@ export default {
     }
   },
   head() {
-    const title = `${this.gameSystem.fullname} Army Books`;
+    const title = `Browse ${this.gameSystem.fullname} Army Books`;
     const description = `Browser the v2.50 BETA army books for ${this.gameSystem.fullname}. Check the PDF view or build a list with the Army Forge.`;
     const image = `/img/game-systems/${this.gameSystem.slug}_twitter-banner-size.jpeg`;
     return {
