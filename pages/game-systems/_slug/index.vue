@@ -59,7 +59,7 @@ export default {
   head() {
     const title = `${this.gameSystem.fullname} Army Books`;
     const description = `Browser the v2.50 BETA army books for ${this.gameSystem.fullname}.`;
-    const image = `/img/army-books-${this.gameSystem.slug}_twitter-banner-size.jpeg`;
+    const image = `/img/game-systems/${this.gameSystem.slug}_twitter-banner-size.jpeg`;
     return {
       title: title,
       meta: [
