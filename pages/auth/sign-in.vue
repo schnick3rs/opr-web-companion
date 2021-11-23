@@ -14,7 +14,7 @@
 
     <v-row justify-sm="center" align-content="center">
       <v-col cols="12" :sm="8" :md="6" lg="4" class="text-center">
-        New to the Web Companion? <nuxt-link to="/auth/create-account">Create Account</nuxt-link>
+        New to the OPR WebApp? <nuxt-link to="/auth/create-account">Create Account</nuxt-link>
       </v-col>
     </v-row>
 

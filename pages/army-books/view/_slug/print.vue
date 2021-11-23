@@ -60,7 +60,7 @@
         <div><strong>Illustrations:</strong> Brandon Gillam</div>
         <div v-if="!armyBook.official"><strong>Army Book by:</strong> {{ armyBook.username }}</div>
         <div v-if="armyBook.coverImageCredit"><strong>Cover Image by:</strong> <span v-html="markdownInline(armyBook.coverImageCredit)"></span></div>
-        <div v-if="!armyBook.official"><strong>Created with:</strong> <a target="_blank" href="https://webapp.onepagerules.com/">OPR Web Companion</a></div>
+        <div v-if="!armyBook.official"><strong>Created with:</strong> <a target="_blank" href="https://webapp.onepagerules.com/">OPR WebApp</a></div>
       </div>
 
       <div class="config d-print-none">

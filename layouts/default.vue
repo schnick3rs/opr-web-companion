@@ -102,7 +102,7 @@
       </v-main>
 
       <opr-footer>
-        <span>Web Companion</span>
+        <span>OPR WebApp</span>
       </opr-footer>
     </v-app>
   </div>

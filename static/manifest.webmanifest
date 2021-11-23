@@ -1,6 +1,6 @@
 {
-	"short_name": "OPR Web Companion",
-	"name": "OnePageRules Web Companion",
+	"short_name": "OPR WebApp",
+	"name": "OnePageRules WebApp",
 	"description": "A hub of list builders for various OnePageRules systems.",
 	"start_url": "/",
 	"display": "standalone",
