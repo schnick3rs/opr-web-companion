@@ -54,6 +54,11 @@ export default {
     },
   },
   methods: {
+    /**
+     * We compute the display of a single item
+     * @param item
+     * @returns {string}
+     */
     equipmentString(item) {
       let content = [];
       if (item.range > 0) {
@@ -63,11 +68,17 @@ export default {
       item.specialRules.forEach((rule) => {
         content.push(rule);
       });
-      let label = pluralize(item.label, this.unit.size);
-      if (item.count > 1) {
-        label = pluralize(item.label, item.count);
+
+      // TODO label is deprecated
+      let name = item.label;
+
+      if (this.unit.size === 1 && item.count > 1) {
+        name = pluralize(item.label, item.count);
+      } else if (this.unit.size > 1) {
+        name = pluralize(item.label, this.unit.size);
       }
-      return `${item.count > 1 ? item.count+'x ' : ''}${label} (${content.join(', ')})`;
+
+      return `${item.count > 1 ? item.count+'x ' : ''}${name} (${content.join(', ')})`;
     },
     computeUpgradeString(upgrades) {
       if ( upgrades.length <= 0 ) {
