@@ -63,7 +63,7 @@ router.post('/calculate', async (request, response) => {
   const { armyBookUid } = request.params;
 
   try {
-    const armyBook = await armyBookService.getArmyBookPublicOrOwner(armyBookUid, request.me.userId);
+    const armyBook = await armyBookService.getArmyBookForOwner(armyBookUid, request.me.userId);
     let { units, specialRules } = armyBook;
 
     const unitz = units.map(unit => {

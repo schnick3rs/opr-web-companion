@@ -1,4 +1,5 @@
-import ArmyBookRule from './ArmyBookRule';
+import * as ArmyBook from './ArmyBook';
+import pluralize from 'pluralize';
 
 const round = (preciseCost) => {
   return Math.round(preciseCost/5)*5;
@@ -8,7 +9,7 @@ const normalizeWeapon = (weapon) => {
   if (weapon === undefined) return undefined
 
   const specialRules = weapon.specialRules.map(sr => {
-    if (typeof sr === 'string') return ArmyBookRule.FromString(sr);
+    if (typeof sr === 'string') return ArmyBook.Rule.FromString(sr);
     return sr;
   });
   let weaponz = {
@@ -121,7 +122,7 @@ const toCustomRule = (rule) => {
   return customRule;
 }
 
-function toCustomRules(specialRules) {
+const toCustomRules = (specialRules) => {
   let customRules = {};
   specialRules.forEach(rule => {
     const ruleCost = toCustomRule(rule);
@@ -132,6 +133,347 @@ function toCustomRules(specialRules) {
   return customRules;
 }
 
+const checkPrerequisites = (unit, section) => {
+  // ToDo check for weapon buffs
+  if(section.affects) {
+    const idx = unit.equipment.findIndex(e => pluralize(e.name) === pluralize(section.affects));
+    return idx >= 0;
+  }
+
+  return section.lose.every(lost => {
+    const idx = unit.equipment.findIndex(e => pluralize(e.name) === pluralize(lost));
+    return idx >= 0;
+  });
+}
+
+
+// We check other upgrade packages if they
+//  (a) have a LOSE for a current item AND
+//  (b) have a GAIN that matches this packages loss.
+/**
+ *
+ * @param unit {object}
+ * @param section {object}
+ * @param upgradePackage {object}
+ * @returns {[string, string]}
+ */
+const findMissingPrerequisites = (unit, section, upgradePackage) => {
+
+  let foundDependency = false;
+  let foundSection = undefined;
+  let foundOption = undefined;
+
+  upgradePackage.sections
+    .filter((section) => {
+      const theSection = section.type === 'ArmyBookUpgradeSection'
+        ? ArmyBook.UpgradeSection.FromObject(section)
+        : ArmyBook.UpgradeSection.FromString(section.label);
+      return checkPrerequisites(unit, theSection);
+    })
+    .some((potentialSection, sectionIndex) => {
+      const { options } = potentialSection;
+      options.some((potentialOption) => {
+        let foundAll = false;
+        let potentialGains = ArmyBook.UpgradeOption.ExtractGains(potentialOption);
+        if (section.affects) {
+          const idx = potentialGains.findIndex(e => pluralize.singular(e.name) === pluralize.singular(section.affects));
+          foundAll = idx >= 0;
+        } else {
+          foundAll = section.lose.every(lost => {
+            const  alreadyHasIndex = unit.equipment.findIndex(e => pluralize.singular(e.name) === pluralize.singular(lost));
+            if (alreadyHasIndex >= 0) {
+              return true;
+            } else {
+              const innerIndex = potentialGains.findIndex(e => pluralize.singular(e.name) === pluralize.singular(lost));
+              return innerIndex >= 0;
+            }
+          });
+        }
+        if (foundAll) {
+          foundSection = potentialSection;
+          foundOption = potentialOption;
+          return true;
+        }
+      });
+    });
+  return [foundSection, foundOption];
+}
+
+const applyUpgrade = (unit, section, option) => {
+
+  // remove lose
+  section.lose.forEach(l => {
+    const idx = unit.equipment.findIndex(e => pluralize(e.name) === pluralize(l));
+    if (idx >= 0) {
+      unit.equipment.splice(idx, 1);
+    } else {
+      console.warn(`Equipment [${l}] not found in [${unit.name}] equipments -> ${unit.equipment.map(e => e.label)}.`);
+    }
+  });
+
+  if (section.variant === 'model') {
+    console.info('Add Model, purge equipment', section);
+    unit.equipment = [];
+  }
+
+  // add gains
+  let gains = ArmyBook.UpgradeOption.ExtractGains(option);
+  gains.forEach(g => {
+    if (g instanceof ArmyBook.Defense) unit.defense = unit.defense - parseInt(g.rating);
+    if (g instanceof ArmyBook.Weapon) unit.equipment.push(g);
+    if (g instanceof ArmyBook.Rule) {
+      if (g.condition) {
+        // currently we assume all conditions are melee
+        unit.equipment = unit.equipment.map(weapon => {
+          // check for the condition
+          console.info(`Upgraded ${weapon.name} with ${g.label}.`);
+          if (weapon.range === 0 || weapon.range === undefined || weapon.range === null) {
+            if (g.modify) {
+              console.info(` Modify ${weapon.name} with ${g.label}.`);
+              const existingRule = weapon.specialRules.find(sr => sr.name === g.name);
+              if (existingRule) {
+                // increment
+                const srIndex = weapon.specialRules.findIndex(sr => sr.name === g.name);
+                const existingRating = parseInt(existingRule.rating);
+                const addedRating = parseInt(g.rating);
+                //g.rating = existingRating + addedRating;
+                weapon.specialRules[srIndex].rating = existingRating + addedRating;
+              } else {
+                weapon.specialRules.push(g)
+              }
+            } else {
+              weapon.specialRules.push(g);
+            }
+          }
+          return weapon;
+        });
+      }
+      if (section.affects) {
+        if (section.affects === 'weapons') {
+          unit.equipment = unit.equipment.map(weapon => {
+            if (weapon.name === section.affects) {
+              weapon.specialRules.push(g);
+              console.info(`Upgraded ${section.affects} with ${g.label}.`);
+            }
+            return weapon;
+          });
+        } else {
+          unit.equipment = unit.equipment.map(weapon => {
+            if (pluralize.singular(weapon.name) === pluralize.singular(section.affects)) {
+              weapon.specialRules.push(g);
+              console.info(`Upgraded ${section.affects} with ${g.label}.`);
+              return weapon;
+            } else {
+              return weapon;
+            }
+          });
+        }
+      } else if (g.modify === true) {
+        const existingRule = unit.specialRules.find(sr => sr.name === g.name);
+        if (existingRule) {
+          // increment
+          const srIndex = unit.specialRules.findIndex(sr => sr.name === g.name);
+          const existingRating = parseInt(existingRule.rating);
+          const addedRating = parseInt(g.rating);
+          //g.rating = existingRating + addedRating;
+          unit.specialRules[srIndex].rating = existingRating + addedRating;
+        } else {
+          unit.specialRules.push(g)
+        }
+      } else {
+        unit.specialRules.push(g);
+      }
+    }
+  });
+
+  return unit;
+}
+
+const calculateUnitCost = (unit, pointCalculator, customRules = {}) => {
+  const equipment = unit.equipment.map(e => {
+    // normalize weapons
+    const equipmentSpecialRules = e.specialRules.map(sr => {
+      if (typeof sr === 'string') return ArmyBook.Rule.FromString(sr);
+      return sr;
+    });
+    let weapon = {
+      name: e.label,
+      range: e.range > 0 ? e.range : undefined,
+      attacks: e.attacks,
+      rules: equipmentSpecialRules.map(sr => sr.name),
+    };
+    equipmentSpecialRules.forEach(sr => {
+      if (sr.rating) {
+        weapon[sr.key] = isNaN(sr.rating) ? sr.rating : parseInt(sr.rating);
+      }
+    });
+    return weapon;
+  });
+  let calculatableUnit = {
+    name: unit.name,
+    models: unit.size,
+    quality: unit.quality,
+    defense: unit.defense,
+    rules: unit.specialRules.map(sr => sr.name),
+    equipment,
+  };
+  unit.specialRules.forEach(sr => {
+    if (sr.rating) {
+      calculatableUnit[sr.key] = isNaN(sr.rating) ? sr.rating : parseInt(sr.rating);
+    }
+  });
+  unit.specialRules = unit.specialRules.map(sr => {
+    return {
+      ...sr,
+      key: sr.key === 'tough-skirmish' ? 'tough' : sr.key,
+    };
+  });
+  return pointCalculator.unitCost(calculatableUnit, customRules);
+}
+
+const recalculateUpgradePackage = (armyBookUid, upgradePackage, units, calc, customRules = {}) => {
+  let recalcedOptions = [];
+  upgradePackage.sections.forEach((section, sectionIndex) => {
+    section.options.forEach((option, optionIndex) => {
+      const upgradeSection = section.type === 'ArmyBookUpgradeSection'
+        ? ArmyBook.UpgradeSection.FromObject(section)
+        : ArmyBook.UpgradeSection.FromString(section.label);
+
+      console.info('Checking upgrade package ->', upgradeSection);
+
+      if (upgradeSection === undefined) {
+        console.warn(`Upgrade section is undefined for ->`, section);
+        return;
+      }
+
+      const upgradeCostSet = units.map(origin => {
+        let unit = JSON.parse(JSON.stringify(origin));
+        if (!!upgradeSection.computeCostAsSingleModel) {
+          unit.size = 1;
+        }
+
+        // flatten equipment count
+        if (unit.equipment) {
+          let shelf = [];
+          unit.equipment.forEach(e => {
+            if (e.count && e.count > 1) {
+              const count = e.count;
+              console.info(`Found ${count}x ${e.name || e.label}`);
+              delete e.count;
+              for (let i = 0; i < count; i++) {
+                console.info(`Adding ${e.name || e.label}`);
+                shelf.push(e);
+              }
+            } else {
+              shelf.push(e);
+            }
+          });
+          unit.equipment = shelf;
+        }
+
+        // normalize equipment
+        unit.equipment = unit.equipment.map(e => {
+          return {
+            ...e,
+            name: pluralize.singular(e.label),
+            specialRules: e.specialRules.map(sr => ArmyBook.Rule.FromString(sr)),
+          };
+        });
+
+        let clone = JSON.parse(JSON.stringify(unit));
+
+        let isValid = checkPrerequisites(clone, upgradeSection);
+
+        if (!isValid) {
+          console.info(`Prerequisites not sufficient for [${clone.name}]. Checking other sections...`);
+          const [section, option] = findMissingPrerequisites(clone, upgradeSection, upgradePackage);
+          if (section && option) {
+            isValid = true;
+            const thisSection = section.type === 'ArmyBookUpgradeSection'
+              ? ArmyBook.UpgradeSection.FromObject(section)
+              : ArmyBook.UpgradeSection.FromString(section.label);
+            unit = applyUpgrade(unit, thisSection, option);
+            clone = JSON.parse(JSON.stringify(unit));
+          } else {
+            console.warn(`No option found that provides missing prerequisites for [${clone.name}]`);
+          }
+        }
+
+        clone = applyUpgrade(clone, upgradeSection, option);
+
+        let baseCost = calculateUnitCost(unit, calc, customRules).toFixed(3);
+        if (upgradeSection.variant === 'model') {
+          baseCost = 0;
+        }
+        const upgradedCost = calculateUnitCost(clone, calc, customRules).toFixed(3);
+        const baseCostRound = Math.round(baseCost/5)*5;
+        const upgradedCostRound = Math.round(upgradedCost/5)*5;
+        return {
+          unitName: unit.name,
+          baseCost,
+          upgradedCost,
+          newCostPrecise: (upgradedCost - baseCost),
+          newCostRounded: (upgradedCostRound - baseCostRound),
+          unit,
+          clone,
+          isValid,
+        };
+      });
+      console.info(`Cost proposal for ${option.label}:`);
+      console.table(upgradeCostSet);
+
+      // select the largest cost
+      let proposedCost = undefined;
+      if (upgradeCostSet && upgradeCostSet.length > 0) {
+        const props = upgradeCostSet
+          .filter(nc => {
+            if (nc.isValid) {
+              return true;
+            } else {
+              console.info(`Skip cost for ${nc.unitName} ...`);
+              return false;
+            }
+          })
+          .map(nc => {
+            if (nc.newCostRounded >= 5) {
+              return nc.newCostRounded;
+            } else if(nc.newCostPrecise > 0) {
+              return 5;
+            } else if (nc.newCostPrecise < 0) {
+              return nc.newCostRounded;
+            } else {
+              return 0;
+            }
+          }).map(c => parseInt(c));
+        proposedCost = Math.max.apply(null, props);
+      }
+
+      const payload = {
+        armyBookUid,
+        upgradePackageUid: upgradePackage.uid,
+        sectionIndex,
+        optionIndex,
+        option: {
+          ...option,
+          //cost: option.mode === 'auto-update' ? proposedCost : option.cost,
+          cost: proposedCost,
+          proposedCost,
+          proposedVersion: calc.version(),
+          proposedCostHint: upgradeCostSet.map(cost => {
+            return {
+              unitName: cost.unitName,
+              newCostPrecise: cost.newCostPrecise.toFixed(3),
+              newCostRounded: cost.newCostRounded,
+              isValid: cost.isValid,
+            };
+          }),
+        },
+      };
+      recalcedOptions.push(payload);
+    });
+  });
+  return recalcedOptions;
+}
 
 export {
   normalizeWeapon,
@@ -139,4 +481,9 @@ export {
   toCustomRule,
   toCustomRules,
   round,
+  checkPrerequisites,
+  findMissingPrerequisites,
+  applyUpgrade,
+  calculateUnitCost,
+  recalculateUpgradePackage,
 }

@@ -53,7 +53,7 @@ export async function updateUpgradePackage(armyBookUid, userId, upgradePackageId
 
 export async function deleteUpgradePackage(armyBookUid, userId, upgradePackageId) {
   await pool.query(
-    'UPDATE opr_companion.army_books ab SET upgradePackages = upgradePackages #- ' +
+    'UPDATE opr_companion.army_books ab SET upgrade_packages = upgrade_packages #- ' +
     'array( ' +
     'SELECT ordinality::int-1 ' +
     'FROM opr_companion.army_books tempy, jsonb_array_elements(upgrade_packages) with ordinality ' +

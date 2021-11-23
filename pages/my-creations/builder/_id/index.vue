@@ -27,6 +27,15 @@
           <v-btn
             v-if="showPointCalcOptions"
             small color="info"
+            @click="recalculateArmyBook()"
+          >
+            <v-icon left>mdi-auto-fix</v-icon>
+            CALC Army Book
+          </v-btn>
+
+          <v-btn
+            v-if="showPointCalcOptions"
+            small color="info"
             @click="recalculateUnitCosts()"
           >
             <v-icon left>mdi-auto-fix</v-icon>
@@ -181,6 +190,14 @@ export default {
     },
   },
   methods: {
+    recalculateArmyBook() {
+      if (this.$oprPointCalculator) {
+        const payload = { armyBookUid: this.armyBookId };
+        this.$store.dispatch('armyBooks/recalculateArmyBook', payload);
+      } else {
+        console.info('Point Calculator Feature disabled.');
+      }
+    },
     recalculateUnitCosts() {
       if (this.$oprPointCalculator) {
         const payload = { armyBookUid: this.armyBookId };

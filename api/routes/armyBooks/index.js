@@ -4,12 +4,16 @@ import { nanoid } from 'nanoid';
 
 import { verifyRequest } from '../authProvider';
 import * as armyBookService from './army-book-service';
+import * as upgradePackagesService from './upgradePackages/upgrade-packages-service';
+import * as unitService from './units/unit-service';
 import userAccountService from '../auth/user-account-service';
 
 import units from './units';
 import upgradePackages from './upgradePackages';
 import specialRules from './specialRules';
 import spells from './spells';
+import {CalcHelper} from "opr-army-book-helper";
+import calc from "opr-point-calculator-lib";
 
 const router = new Router();
 
@@ -232,6 +236,57 @@ router.get('/:armyBookUid/ownership', async (request, response) => {
     response.status(200).json({...armyBook});
   }
 
+});
+
+router.post('/:armyBookUid/calculate', async (request, response) => {
+  const { isOpa, isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+
+  // only admins are allowed to recalculate
+  if (isAdmin === false) {
+    response.status(403).json({message: 'Your account does not allow to import army books.'});
+    return;
+  }
+
+  const { armyBookUid } = request.params;
+
+  try {
+    const armyBook = await armyBookService.getArmyBookForOwner(armyBookUid, request.me.userId);
+
+    let { units, upgradePackages, specialRules } = armyBook;
+    const customRules = CalcHelper.toCustomRules(specialRules);
+
+    const unitz = units.map(unit => {
+      if (unit.costModeAutomatic) {
+        const originalUnit = CalcHelper.normalizeUnit(unit);
+        const unitCost = calc.unitCost(originalUnit, customRules);
+        const cost = CalcHelper.round(unitCost);
+        return {
+          ...unit,
+          cost,
+        };
+      } else {
+        return unit;
+      }
+    });
+    await unitService.updateUnits(armyBookUid, request.me.userId, unitz);
+
+    const upgradePackagez = [];
+    for (const pack of upgradePackages) {
+      const usingUnits = unitz.filter(unit => unit.upgrades.includes(pack.uid));
+      const recalcedOptions = CalcHelper.recalculateUpgradePackage(armyBookUid, pack, usingUnits, calc, customRules);
+      for (const payload of recalcedOptions) {
+        const { armyBookUid, upgradePackageUid, sectionIndex, optionIndex, option } = payload;
+        pack.sections[sectionIndex].options[optionIndex] = option;
+      }
+      upgradePackagez.push(pack);
+    }
+    await upgradePackagesService.updateUpgradePackages(armyBookUid, request.me.userId, upgradePackagez);
+
+    response.status(200).json({ units: unitz, upgradePackages: upgradePackagez});
+  } catch (e) {
+    console.error(e);
+    response.status(400).json({message: 'could not calculate unit costs'});
+  }
 });
 
 router.patch('/:armyBookUid', async (request, response) => {
