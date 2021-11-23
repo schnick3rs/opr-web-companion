@@ -2,7 +2,6 @@ import Router from 'express-promise-router';
 import cors from 'cors';
 import { nanoid } from 'nanoid';
 
-import { verifyRequest } from '../authProvider';
 import * as armyBookService from './army-book-service';
 import * as upgradePackagesService from './upgradePackages/upgrade-packages-service';
 import * as unitService from './units/unit-service';
@@ -14,6 +13,7 @@ import specialRules from './specialRules';
 import spells from './spells';
 import {CalcHelper} from "opr-army-book-helper";
 import calc from "opr-point-calculator-lib";
+import {deleteArmyBook} from "./army-book-service";
 
 const router = new Router();
 
@@ -35,7 +35,7 @@ router.get('/', cors(), async (request, response) => {
 router.get('/mine', async (request, response) => {
   const armyBooks = await armyBookService.getAllByUserId(request.me.userId);
 
-  response.set('Cache-Control', 'public, max-age=300'); // 5 minutes
+  //response.set('Cache-Control', 'public, max-age=300'); // 5 minutes
   response.status(200).json(armyBooks);
 });
 
@@ -57,11 +57,9 @@ router.post('/detachment', async (request, response) => {
 
   // create new army book
   const newArmyBook = await armyBookService.createArmyBook(request.me.userId, gameSystemId, name, hint);
-  console.info(`Created new army book -> ${newArmyBook.uid}`);
 
   // fetch units from parent
   const parentArmyBook = await armyBookService.getArmyBookPublicOrOwner(parentArmyBookId, request.me.userId);
-  console.info(`Load parent army book -> ${parentArmyBook.uid}`);
 
   // set units synced from parent
   const clonedAndSyncedUnits = parentArmyBook.units
@@ -222,15 +220,13 @@ router.get('/:armyBookUid/mine', async (request, response) => {
 router.get('/:armyBookUid/ownership', async (request, response) => {
   const { armyBookUid } = request.params;
 
-  const { userId } = verifyRequest(request);
-
   const armyBook = await armyBookService.getSimpleArmyBook(armyBookUid);
 
   if (!armyBook) {
     response.status(404).json({message: 'Not found.'});
   }
 
-  if (armyBook.userId !== userId) {
+  if (armyBook.userId !== request.me.userId) {
     response.status(403).json({message: 'Permission required.'});
   } else {
     response.status(200).json({...armyBook});
@@ -326,9 +322,8 @@ router.patch('/:armyBookUid', async (request, response) => {
 
 router.delete('/:armyBookUid', async (request, response) => {
   const { armyBookUid } = request.params;
-  const { userId } = verifyRequest(request);
 
-  await armyBookService.delete(armyBookUid, userId);
+  await armyBookService.deleteArmyBook(armyBookUid, request.me.userId);
 
   response.status(204).json();
 });

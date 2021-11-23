@@ -333,10 +333,11 @@ export default {
   components: { OprArmyBookTable, OprBreadcrumbsRow, OprDialog },
   middleware: 'auth',
   async asyncData({ $axios }) {
-    const { data } = await $axios.get('/api/game-systems/');
-    const gameSystems = data.filter(gs => gs.armyBookBuilderEnabled);
+    const { data: gameSystems } = await $axios.get('/api/game-systems/');
+    //const { data: armyBooks } = await $axios.get(`/api/army-books/mine`);
     return {
-      gameSystems,
+      gameSystems: gameSystems.filter(gs => gs.armyBookBuilderEnabled),
+      //armyBooks,
     }
   },
   data() {

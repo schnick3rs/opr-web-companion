@@ -43,6 +43,14 @@ export async function updateSpecialRule(armyBookUid, userId, specialRulesId, spe
   );
 }
 
+export async function updateSpecialRules(armyBookUid, userId, specialRules) {
+  await pool.query(
+    'UPDATE opr_companion.army_books ab SET special_rules = $1 ' +
+    'WHERE uid = $2 AND user_id = $3',
+    [`${JSON.stringify(specialRules)}`, armyBookUid, userId],
+  );
+}
+
 export async function deleteSpecialRule(armyBookUid, userId, specialRulesId) {
   await pool.query(
     'UPDATE opr_companion.army_books ab SET specialRules = specialRules #- ' +

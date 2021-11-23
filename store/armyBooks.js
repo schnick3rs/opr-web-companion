@@ -171,6 +171,11 @@ export const mutations = {
     state.armyBooks = state.armyBooks.filter(armyBook => armyBook.uid !== armyBookUid);
   },
 
+  DISABLE(state, armyBookUid) {
+    let armyBook = state.armyBooks.find(armyBook => armyBook.uid === armyBookUid);
+    armyBook = { ...armyBook, disabled: true };
+  },
+
   SET_UNITS(state, payload) {
     const { armyBookUid, units } = payload;
     let armyBook = state.armyBooks.find(a => a.uid === armyBookUid);
@@ -742,8 +747,9 @@ export const actions = {
   },
 
   async delete({commit}, uid) {
+    //commit('DISABLE', uid);
     let { status } = await this.$axios.delete(`/api/army-books/${uid}`);
-    if (status === 200 || status === 204){
+    if (status === 200 || status === 204) {
       commit('DELETE', uid);
     }
   },

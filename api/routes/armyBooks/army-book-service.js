@@ -291,7 +291,7 @@ export async function getSpecialRules(armyBookUid, userId) {
 }
 
 export async function setSpecialRules(armyBookUid, userId, specialRules) {
-  await specialRulesService.updateSpecialRule(armyBookUid, userId, specialRules)
+  await specialRulesService.updateSpecialRules(armyBookUid, userId, specialRules)
 }
 
 export async function deleteArmyBook(armyBookId, userId) {

@@ -246,7 +246,7 @@ export default {
         syncs: this.unitsToSync.sort().map(index => this.parentArmyBook.units[index].id),
       };
       this.$store.dispatch('armyBooks/createWithClones', payload).then((armyBookUid) => {
-        this.$router.push(`/my-creation/builder/${armyBookUid}/`);
+        this.$router.push(`/my-creations/builder/${armyBookUid}`);
       });
     }
   },

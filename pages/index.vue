@@ -74,7 +74,7 @@ export default {
     }
   },
   head() {
-    const title = 'Web Companion for OnePageRules';
+    const title = 'WebApp for OnePageRules';
     const description = "A Companion Website to support army building for FTL, WarStuff and Double Tab.";
     const image = '/img/army-books-grimdark-future-tile.jpg';
     return {
