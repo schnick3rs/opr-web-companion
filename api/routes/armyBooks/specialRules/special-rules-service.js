@@ -53,7 +53,7 @@ export async function updateSpecialRules(armyBookUid, userId, specialRules) {
 
 export async function deleteSpecialRule(armyBookUid, userId, specialRulesId) {
   await pool.query(
-    'UPDATE opr_companion.army_books ab SET specialRules = specialRules #- ' +
+    'UPDATE opr_companion.army_books ab SET special_rules = special_rules #- ' +
     'array( ' +
     'SELECT ordinality::int-1 ' +
     'FROM opr_companion.army_books tempy, jsonb_array_elements(special_rules) with ordinality ' +

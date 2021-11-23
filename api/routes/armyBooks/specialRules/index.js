@@ -11,7 +11,7 @@ router.get('/', async (request, response) => {
 
 router.post('/', async (request, response) => {
   const { armyBookUid } = request.params;
-  const specialRules = await specialRuleService.addSpecialRule(armyBookUid, request.body, request.me.userId);
+  const specialRules = await specialRuleService.addSpecialRule(armyBookUid, request.me.userId, request.body);
   response.status(200).json(specialRules);
 });
 
