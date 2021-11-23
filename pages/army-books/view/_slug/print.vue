@@ -16,9 +16,15 @@
         </div>
       </template>
 
-      <section class="intro__image" v-if="armyBook.coverImagePath || armyBook.official">
+      <section
+        class="intro__image-container"
+        :class="`intro__image-container--${paperSize}`"
+        v-if="armyBook.coverImagePath || armyBook.official"
+      >
         <v-img
           min-height="150"
+          max-height="400"
+          contain
           :src="armyBook.coverImagePath || introImageSrc"
         ></v-img>
       </section>
@@ -366,7 +372,8 @@ $font-size-block-headline: 3.52778mm;
 }
 
 .intro {
-  &__image {
+
+  &__image-container {
     width: 50%;
     margin: 0 auto;
     padding-top: 8mm;
