@@ -41,12 +41,9 @@ export default {
     const { slug } = params;
     const gameSystemResponse = await $axios.get(`/api/game-systems/${slug}`);
     const gameSystem = gameSystemResponse.data;
-    const armyBooksResponse = await $axios.get(`/api/army-books/`, {params: {gameSystemSlug: gameSystem.slug}});
-    const armyBooks = armyBooksResponse.data;
     return {
       slug,
       gameSystem,
-      armyBooks,
       breadcrumbItems: [
         {text: '', to: '/', exact: true},
         //{text: 'Game Systems', to: '/game-systems', exact: true},
@@ -58,6 +55,24 @@ export default {
         //{ key: 'homebrew', name: 'Fan Army Books', disabled: false, to: `/army-books/${gameSystem.slug}/homebrew` },
       ],
     }
+  },
+  head() {
+    const title = `${this.gameSystem.fullname} Army Books`;
+    const description = `Browser the v2.50 BETA army books for ${this.gameSystem.fullname}.`;
+    const image = `/img/army-books-${this.gameSystem.slug}_twitter-banner-size.jpeg`;
+    return {
+      title: title,
+      meta: [
+        {hid: 'description', name: 'description', content: description},
+        {hid: 'og:title', name: 'og:title', content: title},
+        {hid: 'og:description', name: 'og:description', content: description},
+        {hid: 'og:image', name: 'og:image', content: image},
+        {hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image'},
+        {hid: 'twitter:title', name: 'twitter:title', content: title},
+        {hid: 'twitter:description', name: 'twitter:description', content: description},
+        {hid: 'twitter:image', name: 'twitter:image', content: image},
+      ],
+    };
   },
   data() {
     return {

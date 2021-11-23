@@ -69,7 +69,7 @@ export default {
         {hid: 'twitter:description', name: 'twitter:description', content: description},
         {hid: 'twitter:image', name: 'twitter:image', content: image},
       ],
-    }
+    };
   },
 }
 </script>
