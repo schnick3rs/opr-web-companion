@@ -18,7 +18,6 @@
 
       <section
         class="intro__image-container"
-        :class="`intro__image-container--${paperSize}`"
         v-if="armyBook.coverImagePath || armyBook.official"
       >
         <v-img
