@@ -36,30 +36,7 @@
         ></v-select>
       </v-col>
 
-      <!-- army book name -->
-      <v-col cols="8">
-        <v-text-field
-          v-model="name"
-          label="Name"
-          dense outlined
-          required
-          persistent-hint hint="A shot name describing the army book"
-          append-icon="mdi-dice-6"
-          @click:append="rerollRandomArmyName"
-        ></v-text-field>
-      </v-col>
-
-      <!-- army book one-line-hint -->
-      <v-col cols="8">
-        <v-text-field
-          v-model="hint"
-          label="Hint (recommended)"
-          dense outlined
-          persistent-hint hint="One sentence describing the army"
-        ></v-text-field>
-      </v-col>
-
-      <!-- army book name -->
+      <!-- parent army book -->
       <v-col cols="8">
         <v-select
           v-model="parentArmyBook"
@@ -85,6 +62,30 @@
           </template>
         </v-select>
       </v-col>
+
+      <!-- army book name -->
+      <v-col cols="8">
+        <v-text-field
+          v-model="name"
+          label="Name"
+          dense outlined
+          required
+          persistent-hint hint="A shot name describing the army book"
+          append-icon="mdi-dice-6"
+          @click:append="rerollRandomArmyName"
+        ></v-text-field>
+      </v-col>
+
+      <!-- army book one-line-hint -->
+      <v-col cols="8">
+        <v-text-field
+          v-model="hint"
+          label="Hint (recommended)"
+          dense outlined
+          persistent-hint hint="One sentence describing the army"
+        ></v-text-field>
+      </v-col>
+
     </v-row>
 
     <v-row justify-sm="center">
@@ -196,32 +197,23 @@ export default {
     };
   },
   methods: {
-    generateRandomArmyName() {
-      const prefix = ['Space','Guardian','Battle','Robot','Mecha','Alien','Havoc','Undead','Elven','Dark'];
-      const eel = ['Eel'];
-      const suffix = ['Boyz','Bros','Army','Fleet','Hive','Flock','Swarm','Legion','Horde','Flock','Guild','Cult','Clans','Sisters','Force','Raiders','Guard','Daemons'];
-      const config = {
-        dictionaries: [ prefix, prefix, eel, suffix ],
-        separator: ' ',
-        style: 'capital',
-        length: 4,
-      };
-      return uniqueNamesGenerator(config);
+    generateRandomArmyName(name = 'Eels') {
+      const adjective = uniqueNamesGenerator({ dictionaries: [ adjectives ], style: 'capital', length: 1 });
+      return `${adjective} ${name}`;
     },
     generateRandomArmyHint() {
-      const adjective = uniqueNamesGenerator({ dictionaries: [ adjectives ], length: 1 });
-      return `Those ${adjective} eels from space don't mess around.`;
+      const adjective = uniqueNamesGenerator({ dictionaries: [ adjectives, adjectives ], length: 2, separator: ' and ' });
+      return `Those ${this.name} are ${adjective}.`;
     },
     rerollRandomArmyName(){
-      this.name = this.generateRandomArmyName();
+      this.name = this.generateRandomArmyName(this.parentArmyBook?.name);
+      this.hint = this.generateRandomArmyHint();
     },
     async fetchArmyBooks({slug}) {
       this.unitsToClone = [];
       this.unitsToSync = [];
       this.parentArmyBook = undefined;
       const { data } = await this.$axios.get('/api/army-books/', {params: {gameSystemSlug: slug}});
-      this.name = this.generateRandomArmyName();
-      this.hint = this.generateRandomArmyHint();
       this.armyBooks = data;
     },
     async fetchArmyBook(armyBookId) {
@@ -229,6 +221,8 @@ export default {
       this.unitsToSync = [];
       const { data } = await this.$axios.get(`/api/army-books/${armyBookId}`);
       this.parentArmyBook = data;
+      this.name = this.generateRandomArmyName(this.parentArmyBook.name);
+      this.hint = this.generateRandomArmyHint();
     },
     toggleCloneSelect() {
       this.unitsToClone = this.parentArmyBook.units.map((unit, index) => index);
