@@ -5,6 +5,7 @@ import * as spellService from './spells/spell-service';
 import * as upgradePackagesService from './upgradePackages/upgrade-packages-service';
 import * as specialRulesService from './specialRules/special-rules-service';
 
+
 /* CREATE */
 
 export async function createArmyBook(userId, gameSystemId, name, hint, background) {
@@ -50,6 +51,44 @@ export async function createArmyBook(userId, gameSystemId, name, hint, backgroun
 }
 
 /* READ */
+
+export async function getAll() {
+  const { rows } = await pool.query(
+    'SELECT ' +
+    'army_books.uid, ' +
+    'army_books.user_id AS "userId", ' +
+    'army_books.game_system_id AS "gameSystemId", ' +
+    'army_books.name, ' +
+    'army_books.hint, ' +
+    'army_books.background, ' +
+    'army_books.army_wide_rule AS "armyWideRule", ' +
+    'army_books.units, ' +
+    'army_books.upgrade_packages AS "upgradePackages", ' +
+    'army_books.special_rules AS "specialRules", ' +
+    'army_books.spells, ' +
+    'army_books.modified_at AS "modifiedAt", ' +
+    'army_books.official, ' +
+    'army_books.public, ' +
+    'army_books.version_string AS "versionString", ' +
+    'army_books.cover_image_path AS "coverImagePath", ' +
+    'army_books.cover_image_credit AS "coverImageCredit", ' +
+    'army_books.is_live AS "isLive", ' +
+    'army_books.faction_name AS "factionName", ' +
+    'army_books.faction_relation AS "factionRelation", ' +
+    'user_accounts.username, ' +
+    'game_systems.slug AS "gameSystemSlug", ' +
+    'game_systems.fullname, ' +
+    'game_systems.aberration, ' +
+    'game_systems.universe, ' +
+    'game_systems.shortname ' +
+    'FROM opr_companion.army_books ' +
+    'INNER JOIN opr_companion.user_accounts ON army_books.user_id = user_accounts.id ' +
+    'INNER JOIN opr_companion.game_systems ON army_books.game_system_id = game_systems.id ' +
+    'ORDER BY army_books.name ASC',
+    [],
+  );
+  return rows;
+}
 
 export async function getArmyBookForOwner(armyBookId, userId) {
 

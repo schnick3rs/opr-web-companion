@@ -13,7 +13,6 @@ import specialRules from './specialRules';
 import spells from './spells';
 import {CalcHelper} from "opr-army-book-helper";
 import calc from "opr-point-calculator-lib";
-import {deleteArmyBook} from "./army-book-service";
 
 const router = new Router();
 
