@@ -7,6 +7,7 @@
           icon="mdi-account-hard-hat"
           prominent
           text
+          type="error"
         >
           Account creation and login is currently disabled.
         </v-alert>
