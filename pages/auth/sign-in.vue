@@ -9,7 +9,7 @@
           text
           type="error"
         >
-          Account creation and login is currently disabled.
+          Account creation and login is currently not working.
         </v-alert>
       </v-col>
     </v-row>
