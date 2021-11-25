@@ -15,10 +15,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// auth
 app.use('/auth', routes.auth);
+app.use('/admin', routes.admin);
+
 // db access
 app.use('/game-systems', routes.gameSystems);
 app.use('/army-books', routes.armyBooks);
+
 // localhost
 app.use('/warfleets-ftl', routes.warfleetsFtl);
 app.use('/war-stuff', routes.warStuff);
@@ -26,6 +30,7 @@ app.use('/double-tab', routes.doubleTab);
 app.use('/army-man-combat', routes.armyManCombat);
 app.use('/gf-firefight', routes.gfFirefight);
 app.use('/gf-arena', routes.gfArena);
+
 //
 app.use('/content', routes.content);
 

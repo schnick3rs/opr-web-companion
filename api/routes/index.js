@@ -8,6 +8,7 @@ import auth from './auth';
 import gameSystems from './gameSystems';
 import armyBooks from './armyBooks';
 import content from './content';
+import admin from './admin';
 
 export default {
   warfleetsFtl,
@@ -20,4 +21,5 @@ export default {
   gameSystems,
   armyBooks,
   content,
+  admin,
 };
