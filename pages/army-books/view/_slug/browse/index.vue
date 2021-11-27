@@ -26,7 +26,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="unit in armyBook.units" :key="unit.id" class="unit__row">
+            <tr
+              v-for="unit in armyBook.units" :key="unit.id"
+              class="unit__row"
+              @click="$router.push(`/army-books/view/${armyBook.uid}/browse/units/${unit.id}`)"
+            >
               <td class="unit__cell text-left">{{ unit.name }} [{{ unit.size }}]</td>
               <td class="unit__cell text-center">{{ unit.quality }}+</td>
               <td class="unit__cell text-center">{{ unit.defense }}+</td>
@@ -168,7 +172,7 @@ export default {
       item.specialRules.forEach((rule) => {
         content.push(rule);
       });
-      return `${item.label} (${content.join(', ')})`;
+      return `${item.name} (${content.join(', ')})`;
     },
     markdown(text) {
       return marked(text);

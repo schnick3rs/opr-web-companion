@@ -9,6 +9,7 @@ import gameSystems from './gameSystems';
 import armyBooks from './armyBooks';
 import content from './content';
 import admin from './admin';
+import myminifactory from './myminifactory';
 
 export default {
   warfleetsFtl,
@@ -22,4 +23,5 @@ export default {
   armyBooks,
   content,
   admin,
+  myminifactory,
 };

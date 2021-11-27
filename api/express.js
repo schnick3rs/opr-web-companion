@@ -33,6 +33,7 @@ app.use('/gf-arena', routes.gfArena);
 
 //
 app.use('/content', routes.content);
+app.use('/mmf', routes.myminifactory);
 
 module.exports = {
   path: '/api',
