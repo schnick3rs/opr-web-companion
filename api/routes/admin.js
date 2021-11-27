@@ -14,6 +14,7 @@ router.get('/migrate/equipment-label-to-name', async (request, response) => {
     return;
   }
 
+  let log = [];
   const armyBooks = await armyBookService.getAll();
 
   for (const armyBook of armyBooks) {
@@ -21,6 +22,10 @@ router.get('/migrate/equipment-label-to-name', async (request, response) => {
       const migratedUnits = armyBook.units.map((unit) => {
         if (unit.equipment) {
           let equipment = unit.equipment.map((equip) => {
+            if (equip.name && equip.label && equip.name.localeCompare(equip.label) !== 0) {
+              console.warn(`[${armyBook.uid}] Weapon string diff -> label(${equip.label}) vs name(${equip.name}).`);
+              log.push(`[${armyBook.uid}] ${armyBook.name}::${unit.name} Weapon string diff -> label(${equip.label}) vs name(${equip.name}).`);
+            }
             equip.name = equip.label || equip.name;
             delete equip.label;
             return equip;
@@ -36,7 +41,7 @@ router.get('/migrate/equipment-label-to-name', async (request, response) => {
       await armyBookService.setUnits(armyBook.uid, armyBook.userId, migratedUnits);
     }
   }
-  response.status(200).json({message: 'done'});
+  response.status(200).json({message: 'done', log});
 });
 
 
