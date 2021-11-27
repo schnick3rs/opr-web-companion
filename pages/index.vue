@@ -7,13 +7,13 @@
         v-for="gameSystem in gameSystems" :key="gameSystem.shortname"
       >
         <v-card
-          :disabled="gameSystem.aberration !== 'GF'"
+          :disabled="gameSystem.disabled"
           nuxt :to="`/game-systems/${gameSystem.slug}`"
         >
           <v-img
             :src="`/img/game-systems/${gameSystem.slug}-cover.jpg`"
             min-height="178"
-            :class="{ 'img--greyscale': gameSystem.aberration !== 'GF'}"
+            :class="{ 'img--greyscale': gameSystem.disabled}"
           ></v-img>
           <v-card-text class="text-center">
             {{gameSystem.shortname}}
@@ -68,7 +68,12 @@ export default {
   name: "home",
   async asyncData({ $axios }) {
     const { data } = await $axios.get(`/api/game-systems/`);
-    const gameSystems = data.filter(gs => gs.armyBookBuilderEnabled);
+    const gameSystems = data
+      .filter(gs => gs.armyBookBuilderEnabled)
+      .map(gs => {
+        gs.disabled = !(gs.officialArmyBookCount > 0);
+        return gs;
+      });
     return {
       gameSystems,
     }

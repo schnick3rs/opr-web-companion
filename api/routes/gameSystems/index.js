@@ -14,8 +14,17 @@ router.get('/', async (request, response) => {
       'game_systems."portfolioLink", ' +
       'game_systems.shortname, ' +
       'game_systems.aberration, ' +
-      'game_systems."armyBookBuilderEnabled" ' +
+      'game_systems."armyBookBuilderEnabled", ' +
+      'ab.army_book_count AS "officialArmyBookCount" ' +
       'FROM opr_companion.game_systems ' +
+      'LEFT JOIN (' +
+        'SELECT game_system_id, count(*)::int AS army_book_count ' +
+        'FROM opr_companion.army_books ' +
+        'WHERE army_books.official = true ' +
+        'AND army_books.is_live = true ' +
+        'AND army_books.public = true ' +
+        'GROUP BY game_system_id ' +
+      ') AS ab ON ab.game_system_id = game_systems.id ' +
       'ORDER BY sort_order ASC '
     );
 
