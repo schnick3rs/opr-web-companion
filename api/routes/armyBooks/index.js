@@ -1,5 +1,6 @@
 import Router from 'express-promise-router';
 import cors from 'cors';
+import axios from 'axios';
 import { nanoid } from 'nanoid';
 
 import * as armyBookService from './army-book-service';
@@ -132,7 +133,6 @@ router.post('/import', async (request, response) => {
     unit.costModeAutomatic = costModeAutomatic;
 
     unit.equipment.forEach((gear, index) => {
-      gear.name = gear.name || gear.label; // AF use label, but we use name
       //gear.name = pluralize.singular(gear.name); // we singularize any name
       gear.id = nanoid(5);
       if (gear.count && gear.count > 1 && !isNaN(gear.count)) {
@@ -194,6 +194,46 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
     })
     response.set('Cache-Control', 'public, max-age=60'); // 1 minute
     response.status(200).json({...armyBook, units});
+  }
+});
+
+router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
+
+  const { armyBookUid } = request.params;
+  let userId = request?.me?.userId || 0;
+
+  const armyBook = await armyBookService.getArmyBookPublicOrOwner(armyBookUid, userId);
+
+  if (!armyBook) {
+    response.status(404).json({});
+  } else {
+
+    let pdfByteArray = await armyBookService.readPdfA4(armyBookUid);
+
+    if (!pdfByteArray) {
+
+      const params = {
+        url: `https://webapp.onepagerules.com/army-books/view/${armyBookUid}/print`,
+        apiKey: process.env.HTML2PDF_API_KEY,
+        media: 'print',
+      };
+      const res = await axios.get('https://api.html2pdf.app/v1/generate',
+        {
+          params: params,
+          responseType: 'arraybuffer',
+        },
+      );
+      pdfByteArray = res.data;
+      await armyBookService.savePdfA4(armyBookUid, userId, pdfByteArray, armyBook.modifiedAt);
+    }
+
+    response.setHeader('Content-Type', 'application/pdf');
+    const pdfFileName = `${armyBook.aberration} - ${armyBook.name} ${armyBook.versionString}`;
+    response.setHeader('Content-Disposition', `inline; filename="${pdfFileName}.pdf"`);
+    response.setHeader('Content-Transfer-Encoding', 'binary');
+    response.setHeader('Accept-Ranges', 'bytes');
+    response.set('Cache-Control', 'public, max-age=60'); // 1 minute
+    response.send(pdfByteArray);
   }
 });
 
