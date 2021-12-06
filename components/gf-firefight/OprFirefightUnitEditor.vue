@@ -52,7 +52,7 @@
             </thead>
             <tbody>
             <tr v-for="(item, index) in unitEquipment" :key="index">
-              <td class="text-left">{{ item.label }}</td>
+              <td class="text-left">{{ item.name }}</td>
               <td class="text-center">{{ item.range > 0 ? `${item.range}"` : 'melee' }}</td>
               <td class="text-center">{{ item.attacks }}</td>
               <td class="text-center">{{ weaponAp(item) }}</td>

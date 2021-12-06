@@ -335,7 +335,6 @@ export default {
       this.unitsContainerHeight = (this.$refs.unitsContainer.clientHeight * 0.26) + 'mm';
     },
     equipmentString(item) {
-      let itemString = item.label;
       let content = [];
       if (item.range > 0) {
         content.push(`${item.range}”`);
@@ -344,7 +343,7 @@ export default {
       item.specialRules.forEach((rule) => {
         content.push(rule);
       });
-      return `${item.label} (${content.join(', ')})`;
+      return `${item.name} (${content.join(', ')})`;
     },
     computeUpgradeString(upgrades) {
       if ( upgrades.length <= 0 ) {

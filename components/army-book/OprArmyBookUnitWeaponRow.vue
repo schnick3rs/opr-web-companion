@@ -17,8 +17,8 @@
         v-else
         size="10"
         :value="name"
-        @keydown.enter="$emit('update', {field: 'label', value: $event.target.value})"
-        @blur="$emit('update', {field: 'label', value: $event.target.value})"
+        @keydown.enter="updateName($event.target.value)"
+        @blur="updateName($event.target.value)"
       >
     </td>
     <td class="text-center">
@@ -101,7 +101,7 @@ export default {
       return this.weapon.count || 1;
     },
     name() {
-      return this.weapon.label;
+      return this.weapon.name;
     },
     range() {
       return this.weapon.range > 0 ? `${this.weapon.range}"` : 'melee';
@@ -122,6 +122,9 @@ export default {
     },
   },
   methods: {
+    updateName(name) {
+      this.$emit('update', {field: 'name', value: name});
+    },
     updateRules(rulesString) {
       let rulesArray = [];
       rulesString.split(',').map(i => i.trim()).forEach(i => {

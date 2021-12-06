@@ -100,7 +100,7 @@
                   <v-icon small v-show="!!unit.sync">mdi-dna</v-icon>
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  {{ unit.equipment.map((e) => e.label).join(', ') }}
+                  {{ unit.equipment.map((e) => e.name).join(', ') }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
                   {{ unit.specialRules.map((e) => e.name).join(', ') }}

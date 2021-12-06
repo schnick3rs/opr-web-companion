@@ -1,34 +1,48 @@
 <template>
   <div>
     <v-row justify="center">
-      <v-col :cols="8">
-        <v-img height="200" :src="image" contain></v-img>
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      <v-col :cols="3">
-        <div class="info rounded-b-lg mx-1">
-          <div>Quality</div>
-          3+
-        </div>
-      </v-col>
-      <v-col :cols="3">
-        <div class="info rounded-b-lg mx-1">
-          <div>Defense</div>
-          3+
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
+      <v-col cols="6">
         <v-card>
           <v-card-title>{{unit.name}}</v-card-title>
-          <v-card-subtitle>{{armyBook.name}} unit</v-card-subtitle>
+          <v-card-subtitle>{{armyBook.name}} unit, {{unit.size}} models</v-card-subtitle>
           <v-card-text>
-            pewpewpew
+            <v-row justify="center" class="text-center">
+              <v-col :cols="3">
+                <div class="rounded-b-lg mx-1" style="border: solid 1px lightgrey;">
+                  <div class="" style="background-color: lightgrey">Speed</div>
+                  <div class="my-2" style="font-size: x-large;">
+                    {{movement}}" / {{rush}}"
+                  </div>
+                </div>
+              </v-col>
+              <v-col :cols="3">
+                <div class="rounded-b-lg mx-1" style="border: solid 1px lightgrey;">
+                  <div class="" style="background-color: lightgrey">Quality</div>
+                  <div class="my-2" style="font-size: x-large;">{{unit.quality}}+</div>
+                </div>
+              </v-col>
+              <v-col :cols="3">
+                <div class="rounded-b-lg mx-1" style="border: solid 1px lightgrey;">
+                  <div class="" style="background-color: lightgrey">Defense</div>
+                  <div class="my-2" style="font-size: x-large;">{{unit.defense}}+</div>
+                </div>
+              </v-col>
+              <v-col :cols="3">
+                <div class="rounded-b-lg mx-1" style="border: solid 1px lightgrey;">
+                  <div class="" style="background-color: lightgrey">Tough</div>
+                  <div class="my-2" style="font-size: x-large;">{{tough}}</div>
+                </div>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-text>
-            special special
+            Equipment
+          </v-card-text>
+          <v-card-text>
+            Special Rules
+          </v-card-text>
+          <v-card-text>
+            Upgrades
           </v-card-text>
         </v-card>
       </v-col>
@@ -43,17 +57,29 @@ export default {
     const { slug: armyBookId, unit: unitId } = params;
     const { data: armyBook } = await $axios.get(`/api/army-books/${armyBookId}`);
     const unit = armyBook.units.find(unit => unit.id === unitId);
-    //const { data: mmf } = await $axios.get(`/api/mmf/${unit.name}`);
-    const { data: mmf } = await $axios.get(`/api/mmf/Assault Grunts`);
     return {
       armyBook,
       unit,
-      mmf,
     };
   },
   computed: {
-    image() {
-      return this.mmf.images[0].standard.url;
+    avatarImage() {
+      if (this.armyBook.coverImagePath) {
+        return this.armyBook.coverImagePath;
+      }
+      if (this.armyBook.official && this.armyBook.name) {
+        return `/img/army-books/${this.armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`
+      }
+      return undefined;
+    },
+    movement() {
+      return 6;
+    },
+    rush() {
+      return this.movement * 2;
+    },
+    tough() {
+      return this.unit.specialRules.find(sr => sr.key === 'tough')?.rating;
     }
   }
 }

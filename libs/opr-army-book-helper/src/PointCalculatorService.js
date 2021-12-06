@@ -375,7 +375,7 @@ const recalculateUpgradePackage = (armyBookUid, upgradePackage, units, calc, cus
         unit.equipment = unit.equipment.map(e => {
           return {
             ...e,
-            name: pluralize.singular(e.label),
+            name: pluralize.singular(e.name),
             specialRules: e.specialRules.map(sr => ArmyBook.Rule.FromString(sr)),
           };
         });

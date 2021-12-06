@@ -38,9 +38,9 @@ export default {
       const equipment = [];
       // sort range first, melee second
       this.unit.equipment.forEach(weapon => {
-        if (equipment.some(final => pluralize.singular(final.label) === pluralize.singular(weapon.label))) {
-          const index = equipment.findIndex(g => pluralize.singular(g.label) === pluralize.singular(weapon.label));
-          const base = equipment.find(g => pluralize.singular(g.label) === pluralize.singular(weapon.label));
+        if (equipment.some(final => pluralize.singular(final.name) === pluralize.singular(weapon.name))) {
+          const index = equipment.findIndex(g => pluralize.singular(g.name) === pluralize.singular(weapon.name));
+          const base = equipment.find(g => pluralize.singular(g.name) === pluralize.singular(weapon.name));
           equipment[index] = { ...weapon, count: ++base.count};
         } else {
           equipment.push({...weapon, count: weapon.count || 1});
@@ -70,12 +70,13 @@ export default {
       });
 
       // TODO label is deprecated
-      let name = item.label;
+      const originName = item.label || item.name;
+      let name = originName;
 
       if (this.unit.size === 1 && item.count > 1) {
-        name = pluralize(item.label, item.count);
+        name = pluralize(originName, item.count);
       } else if (this.unit.size > 1) {
-        name = pluralize(item.label, this.unit.size);
+        name = pluralize(originName, this.unit.size);
       }
 
       return `${item.count > 1 ? item.count+'x ' : ''}${name} (${content.join(', ')})`;

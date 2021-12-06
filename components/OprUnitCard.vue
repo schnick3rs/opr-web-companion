@@ -76,9 +76,9 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="item in finalEquipment" :key="item.label">
+          <tr v-for="item in finalEquipment" :key="item.name">
             <td class="text-center">{{ item.amount }}x</td>
-            <td class="text-left">{{ item.label }}</td>
+            <td class="text-left">{{ item.name }}</td>
             <td class="text-center">
               <span v-if="item.range > 1">{{ item.range }}"</span>
               <span v-else>melee</span>
