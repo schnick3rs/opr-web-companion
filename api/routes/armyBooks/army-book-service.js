@@ -350,17 +350,36 @@ export async function updateArmyBook(armyBookUid, userId, fields, values) {
 }
 
 // https://stackoverflow.com/questions/39573219/can-i-store-a-word-document-in-a-postgresql-database
-export async function savePdfA4(armyBookUid, userId, data, timestamp) {
+export async function savePdfA4(armyBookUid, data, timestamp) {
   await pool.query(
-    'UPDATE opr_companion.army_books SET pdf_a4 = $3::bytea, pdf_a4_created_at = $4 WHERE uid = $1 AND user_id = $2',
-    [armyBookUid, userId, data, timestamp],
+    'INSERT INTO opr_companion.army_books_pdfs (army_book_uid, pdf_a4, pdf_a4_created_at) ' +
+    'VALUES ($1, $2::bytea, $3) ' +
+    'ON CONFLICT (army_book_uid) DO '+
+    'UPDATE SET pdf_a4 = $2::bytea, pdf_a4_created_at = $3',
+    [armyBookUid, data, timestamp],
   );
 }
 
 export async function readPdfA4(armyBookUid) {
   const { rows } = await pool.query(
-    'SELECT pdf_a4 AS "pdfA4" FROM opr_companion.army_books WHERE uid = $1 AND modified_at = pdf_a4_created_at',
+    'SELECT army_books_pdfs.pdf_a4 AS "pdf" ' +
+    'FROM opr_companion.army_books ' +
+    'INNER JOIN opr_companion.army_books_pdfs ON army_books.uid = army_books_pdfs.army_book_uid ' +
+    'WHERE uid = $1 ' +
+    'AND army_books.modified_at::timestamp(0) = army_books_pdfs.pdf_a4_created_at::timestamp(0) ',
     [armyBookUid],
   );
-  return rows[0].pdfA4;
+  return rows[0]?.pdf;
+}
+
+export async function readPdfLetter(armyBookUid) {
+  const { rows } = await pool.query(
+    'SELECT army_books_pdfs.pdf_letter AS "pdf" ' +
+    'FROM opr_companion.army_books ' +
+    'INNER JOIN opr_companion.army_books_pdfs ON army_books.uid = army_books_pdfs.army_book_uid ' +
+    'WHERE uid = $1 ' +
+    'AND army_books.modified_at::timestamp(0) = army_books_pdfs.pdf_letter_created_at::timestamp(0) ',
+    [armyBookUid],
+  );
+  return rows[0]?.pdf;
 }

@@ -212,6 +212,8 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
 
     if (!pdfByteArray) {
 
+      console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching from serice provider...`);
+
       const params = {
         url: `https://webapp.onepagerules.com/army-books/view/${armyBookUid}/print`,
         apiKey: process.env.HTML2PDF_API_KEY,
@@ -224,7 +226,10 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
         },
       );
       pdfByteArray = res.data;
-      await armyBookService.savePdfA4(armyBookUid, userId, pdfByteArray, armyBook.modifiedAt);
+      console.info(`[${armyBook.name}]#${armyBook.uid} :: Save pdf bytes ${pdfByteArray.length}...`);
+      await armyBookService.savePdfA4(armyBookUid, pdfByteArray, new Date(armyBook.modifiedAt.toISOString()));
+    } else {
+      console.info(`[${armyBook.name}]#${armyBook.uid} :: PDF found.`);
     }
 
     response.setHeader('Content-Type', 'application/pdf');

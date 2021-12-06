@@ -51,7 +51,7 @@
           >
           </v-img>
         </div>
-        <v-card-text v-text="armyBook.name"></v-card-text>
+        <v-card-text v-text="armyBook.name" class="text-center font-weight-bold"></v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
           <template v-if="armyBook._type === 'faction'">
@@ -63,15 +63,14 @@
                 <v-list-item
                   v-for="(item, index) in armyBook.items"
                   :key="index"
-                  nuxt
-                  :to="`/army-books/view/${item.uid}/print`"
+                  :href="`/api/army-books/${item.uid}/pdf`"
                 >
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
           </template>
-          <v-btn v-else text small color="primary" nuxt :to="`/army-books/view/${armyBook.uid}/print`"><v-icon left>mdi-printer</v-icon>pdf</v-btn>
+          <v-btn v-else text small color="primary" :href="`/api/army-books/${armyBook.uid}/pdf`"><v-icon left>mdi-printer</v-icon>pdf</v-btn>
           <v-spacer></v-spacer>
           <template v-if="armyBook._type === 'faction'">
             <v-menu offset-y>
