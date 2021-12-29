@@ -35,7 +35,7 @@
     "nanoid": "^3.1.30",
     "nuxt": "^2.15.8",
     "opr-army-book-helper": "file:libs/opr-army-book-helper",
-    "opr-point-calculator-lib": "git+ssh://github.com/schnick3rs/opr-point-calculator.git#v2.50.6.5",
+    "opr-point-calculator-lib": "git+ssh://github.com/schnick3rs/opr-point-calculator.git#v2.50.6.6",
     "pbkdf2": "^3.1.2",
     "pg": "^8.7.1",
     "pluralize": "^8.0.0",
