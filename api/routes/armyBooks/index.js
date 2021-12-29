@@ -159,7 +159,19 @@ router.post('/import', async (request, response) => {
   try {
     const { uid } = await armyBookService.createArmyBook(request.me.userId, gameSystemId, name, hint, background);
 
-    await armyBookService.updateArmyBook(uid, request.me.userId, ['version_string', 'official'], [versionString, official]);
+    const updateSetFields = [];
+    const updateSetValues = [];
+    const data = request.body;
+    ['version_string', 'official'].forEach((column) => {
+      if(data[column] !== undefined) {
+        updateSetFields.push(`${column} = $${updateSetFields.length+1}`);
+        updateSetValues.push(data[column]);
+      } else {
+        console.info(`No entry found for ${column}`);
+      }
+    })
+    // INFO disabled for now
+    //await armyBookService.updateArmyBook(uid, request.me.userId, updateSetFields, updateSetValues);
 
     await armyBookService.setUnits(uid, request.me.userId, units);
     await armyBookService.setSpecialRules(uid, request.me.userId, specialRules);
