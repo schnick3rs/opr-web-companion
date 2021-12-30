@@ -373,9 +373,11 @@ const recalculateUpgradePackage = (armyBookUid, upgradePackage, units, calc, cus
 
         // normalize equipment
         unit.equipment = unit.equipment.map(e => {
+          const equipmentName = e.label || e.name;
+          const name = pluralize.singular(equipmentName);
           return {
             ...e,
-            name: pluralize.singular(e.name),
+            name: name,
             specialRules: e.specialRules.map(sr => ArmyBook.Rule.FromString(sr)),
           };
         });

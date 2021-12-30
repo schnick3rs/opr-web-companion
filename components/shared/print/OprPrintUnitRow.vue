@@ -38,9 +38,11 @@ export default {
       const equipment = [];
       // sort range first, melee second
       this.unit.equipment.forEach(weapon => {
-        if (equipment.some(final => pluralize.singular(final.name) === pluralize.singular(weapon.name))) {
-          const index = equipment.findIndex(g => pluralize.singular(g.name) === pluralize.singular(weapon.name));
-          const base = equipment.find(g => pluralize.singular(g.name) === pluralize.singular(weapon.name));
+        const weaponName = weapon.label || weapon.name;
+        // TODO use label now but later name
+        if (equipment.some(final => pluralize.singular(final.label) === pluralize.singular(weaponName))) {
+          const index = equipment.findIndex(g => pluralize.singular(g.label) === pluralize.singular(weaponName));
+          const base = equipment.find(g => pluralize.singular(g.label) === pluralize.singular(weaponName));
           equipment[index] = { ...weapon, count: ++base.count};
         } else {
           equipment.push({...weapon, count: weapon.count || 1});

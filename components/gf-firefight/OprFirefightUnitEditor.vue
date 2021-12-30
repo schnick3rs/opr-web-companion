@@ -21,7 +21,7 @@
         <v-icon large left v-if="isHero">mdi-account-star</v-icon>
         <v-icon large left v-else-if="codexUnit.size > 1">mdi-account-group</v-icon>
         <v-icon large left v-else>mdi-account</v-icon>
-        {{ unit.name }}
+        {{ unit.label || unit.name }}
       </v-card-title>
 
       <v-card-subtitle>{{ codexUnit.name }} <span v-if="codexUnit.size > 1">[{{codexUnit.size}}]</span></v-card-subtitle>

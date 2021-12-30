@@ -344,7 +344,7 @@ export default {
       item.specialRules.forEach((rule) => {
         content.push(rule);
       });
-      return `${item.name} (${content.join(', ')})`;
+      return `${item.label || item.name} (${content.join(', ')})`;
     },
     computeUpgradeString(upgrades) {
       if ( upgrades.length <= 0 ) {

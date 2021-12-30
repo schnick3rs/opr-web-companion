@@ -101,7 +101,7 @@ export default {
       return this.weapon.count || 1;
     },
     name() {
-      return this.weapon.name;
+      return this.weapon?.label || this.weapon.name;
     },
     range() {
       return this.weapon.range > 0 ? `${this.weapon.range}"` : 'melee';
@@ -124,6 +124,8 @@ export default {
   methods: {
     updateName(name) {
       this.$emit('update', {field: 'name', value: name});
+      // DEPRECATED
+      this.$emit('update', {field: 'label', value: name});
     },
     updateRules(rulesString) {
       let rulesArray = [];

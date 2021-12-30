@@ -133,6 +133,9 @@ router.post('/import', async (request, response) => {
     unit.costModeAutomatic = costModeAutomatic;
 
     unit.equipment.forEach((gear, index) => {
+      // AF use label, but we use name
+      // TODO remove once name can be used
+      gear.name = gear.name || gear.label;
       //gear.name = pluralize.singular(gear.name); // we singularize any name
       gear.id = nanoid(5);
       if (gear.count && gear.count > 1 && !isNaN(gear.count)) {
