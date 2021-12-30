@@ -2,12 +2,12 @@
   <span :data-type="value.type" class="glue">
     <template v-if="prepend">{{prepend}}</template><template v-if="value.type === 'ArmyBookItem'">
       <span>{{value.name}}&nbsp;<opr-print-glues :data-content="value.content"
-        v-for="(item, index) in value.content"
+        v-for="(item, index) in sortedItemContent"
         :key="index"
         :value="item"
-        :is-last="index >= value.content.length-1"
+        :is-last="index >= sortedItemContent.length-1"
         :prepend="index === 0 ? '(' : ''"
-        :append="index === value.content.length-1 ? ')' : ''"
+        :append="index === sortedItemContent.length-1 ? ')' : ''"
       ></opr-print-glues></span>
     </template>
     <template v-else-if="value.type === 'ArmyBookWeapon'">
@@ -40,10 +40,12 @@ export default {
     },
     sortedItemContent() {
       if (this.value && this.value.type === 'ArmyBookItem') {
-        return this.value.content.sort((a, b) => {
+        const content = JSON.parse(JSON.stringify(this.value.content));
+        content.sort((a, b) => {
           if (a.type > b.type) return 1;
           if (a.type < b.type) return -1;
         });
+        return content;
       }
     }
   },
