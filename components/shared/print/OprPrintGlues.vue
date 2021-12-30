@@ -1,8 +1,8 @@
 <template>
   <span :data-type="value.type" class="glue">
     <template v-if="prepend">{{prepend}}</template><template v-if="value.type === 'ArmyBookItem'">
-      <span>{{value.name}}&nbsp;<opr-print-glues
-        v-for="(item, index) in sortedItemContent"
+      <span>{{value.name}}&nbsp;<opr-print-glues :data-content="value.content"
+        v-for="(item, index) in value.content"
         :key="index"
         :value="item"
         :is-last="index >= value.content.length-1"
