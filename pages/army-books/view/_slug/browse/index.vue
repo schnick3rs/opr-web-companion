@@ -172,7 +172,7 @@ export default {
       item.specialRules.forEach((rule) => {
         content.push(rule);
       });
-      return `${item.name} (${content.join(', ')})`;
+      return `${item.label || item.name} (${content.join(', ')})`;
     },
     markdown(text) {
       return marked(text);
