@@ -181,6 +181,7 @@ export default {
   data() {
     return {
       unitsContainerHeight: undefined,
+      unitsContainerHeightMm: undefined,
       upgradesSectionStartHeight: {
         'din-a4': 296,
         'letter-us': 279,
@@ -194,7 +195,7 @@ export default {
         return {
           // 296 (page height) -12 (padding) -(headline-padding) -(headline-font-size) - (units)
           // 278 (page height) -12 (padding) -(headline-padding) -(headline-font-size) - (units)
-          height: `calc(${height}mm - 12mm - 8mm - 8mm - ${this.unitsContainerHeight} - 8mm)`,
+          height: `${height - 12 - 8 - 8 - 8 - this.unitsContainerHeight}mm`,
         };
       }
       return {};
@@ -333,7 +334,8 @@ export default {
   },
   methods: {
     setUnitsContainerHeight() {
-      this.unitsContainerHeight = (this.$refs.unitsContainer.clientHeight * 0.26) + 'mm';
+      this.unitsContainerHeight = this.$refs.unitsContainer.clientHeight * 0.26;
+      this.unitsContainerHeightMm = (this.$refs.unitsContainer.clientHeight * 0.26) + 'mm';
     },
     equipmentString(item) {
       let content = [];
