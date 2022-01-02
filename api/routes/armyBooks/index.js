@@ -209,6 +209,8 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
     })
     response.set('Cache-Control', 'public, max-age=60'); // 1 minute
     response.status(200).json({...armyBook, units});
+    //response.set('Last-Modified', new Date(armyBook.modifiedAt).toUTCString());
+    //return response.send({...armyBook, units});
   }
 });
 

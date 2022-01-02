@@ -6,6 +6,7 @@ import { verifyRequest } from './routes/authProvider';
 
 const app = express();
 app.use(express.json());
+//app.set('etag', 'strong');
 
 app.use((req, res, next) => {
   try {
