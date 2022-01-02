@@ -283,6 +283,13 @@
               <v-icon>mdi-printer</v-icon>
             </v-btn>
             <v-btn
+              :href="`/api/army-books/${item.uid}/pdf`"
+              download
+              icon small
+            >
+              <v-icon>mdi-file-pdf-box</v-icon>
+            </v-btn>
+            <v-btn
               @click="openDeleteArmyBookDialog(item.uid, item.name)"
               icon small
               color="error"
@@ -306,13 +313,23 @@
           </v-card-title>
           <v-card-text>
             <div class="pt-2 pb-2">
-              <p>Do you <strong>really</strong> want to delete the army book permanently?</p>
-              <p><em>{{deleteArmyBookForm.name}}</em></p>
+              <p>Are you sure you want to delete <strong>{{deleteArmyBookForm.name}}</strong>?</p>
+              <v-text-field
+                v-model="deleteArmyBookForm.input"
+                dense
+                outlined
+                persistent-hint hint="Type the Army Books name to confirm"
+              ></v-text-field>
             </div>
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions>
-            <v-btn block color="primary" @click="deleteArmyBook()">Delete permanently</v-btn>
+            <v-btn
+              block
+              color="primary"
+              @click="deleteArmyBook()"
+              :disabled="deleteArmyBookForm.name !== deleteArmyBookForm.input"
+            >Delete permanently</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -381,6 +398,7 @@ export default {
       deleteArmyBookForm: {
         uid: undefined,
         name: '',
+        input: '',
       },
     };
   },
@@ -544,13 +562,16 @@ export default {
     openDeleteArmyBookDialog(uid, name) {
       this.deleteArmyBookForm.uid = uid;
       this.deleteArmyBookForm.name = name
+      this.deleteArmyBookForm.input = '';
       this.showDeleteArmyBookDialog = true;
     },
     deleteArmyBook() {
-      const uid = this.deleteArmyBookForm.uid;
-      this.$store.dispatch('armyBooks/delete', uid);
-      this.$ga.event('Army Book', 'delete', `${uid}`, 1);
-      this.showDeleteArmyBookDialog = false;
+      if (this.deleteArmyBookForm.name === this.deleteArmyBookForm.input) {
+        const uid = this.deleteArmyBookForm.uid;
+        this.$store.dispatch('armyBooks/delete', uid);
+        this.$ga.event('Army Book', 'delete', `${uid}`, 1);
+        this.showDeleteArmyBookDialog = false;
+      }
     },
   },
 }
