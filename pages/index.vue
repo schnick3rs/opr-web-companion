@@ -156,7 +156,11 @@ export default {
   },
   computed: {
     isAdmin() {
-      return this.$store.state.auth?.user?.isAdmin;
+      try {
+        return this.$auth?.user?.isAdmin;
+      } catch (e) {
+        return false;
+      }
     },
   },
 }
