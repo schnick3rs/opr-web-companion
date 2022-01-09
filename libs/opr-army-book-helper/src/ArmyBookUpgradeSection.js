@@ -375,7 +375,7 @@ export default class ArmyBookUpgradeSection {
 
     // Attachment
     if (parsableString.startsWith('Take')) {
-      const regUpgradeAttachment = /^Take (?<affects>all|any|one|up to \w+) (?<weapon>.*) attachment.*/gm;
+      const regUpgradeAttachment = /^Take (?<affects>all|any|one|up to \w+)? ?(?<weapon>.*) (attachment|upgrade).*/gm;
       if (parsableString.match(regUpgradeAttachment)) {
         const { groups: { affects, weapon } } = regUpgradeAttachment.exec(parsableString);
 
@@ -383,23 +383,28 @@ export default class ArmyBookUpgradeSection {
 
         let affectedModels = 1;
 
-        if (affects.startsWith('up to')) {
-          const wordNumberMatch = /^up to (?<wordnumber>\w+)$/gm.exec(affects);
-          const { wordnumber } = wordNumberMatch.groups;
-          affectedModels = numberWords.findIndex(word => word === wordnumber)
-        } else if (affects === 'one') {
-          affectedModels = 1;
-        } else {
-          affectedModels = affects;
+        if (affects !== undefined) {
+          if (affects.startsWith('up to')) {
+            const wordNumberMatch = /^up to (?<wordnumber>\w+)$/gm.exec(affects);
+            const {wordnumber} = wordNumberMatch.groups;
+            affectedModels = numberWords.findIndex(word => word === wordnumber)
+          } else if (affects === 'one') {
+            affectedModels = 1;
+          } else {
+            affectedModels = affects;
+          }
         }
 
         return this.BuildUpgrade(affectedModels, 'any');
       }
     }
 
-    // Attachment extended
-    if (parsableString.toLowerCase().includes('take') && parsableString.toLowerCase().includes('attachment')) {
-      const regUpgradeAttachment = /^(?<affects>Any|One) ?(models? may )?Take (?<limit>all|any|one|up to \w+) (?<weapon>.*) attachment.*/gim;
+    // Attachment / item upgrade extended
+    if (
+      parsableString.toLowerCase().includes('take') &&
+      (parsableString.toLowerCase().includes('attachment') || parsableString.toLowerCase().includes('upgrade'))
+    ) {
+      const regUpgradeAttachment = /^(?<affects>Any|One) ?(models? may )?Take (?<limit>all|any|one|up to \w+) (?<weapon>.*) (attachment|upgrade).*/gim;
       if (parsableString.match(regUpgradeAttachment)) {
         const { groups: { affects, weapon, limit } } = regUpgradeAttachment.exec(parsableString);
 
