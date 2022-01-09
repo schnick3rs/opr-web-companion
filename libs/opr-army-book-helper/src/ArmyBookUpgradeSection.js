@@ -286,7 +286,7 @@ export default class ArmyBookUpgradeSection {
         const { groups: { lose } } = /^Replace (?<lose>.+)$/gm.exec(parsableString);
 
         const loses = lose
-          .split(/,|and/)
+          .split(/,| and /)
           .map(s => s.trim())
           .reduce((prev, current, index, arr) => {
             if (current.match(/^(?<count>\d+)x\s(?<weapon>.+)$/gm)) {
