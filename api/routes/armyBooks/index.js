@@ -27,7 +27,20 @@ router.get('/', cors(), async (request, response) => {
 
   const { gameSystemSlug } = request.query;
 
-  const items = await armyBookService.getPublicArmyBooksListView(gameSystemSlug);
+  // all original army books for this system
+  let items = await armyBookService.getPublicArmyBooksListView(gameSystemSlug);
+
+  if (gameSystemSlug === 'grimdark-future-firefight') {
+    let skirmish = await armyBookService.getPublicArmyBooksListView('grimdark-future');
+    skirmish = skirmish.map(armyBook => {
+      armyBook.uid = `${armyBook.uid}-skirmish`;
+      // TODO set this respectively and filter
+      armyBook.enableForSkirmish = true;
+      return armyBook;
+    });
+    items.push(...skirmish);
+  }
+
   response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
   response.status(200).json(items);
 
@@ -193,23 +206,115 @@ router.post('/import', async (request, response) => {
 
 router.get('/:armyBookUid', cors(), async (request, response) => {
 
-  const { armyBookUid } = request.params;
+  let { armyBookUid } = request.params;
+  let minify = false;
   let userId = request?.me?.userId || 0;
+
+  if (armyBookUid.endsWith('-skirmish')) {
+    armyBookUid = armyBookUid.split('-skirmish')[0];
+    minify = true;
+  }
 
   const armyBook = await armyBookService.getArmyBookPublicOrOwner(armyBookUid, userId);
 
   if (!armyBook) {
     response.status(404).json({});
   } else {
+
     // enrich unit missing splitPageNumber
-    const units = armyBook.units.map(unit => {
+    armyBook.units = armyBook.units.map(unit => {
       return {
         ...unit,
         splitPageNumber: parseInt(unit.splitPageNumber) || 1,
       }
-    })
+    });
+
+    // TODO check if this book is allowed to minify
+    if (minify === true) {
+
+      armyBook.units = armyBook.units.map(unit => {
+
+        let originalUnit = CalcHelper.normalizeUnit(unit);
+        originalUnit.models = 1;
+        const cost = calc.unitCost(originalUnit);
+        const rounded = CalcHelper.round(cost);
+        if (rounded > 100) {
+          return null;
+        } else if (rounded < 15) {
+          originalUnit.models = 3;
+          unit.size = 3;
+        } else if (rounded < 5) {
+          originalUnit.models = 5;
+          unit.size = 5;
+        } else {
+          originalUnit.models = 1;
+          unit.size = 1;
+        }
+        unit.cost = CalcHelper.round(calc.unitCost(originalUnit));
+        unit.name = pluralize(unit.name, unit.size);
+
+        unit.equipment = unit.equipment.map(weapon => {
+          const name = weapon.name || weapon.label;
+          weapon.name = pluralize(name, unit.size);
+          weapon.label = pluralize(name, unit.size);
+          return weapon;
+        });
+
+        unit.splitPageNumber = 1;
+
+        return unit;
+      }).filter(unit => unit !== null);
+
+      armyBook.specialRules = armyBook.specialRules.map(sr => {
+        sr.description = sr.description.replace('The hero and its unit', 'This model and all friendly units within 12"');
+        sr.description = sr.description.replace('This model and its unit', 'This model and all friendly units within 12"');
+        sr.description = sr.description.replace(/If the hero is part of a unit of (.*), the unit counts/, 'All friendly units of $1 within 12" count');
+        return sr;
+      });
+
+      armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
+        const usingUnits = armyBook.units.filter(unit => unit.upgrades.includes(pack.uid));
+        const sizes = usingUnits.map(unit => unit.size);
+        const maxSize = Math.max(...sizes);
+        if (maxSize === 1) {
+          pack.sections = pack.sections.map(section => {
+            section.label = section.label.replace('Replace one', 'Replace');
+            section.label = section.label.replace('Replace all', 'Replace');
+            section.label = section.label.replace(/Replace up to \w+/, 'Replace');
+            section.label = section.label.replace(/Replace with up to \w+/, 'Replace');
+            section.label = section.label.replace('Upgrade one model', 'Upgrade');
+            section.label = section.label.replace('Upgrade all models', 'Upgrade');
+            section.label = section.label.replace('Upgrade any model', 'Upgrade');
+            section.label = pluralize(section.label, 1);
+            return section;
+          });
+        }
+        return pack;
+      });
+
+      armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
+        const usingUnits = armyBook.units.filter(unit => unit.upgrades.includes(pack.uid));
+        const recalcedOptions = CalcHelper.recalculateUpgradePackage(armyBookUid, pack, usingUnits, calc, {});
+        for (const payload of recalcedOptions) {
+          const { armyBookUid, upgradePackageUid, sectionIndex, optionIndex, option } = payload;
+          pack.sections[sectionIndex].options[optionIndex] = option;
+        }
+        return pack;
+      });
+
+      armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
+        pack.sections = pack.sections.map(section => {
+          section.options = section.options.filter(option => option.cost < 50);
+          return section;
+        }).filter(section => section.options.length > 0);
+        return pack;
+      });
+
+      armyBook.aberration = 'GFF';
+    }
+
     response.set('Cache-Control', 'public, max-age=60'); // 1 minute
-    response.status(200).json({...armyBook, units});
+    response.status(200).json(armyBook);
     //response.set('Last-Modified', new Date(armyBook.modifiedAt).toUTCString());
     //return response.send({...armyBook, units});
   }
@@ -287,17 +392,15 @@ router.get('/:armyBookUid/skirmish', cors(), async (request, response) => {
       return pack;
     });
 
-    const upgradePackagez = [];
-    for (const pack of armyBook.upgradePackages) {
+    armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
       const usingUnits = armyBook.units.filter(unit => unit.upgrades.includes(pack.uid));
       const recalcedOptions = CalcHelper.recalculateUpgradePackage(armyBookUid, pack, usingUnits, calc, {});
       for (const payload of recalcedOptions) {
         const { armyBookUid, upgradePackageUid, sectionIndex, optionIndex, option } = payload;
         pack.sections[sectionIndex].options[optionIndex] = option;
       }
-      upgradePackagez.push(pack);
-    }
-    armyBook.upgradePackages = upgradePackagez;
+      return pack;
+    });
 
     armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
       pack.sections = pack.sections.map(section => {
@@ -313,7 +416,6 @@ router.get('/:armyBookUid/skirmish', cors(), async (request, response) => {
     response.status(200).json(armyBook);
   }
 });
-
 
 router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
 
