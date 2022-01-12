@@ -334,6 +334,25 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
             return section;
           });
         }
+
+        pack.sections = pack.sections.reduce((previousValue, currentValue) => {
+
+            let sameSectionIndex = previousValue.findIndex(
+              (section) => section.label === currentValue.label
+            );
+
+            if (sameSectionIndex >= 0) {
+              let options = currentValue.options;
+              let existingOptions = previousValue[sameSectionIndex];
+              previousValue[sameSectionIndex].options.push(...options);
+            } else {
+              previousValue.push(currentValue);
+            }
+            return previousValue;
+          },
+          []
+        );
+
         return pack;
       });
 
