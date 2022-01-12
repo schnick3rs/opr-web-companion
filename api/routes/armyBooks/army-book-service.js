@@ -75,6 +75,7 @@ export async function getAll() {
     'army_books.is_live AS "isLive", ' +
     'army_books.faction_name AS "factionName", ' +
     'army_books.faction_relation AS "factionRelation", ' +
+    'army_books.enable_generate_skirmish_book AS "enableGenerateSkirmishBook", ' +
     'user_accounts.username, ' +
     'game_systems.slug AS "gameSystemSlug", ' +
     'game_systems.fullname, ' +
@@ -113,6 +114,7 @@ export async function getArmyBookForOwner(armyBookId, userId) {
     'army_books.is_live AS "isLive", ' +
     'army_books.faction_name AS "factionName", ' +
     'army_books.faction_relation AS "factionRelation", ' +
+    'army_books.enable_generate_skirmish_book AS "enableGenerateSkirmishBook", ' +
     'user_accounts.username, ' +
     'game_systems.slug AS "gameSystemSlug", ' +
     'game_systems.fullname, ' +
@@ -165,6 +167,7 @@ export async function getPublicArmyBooksListView(slug = undefined) {
     'army_books.is_live AS "isLive", ' +
     'army_books.faction_name AS "factionName", ' +
     'army_books.faction_relation AS "factionRelation", ' +
+    'army_books.enable_generate_skirmish_book AS "enableGenerateSkirmishBook", ' +
     'user_accounts.username, ' +
     'game_systems.slug AS "gameSystemSlug", ' +
     'game_systems.fullname, ' +
@@ -204,6 +207,7 @@ export async function getArmyBookPublicOrOwner(armyBookUid, userId) {
     'army_books.is_live AS "isLive", ' +
     'army_books.faction_name AS "factionName", ' +
     'army_books.faction_relation AS "factionRelation", ' +
+    'army_books.enable_generate_skirmish_book AS "enableGenerateSkirmishBook", ' +
     'user_accounts.username, ' +
     'game_systems.slug AS "gameSystemSlug", ' +
     'game_systems.fullname, ' +
@@ -255,6 +259,7 @@ export async function getAllByUserId(userId) {
     'army_books.is_live AS "isLive", ' +
     'army_books.faction_name AS "factionName", ' +
     'army_books.faction_relation AS "factionRelation", ' +
+    'army_books.enable_generate_skirmish_book AS "enableGenerateSkirmishBook", ' +
     'game_systems.slug AS "gameSystemSlug", ' +
     'game_systems.fullname, ' +
     'game_systems.aberration, ' +
@@ -280,6 +285,7 @@ export async function getSimpleArmyBook(armyBookId) {
     'army_books.public, ' +
     'army_books.is_live AS "isLive", ' +
     'army_books.version_string AS "versionString", ' +
+    'army_books.enable_generate_skirmish_book AS "enableGenerateSkirmishBook", ' +
     'user_accounts.username ' +
     'FROM opr_companion.army_books ' +
     'INNER JOIN opr_companion.user_accounts ON army_books.user_id = user_accounts.id ' +
