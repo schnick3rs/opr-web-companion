@@ -136,7 +136,9 @@ export default {
     }
   },
   methods: {
-    filter: (book) => { return book.official && book.isLive; },
+    filter(book) {
+      return book.official;// && book.isLive;
+    },
     groupedArmyBooks(armyBooks = []) {
 
       armyBooks = armyBooks.reduce((previousValue, currentValue, currentIndex, array) => {
@@ -176,5 +178,16 @@ export default {
 <style scoped lang="scss">
 .inverted {
   filter: invert(1);
+}
+.wip-band {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  background: coral;
+  font-weight: 500;
+  color: white;
+  z-index: 2;
+  bottom: 50%;
+  opacity: 0.85;
 }
 </style>
