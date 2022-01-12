@@ -38,7 +38,7 @@ router.get('/', cors(), async (request, response) => {
       armyBook.enableForSkirmish = true;
       return armyBook;
     });
-    items.push(...skirmish);
+    //items.push(...skirmish);
   }
 
   response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
