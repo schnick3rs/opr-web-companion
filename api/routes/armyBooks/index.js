@@ -30,15 +30,24 @@ router.get('/', cors(), async (request, response) => {
   // all original army books for this system
   let items = await armyBookService.getPublicArmyBooksListView(gameSystemSlug);
 
-  if (gameSystemSlug === 'grimdark-future-firefight') {
-    let skirmish = await armyBookService.getPublicArmyBooksListView('grimdark-future');
-    skirmish = skirmish.map(armyBook => {
-      armyBook.uid = `${armyBook.uid}-skirmish`;
-      // TODO set this respectively and filter
-      armyBook.enableForSkirmish = true;
-      return armyBook;
-    });
-    //items.push(...skirmish);
+  if (['grimdark-future-firefight', 'age-of-fantasy-skirmish'].includes(gameSystemSlug)) {
+
+    const { isOpa, isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+    if (isAdmin) {
+      let parentSlug = 'grimdark-future';
+      if (gameSystemSlug === 'age-of-fantasy-skirmish') {
+        parentSlug = 'age-of-fantasy';
+      }
+
+      let skirmish = await armyBookService.getPublicArmyBooksListView(parentSlug);
+      skirmish = skirmish.map(armyBook => {
+        armyBook.uid = `${armyBook.uid}-skirmish`;
+        // TODO set this respectively and filter
+        armyBook.enableForSkirmish = true;
+        return armyBook;
+      }).filter(armyBook => armyBook.enableForSkirmish === true);
+      items.push(...skirmish);
+    }
   }
 
   response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
@@ -206,20 +215,23 @@ router.post('/import', async (request, response) => {
 
 router.get('/:armyBookUid', cors(), async (request, response) => {
 
-  let { armyBookUid } = request.params;
+  const { armyBookUid } = request.params;
+  let originArmyBookUid = armyBookUid;
   let minify = false;
   let userId = request?.me?.userId || 0;
 
   if (armyBookUid.endsWith('-skirmish')) {
-    armyBookUid = armyBookUid.split('-skirmish')[0];
+    originArmyBookUid = armyBookUid.split('-skirmish')[0];
     minify = true;
   }
 
-  const armyBook = await armyBookService.getArmyBookPublicOrOwner(armyBookUid, userId);
+  // we fetch the source for further handling
+  const armyBook = await armyBookService.getArmyBookPublicOrOwner(originArmyBookUid, userId);
 
-  if (!armyBook) {
-    response.status(404).json({});
-  } else {
+  if (armyBook) {
+
+    // we overwrite with our pseudo xxx-skirmish id
+    armyBook.uid = armyBookUid;
 
     // enrich unit missing splitPageNumber
     armyBook.units = armyBook.units.map(unit => {
@@ -237,22 +249,32 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
         let originalUnit = CalcHelper.normalizeUnit(unit);
         originalUnit.models = 1;
         const cost = calc.unitCost(originalUnit);
-        const rounded = CalcHelper.round(cost);
-        if (rounded > 100) {
-          return null;
-        } else if (rounded < 15) {
-          originalUnit.models = 3;
+        if (cost >= 100) {
+          // we discard this unit later
+          unit.size = 1;
+        } else if (cost < 15) {
           unit.size = 3;
-        } else if (rounded < 5) {
-          originalUnit.models = 5;
+        } else if (cost < 5) {
           unit.size = 5;
         } else {
-          originalUnit.models = 1;
           unit.size = 1;
         }
+
+        // reset the new size to compute the final cost
+        originalUnit.models = unit.size;
         unit.cost = CalcHelper.round(calc.unitCost(originalUnit));
+
+        // We remove some common sufixes that do not make sense for unit size 1
+        if (unit.size === 1) {
+          unit.name = unit.name.replace(' Squad', ''); // see HDF
+          unit.name = unit.name.replace(' Squads', ''); // see HDF
+          unit.name = unit.name.replace(' Mob', ''); // see Orc Marauders
+        }
+
+        // Pluralize according to unit size
         unit.name = pluralize(unit.name, unit.size);
 
+        // Ensure unit equipment is named with the unit.size in mind
         unit.equipment = unit.equipment.map(weapon => {
           const name = weapon.name || weapon.label;
           weapon.name = pluralize(name, unit.size);
@@ -260,24 +282,30 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           return weapon;
         });
 
+        // We assume, that for Skirmish, all units fit on a single page
         unit.splitPageNumber = 1;
 
         return unit;
-      }).filter(unit => unit !== null);
+      })
+        .filter(unit => unit.cost < 100) // discard units with rounded cost >= 100
+        .filter(unit => unit.specialRules.every(sr => sr.key !== 'artillery')); // discard units with rule 'artillery'
 
       armyBook.specialRules = armyBook.specialRules.map(sr => {
+        // TODO check remaining exceptions
         sr.description = sr.description.replace('The hero and its unit', 'This model and all friendly units within 12"');
         sr.description = sr.description.replace('This model and its unit', 'This model and all friendly units within 12"');
         sr.description = sr.description.replace(/If the hero is part of a unit of (.*), the unit counts/, 'All friendly units of $1 within 12" count');
         return sr;
       });
 
+      // Beautify names due to units with size 1
       armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
         const usingUnits = armyBook.units.filter(unit => unit.upgrades.includes(pack.uid));
         const sizes = usingUnits.map(unit => unit.size);
         const maxSize = Math.max(...sizes);
         if (maxSize === 1) {
           pack.sections = pack.sections.map(section => {
+            // TODO check how 'any' can be renamed better
             section.label = section.label.replace('Replace one', 'Replace');
             section.label = section.label.replace('Replace all', 'Replace');
             section.label = section.label.replace(/Replace up to \w+/, 'Replace');
@@ -292,24 +320,38 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
         return pack;
       });
 
+      // TODO merge sections within package with same label (e.g. Replace <weapon>
+      // group by section label
+
+      // Recalculate costs for upgrade packages
       armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
         const usingUnits = armyBook.units.filter(unit => unit.upgrades.includes(pack.uid));
         const recalcedOptions = CalcHelper.recalculateUpgradePackage(armyBookUid, pack, usingUnits, calc, {});
         for (const payload of recalcedOptions) {
-          const { armyBookUid, upgradePackageUid, sectionIndex, optionIndex, option } = payload;
+          const {armyBookUid, upgradePackageUid, sectionIndex, optionIndex, option} = payload;
           pack.sections[sectionIndex].options[optionIndex] = option;
         }
         return pack;
       });
 
-      armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
-        pack.sections = pack.sections.map(section => {
-          section.options = section.options.filter(option => option.cost < 50);
-          return section;
-        }).filter(section => section.options.length > 0);
+      // We remove upgrade options that cost >= 50
+      armyBook.upgradePackages = armyBook.upgradePackages
+        .map(pack => {
+          pack.sections = pack.sections.map(section => {
+            section.options = section.options.filter(option => option.cost < 50);
+            return section;
+          })
+        // discard sections with options that are empty
+        .filter(section => section.options.length > 0)
+        // discard sections with add <> model -> Add one model with
+        .filter(section => section.label.startsWith('Add one model with') === false);
+
         return pack;
       });
 
+      // todo enrich with correct meta data
+
+      armyBook.autogenerated = true;
       armyBook.aberration = 'GFF';
     }
 
@@ -317,112 +359,26 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
     response.status(200).json(armyBook);
     //response.set('Last-Modified', new Date(armyBook.modifiedAt).toUTCString());
     //return response.send({...armyBook, units});
-  }
-});
 
-router.get('/:armyBookUid/skirmish', cors(), async (request, response) => {
-
-  const { armyBookUid } = request.params;
-  let userId = request?.me?.userId || 0;
-
-  const armyBook = await armyBookService.getArmyBookPublicOrOwner(armyBookUid, userId);
-
-  if (!armyBook) {
-    response.status(404).json({});
   } else {
-    // enrich unit missing splitPageNumber
-    armyBook.units = armyBook.units.map(unit => {
-
-      let originalUnit = CalcHelper.normalizeUnit(unit);
-      originalUnit.models = 1;
-      const cost = calc.unitCost(originalUnit);
-      const rounded = CalcHelper.round(cost);
-      if (rounded > 100) {
-        return null;
-      } else if (rounded < 15) {
-        originalUnit.models = 3;
-        unit.size = 3;
-      } else if (rounded < 5) {
-        originalUnit.models = 5;
-        unit.size = 5;
-      } else {
-        originalUnit.models = 1;
-        unit.size = 1;
-      }
-      unit.cost = CalcHelper.round(calc.unitCost(originalUnit));
-      unit.name = pluralize(unit.name, unit.size);
-
-      unit.equipment = unit.equipment.map(weapon => {
-        const name = weapon.name || weapon.label;
-        weapon.name = pluralize(name, unit.size);
-        weapon.label = pluralize(name, unit.size);
-        return weapon;
-      });
-
-      return {
-        ...unit,
-        splitPageNumber: parseInt(unit.splitPageNumber) || 1,
-      }
-    }).filter(unit => unit !== null);
-
-    armyBook.specialRules = armyBook.specialRules.map(sr => {
-      sr.description = sr.description.replace('The hero and its unit', 'This model and all friendly units within 12"');
-      sr.description = sr.description.replace('This model and its unit', 'This model and all friendly units within 12"');
-      sr.description = sr.description.replace(/If the hero is part of a unit of (.*), the unit counts/, 'All friendly units of $1 within 12" count');
-      return sr;
-    });
-
-    armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
-      const usingUnits = armyBook.units.filter(unit => unit.upgrades.includes(pack.uid));
-      const sizes = usingUnits.map(unit => unit.size);
-      const maxSize = Math.max(...sizes);
-      if (maxSize === 1) {
-        pack.sections = pack.sections.map(section => {
-          section.label = section.label.replace('Replace one', 'Replace');
-          section.label = section.label.replace('Replace all', 'Replace');
-          section.label = section.label.replace(/Replace up to \w+/, 'Replace');
-          section.label = section.label.replace(/Replace with up to \w+/, 'Replace');
-          section.label = section.label.replace('Upgrade one model', 'Upgrade');
-          section.label = section.label.replace('Upgrade all models', 'Upgrade');
-          section.label = section.label.replace('Upgrade any model', 'Upgrade');
-          section.label = pluralize(section.label, 1);
-          return section;
-        });
-      }
-      return pack;
-    });
-
-    armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
-      const usingUnits = armyBook.units.filter(unit => unit.upgrades.includes(pack.uid));
-      const recalcedOptions = CalcHelper.recalculateUpgradePackage(armyBookUid, pack, usingUnits, calc, {});
-      for (const payload of recalcedOptions) {
-        const { armyBookUid, upgradePackageUid, sectionIndex, optionIndex, option } = payload;
-        pack.sections[sectionIndex].options[optionIndex] = option;
-      }
-      return pack;
-    });
-
-    armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
-      pack.sections = pack.sections.map(section => {
-        section.options = section.options.filter(option => option.cost < 50);
-        return section;
-      }).filter(section => section.options.length > 0);
-      return pack;
-    });
-
-    armyBook.aberration = 'GFF';
-
-    response.set('Cache-Control', 'public, max-age=60'); // 1 minute
-    response.status(200).json(armyBook);
+    response.status(404).json({});
   }
+
 });
 
 router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
 
   const { armyBookUid } = request.params;
+  let originArmyBookUid = armyBookUid;
+  let minify = false;
   let userId = request?.me?.userId || 0;
 
-  const armyBook = await armyBookService.getArmyBookPublicOrOwner(armyBookUid, userId);
+  if (armyBookUid.endsWith('-skirmish')) {
+    originArmyBookUid = armyBookUid.split('-skirmish')[0];
+    minify = true;
+  }
+
+  const armyBook = await armyBookService.getArmyBookPublicOrOwner(originArmyBookUid, userId);
 
   if (!armyBook) {
     response.status(404).json({});
