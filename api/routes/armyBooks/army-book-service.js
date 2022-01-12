@@ -5,7 +5,6 @@ import * as spellService from './spells/spell-service';
 import * as upgradePackagesService from './upgradePackages/upgrade-packages-service';
 import * as specialRulesService from './specialRules/special-rules-service';
 
-
 /* CREATE */
 
 export async function createArmyBook(userId, gameSystemId, name, hint, background) {
