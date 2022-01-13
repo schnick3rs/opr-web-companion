@@ -305,6 +305,21 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           return weapon;
         });
 
+        // restructure psychic units
+        const psyRuleNames = armyBook.specialRules.filter(sr => sr.description.startsWith('This unit counts as having Psychic(1)')).map(sr => sr.name); // ['Seer Council']
+        if (psyRuleNames.length > 0) {
+          if (unit.size === 1) {
+            const psyRuleIndex = unit.specialRules.findIndex(sr => psyRuleNames.some(psyRule => sr.name === psyRule));
+            if (psyRuleIndex >= 0) {
+              unit.specialRules[psyRuleIndex] = {
+                key: 'psychic',
+                name: 'Psychic',
+                rating: 1,
+              };
+            }
+          }
+        }
+
         // We assume, that for Skirmish, all units fit on a single page
         unit.splitPageNumber = 1;
 
