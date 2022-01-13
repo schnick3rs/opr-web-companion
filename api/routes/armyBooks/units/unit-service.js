@@ -21,16 +21,9 @@ export const sortUnitsSkirmish = (units) => {
     if (unitHasHero(a) && !unitHasHero(b)) return -1;
     if (!unitHasHero(a) && unitHasHero(b)) return 1;
 
-    if (unitHasHero(a)) {
-      if (a.cost > b.cost) return -1;
-      if (a.cost < b.cost) return 1;
-
-      if (a.name > b.name) return 1;
-      if (a.name < b.name) return -1;
-    } else {
-
-      if (a.cost > b.cost) return -1;
-      if (a.cost < b.cost) return 1;
+    if (unitHasHero(a) === false) {
+      if (a.cost < b.cost) return -1;
+      if (a.cost > b.cost) return 1;
 
       if (a.name > b.name) return 1;
       if (a.name < b.name) return -1;

@@ -331,6 +331,10 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           'This model and all friendly units within 12”');
 
         sr.description = sr.description.replace(
+          'The model and its unit',
+          'This model and all friendly units within 12”');
+
+        sr.description = sr.description.replace(
           /If the hero is part of a unit of (.*), the unit counts/,
           'All friendly units of $1 within 12" count');
         return sr;
