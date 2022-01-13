@@ -256,22 +256,26 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
       armyBook.units = armyBook.units.map(unit => {
 
         let originalUnit = CalcHelper.normalizeUnit(unit);
-        originalUnit.models = 1;
-        const cost = calc.unitCost(originalUnit);
-        if (cost >= 100) {
-          // we discard this unit later
-          unit.size = 1;
-        } else if (cost < 15) {
-          unit.size = 3;
-        } else if (cost < 5) {
-          unit.size = 5;
-        } else {
-          unit.size = 1;
-        }
 
-        // reset the new size to compute the final cost
-        originalUnit.models = unit.size;
-        unit.cost = CalcHelper.round(calc.unitCost(originalUnit));
+        // we only recompute for units size > 1
+        if (originalUnit.models > 1) {
+          originalUnit.models = 1;
+          const cost = calc.unitCost(originalUnit);
+          if (cost >= 100) {
+            // we discard this unit later
+            unit.size = 1;
+          } else if (cost < 15) {
+            unit.size = 3;
+          } else if (cost < 5) {
+            unit.size = 5;
+          } else {
+            unit.size = 1;
+          }
+
+          // reset the new size to compute the final cost
+          originalUnit.models = unit.size;
+          unit.cost = CalcHelper.round(calc.unitCost(originalUnit));
+        }
 
         // We remove some common sufixes that do not make sense for unit size 1
         if (unit.size === 1) {
@@ -279,6 +283,7 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           unit.name = unit.name.replace(' Squads', ''); // see HDF
           unit.name = unit.name.replace(' Mob', ''); // see Orc Marauders
         }
+        unit.name = unit.name.replace(' Herd', ''); // see Orc Marauders
 
         // Pluralize according to unit size
         unit.name = pluralize(unit.name, unit.size);
