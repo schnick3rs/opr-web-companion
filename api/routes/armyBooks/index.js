@@ -293,6 +293,7 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
         // Ensure unit equipment is named with the unit.size in mind
         unit.equipment = unit.equipment.map(weapon => {
+
           const name = weapon.label || weapon.name;
 
           if (['Claws'].includes(name)) {
@@ -361,9 +362,40 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
         return sr;
       });
 
-      // TODO merge upgrade packages for same units
+      /**
+       * UPGRADE PACKAGES
+       *
+       * - Merge sections that use the same units, making distinction obsolete
+       * - Shrink section label
+       * - Merge options with same label
+       * - Discard sections where prerequisite it not met
+       * - Recalculate cost
+       * - Discard expensive options
+       * - Discard empty options
+       * - Discard empty sections
+       * - Discard empty packages
+       */
 
-      // Beautify names due to units with size 1
+      /* TODO merge upgrade packages for same units
+       * get all units with more than one upgrade package
+       *
+       */
+      armyBook.units.map(unit => {
+        if (unit.upgrades.length > 1) {
+          const otherUpgrades = armyBook.units.filter(unyt => unyt.id !== unit.id).flatMap(unyt => unyt.upgrades);
+          const missing = unit.upgrades.every(upgrade => {
+            return !otherUpgrades.includes(upgrade);
+          });
+          if (missing) {
+            console.warn('merge upgrades', unit.upgrades);
+          } else {
+            console.warn('all fine', unit.upgrades);
+          }
+        }
+        return unit;
+      });
+
+      // Shrink names due to units with size 1
       armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
         const usingUnits = armyBook.units.filter(unit => unit.upgrades.includes(pack.uid));
         const sizes = usingUnits.map(unit => unit.size);
@@ -383,7 +415,7 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           });
         }
 
-        // TODO catch upgrades without prerequisite
+        // TODO discard upgrades without prerequisite
 
         // group by section label
         pack.sections = pack.sections.reduce((previousValue, currentValue) => {
