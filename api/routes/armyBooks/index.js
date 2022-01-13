@@ -508,7 +508,15 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
     response.status(404).json({});
   } else {
 
-    let pdfByteArray = await armyBookService.readPdfA4(armyBookUid);
+    let pdfByteArray = undefined;
+
+    let pdf = await armyBookService.readPdfA4(armyBookUid);
+
+    if (pdf && pdf.createdAt) {
+      if (new Date(pdf.createdAt).toISOString() == new Date(armyBook.modifiedAt).toISOString()) {
+        pdfByteArray = pdf.byteArray;
+      }
+    }
 
     if (!pdfByteArray) {
 

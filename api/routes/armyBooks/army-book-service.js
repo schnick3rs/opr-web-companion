@@ -367,14 +367,14 @@ export async function savePdfA4(armyBookUid, data, timestamp) {
 
 export async function readPdfA4(armyBookUid) {
   const { rows } = await pool.query(
-    'SELECT army_books_pdfs.pdf_a4 AS "pdf" ' +
-    'FROM opr_companion.army_books ' +
-    'INNER JOIN opr_companion.army_books_pdfs ON army_books.uid = army_books_pdfs.army_book_uid ' +
-    'WHERE uid = $1 ' +
-    'AND army_books.modified_at::timestamp(0) = army_books_pdfs.pdf_a4_created_at::timestamp(0) ',
+    'SELECT ' +
+    'army_books_pdfs.pdf_a4 AS "byteArray", ' +
+    'army_books_pdfs.pdf_a4_created_at AS "createdAt" ' +
+    'FROM opr_companion.army_books_pdfs ' +
+    'WHERE army_books_pdfs.army_book_uid = $1 ',
     [armyBookUid],
   );
-  return rows[0]?.pdf;
+  return rows[0]
 }
 
 export async function readPdfLetter(armyBookUid) {
