@@ -294,8 +294,14 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
         // Ensure unit equipment is named with the unit.size in mind
         unit.equipment = unit.equipment.map(weapon => {
           const name = weapon.label || weapon.name;
-          weapon.name = pluralize(name, unit.size);
-          weapon.label = pluralize(name, unit.size);
+
+          if (['Claws'].includes(name)) {
+            // we skip pluralisation for some weapon names
+          } else {
+            weapon.name = pluralize(name, unit.size);
+            weapon.label = pluralize(name, unit.size);
+          }
+
           return weapon;
         });
 
