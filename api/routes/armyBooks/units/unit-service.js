@@ -13,6 +13,32 @@ const unitHasTough = (unit) => {
   return unit.specialRules.some(sr => sr.key === 'tough');
 }
 
+export const sortUnitsSkirmish = (units) => {
+  const unitz = [...units];
+  unitz.sort((a, b) => {
+
+    // sort by IS HERO
+    if (unitHasHero(a) && !unitHasHero(b)) return -1;
+    if (!unitHasHero(a) && unitHasHero(b)) return 1;
+
+    if (unitHasHero(a)) {
+      if (a.cost > b.cost) return -1;
+      if (a.cost < b.cost) return 1;
+
+      if (a.name > b.name) return 1;
+      if (a.name < b.name) return -1;
+    } else {
+
+      if (a.cost > b.cost) return -1;
+      if (a.cost < b.cost) return 1;
+
+      if (a.name > b.name) return 1;
+      if (a.name < b.name) return -1;
+    }
+  });
+  return unitz;
+}
+
 export const sortUnits = (units) => {
   const unitz = [...units];
   unitz.sort((a, b) => {

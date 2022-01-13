@@ -16,6 +16,7 @@ import specialRules from './specialRules';
 import spells from './spells';
 import {CalcHelper} from "opr-army-book-helper";
 import calc from "opr-point-calculator-lib";
+import {sortUnitsSkirmish} from "./units/unit-service";
 
 const router = new Router();
 
@@ -282,6 +283,8 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           unit.name = unit.name.replace(' Squad', ''); // see HDF
           unit.name = unit.name.replace(' Squads', ''); // see HDF
           unit.name = unit.name.replace(' Mob', ''); // see Orc Marauders
+          unit.name = unit.name.replace(' Team', ''); // see Custodian Brothers
+          unit.name = unit.name.replace(' Council', ''); // see High Elf Fleet
         }
         unit.name = unit.name.replace(' Herd', ''); // see Orc Marauders
 
@@ -290,7 +293,7 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
         // Ensure unit equipment is named with the unit.size in mind
         unit.equipment = unit.equipment.map(weapon => {
-          const name = weapon.name || weapon.label;
+          const name = weapon.label || weapon.name;
           weapon.name = pluralize(name, unit.size);
           weapon.label = pluralize(name, unit.size);
           return weapon;
@@ -305,11 +308,31 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
         .filter(unit => unit.specialRules.every(sr => sr.key !== 'artillery')) // discard units with rule 'artillery'
       ;
 
+      // re-Sort units
+      armyBook.units = unitService.sortUnitsSkirmish(armyBook.units);
+
       armyBook.specialRules = armyBook.specialRules.map(sr => {
         // TODO check remaining exceptions
-        sr.description = sr.description.replace('The hero and its unit', 'This model and all friendly units within 12"');
-        sr.description = sr.description.replace('This model and its unit', 'This model and all friendly units within 12"');
-        sr.description = sr.description.replace(/If the hero is part of a unit of (.*), the unit counts/, 'All friendly units of $1 within 12" count');
+
+        sr.description = sr.description.replace(
+          'The hero and its unit get the Ambush special rule.',
+          'The hero and up to half of its army get the Ambush special rule (must deploy within 3” of the hero).'); // see RL
+
+        sr.description = sr.description.replace(
+          'Once per activation, before attacking, pick 2 friendly units within 12”, which get +2 to their next morale roll.',
+          'Once per activation, before attacking, pick 2 friendly units within 12”. Those units, and all friendly units within 6", get +2 to their next morale roll.'); // see HDF
+
+        sr.description = sr.description.replace(
+          'The hero and its unit',
+          'This model and all friendly units within 12”');
+
+        sr.description = sr.description.replace(
+          'This model and its unit',
+          'This model and all friendly units within 12”');
+
+        sr.description = sr.description.replace(
+          /If the hero is part of a unit of (.*), the unit counts/,
+          'All friendly units of $1 within 12" count');
         return sr;
       });
 
