@@ -348,8 +348,8 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           'This model and all friendly units within 12”');
 
         sr.description = sr.description.replace(
-          'This model and its unit',
-          'This model and all friendly units within 12”');
+          'his model and its unit',
+          'his model and all friendly units within 12”');
 
         sr.description = sr.description.replace(
           'The model and its unit',
@@ -360,6 +360,8 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           'All friendly units of $1 within 12" count');
         return sr;
       });
+
+      // TODO merge upgrade packages for same units
 
       // Beautify names due to units with size 1
       armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
@@ -381,6 +383,9 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           });
         }
 
+        // TODO catch upgrades without prerequisite
+
+        // group by section label
         pack.sections = pack.sections.reduce((previousValue, currentValue) => {
 
             let sameSectionIndex = previousValue.findIndex(
@@ -401,9 +406,6 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
         return pack;
       });
-
-      // TODO merge sections within package with same label (e.g. Replace <weapon>
-      // group by section label
 
       // Recalculate costs for upgrade packages
       armyBook.upgradePackages = armyBook.upgradePackages.map(pack => {
