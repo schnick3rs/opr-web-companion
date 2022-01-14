@@ -72,6 +72,9 @@ export default {
       .filter(gs => gs.armyBookBuilderEnabled)
       .map(gs => {
         gs.disabled = !(gs.officialArmyBookCount > 0);
+        if (gs.slug === 'grimdark-future-firefight') {
+          gs.disable = false;
+        }
         return gs;
       });
     return {

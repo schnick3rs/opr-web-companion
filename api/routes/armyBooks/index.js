@@ -283,7 +283,7 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           unit.name = unit.name.replace(' Squad', ''); // see HDF
           unit.name = unit.name.replace(' Squads', ''); // see HDF
           unit.name = unit.name.replace(' Mob', ''); // see Orc Marauders
-          unit.name = unit.name.replace(' Team', ''); // see Custodian Brothers
+          //unit.name = unit.name.replace(' Team', ''); // see Custodian Brothers
           unit.name = unit.name.replace(' Council', ''); // see High Elf Fleet
         }
         unit.name = unit.name.replace(' Herd', ''); // see Orc Marauders
