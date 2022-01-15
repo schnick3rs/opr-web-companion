@@ -329,30 +329,11 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
           const name = weapon.label || weapon.name;
 
-          if (['Claws'].includes(name)) {
-            // we skip pluralisation for some weapon names
-          } else {
-            weapon.name = pluralize(name, unit.size);
-            weapon.label = pluralize(name, unit.size);
-          }
+          weapon.name = name;
+          weapon.label = name;
 
           return weapon;
         });
-
-        // restructure psychic units
-        const psyRuleNames = armyBook.specialRules.filter(sr => sr.description.startsWith('This unit counts as having Psychic(1)')).map(sr => sr.name); // ['Seer Council']
-        if (psyRuleNames.length > 0) {
-          if (unit.size === 1) {
-            const psyRuleIndex = unit.specialRules.findIndex(sr => psyRuleNames.some(psyRule => sr.name === psyRule));
-            if (psyRuleIndex >= 0) {
-              unit.specialRules[psyRuleIndex] = {
-                key: 'psychic',
-                name: 'Psychic',
-                rating: 1,
-              };
-            }
-          }
-        }
 
         // We assume, that for Skirmish, all units fit on a single page
         unit.splitPageNumber = 1;
