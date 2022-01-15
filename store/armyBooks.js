@@ -83,6 +83,11 @@ export const getters = {
     return armyBook?.official;
   },
 
+  armyBookEnableGenerateSkirmishBook: (state) => (id) => {
+    const armyBook = state.armyBooks.find(a => a.uid === id);
+    return armyBook?.enableGenerateSkirmishBook;
+  },
+
   armyBookBackground: (state) => (id) => {
     const armyBook = state.armyBooks.find(a => a.uid === id);
     return armyBook?.background;
@@ -477,6 +482,12 @@ export const mutations = {
     armyBook.official = value;
   },
 
+  setArmyBookEnableGenerateSkirmishBook(state, payload) {
+    const { id, value } = payload;
+    const armyBook = state.armyBooks.find(a => a.uid === id);
+    armyBook.enableGenerateSkirmishBook = value;
+  },
+
   setArmyBookIsPublic(state, payload) {
     const { id, value } = payload;
     const armyBook = state.armyBooks.find(a => a.uid === id);
@@ -853,6 +864,7 @@ export const actions = {
         cover_image_credit: armyBook.coverImageCredit,
         is_live: armyBook.isLive,
         official: armyBook.official,
+        enable_generate_skirmish_book: armyBook.enableGenerateSkirmishBook,
       };
       const { data } = await this.$axios.patch(`/api/army-books/${armyBookUid}/`, patch);
     }
