@@ -325,20 +325,6 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
         }
 
-        // We remove some common sufixes that do not make sense for unit size 1
-        if (unit.size === 1) {
-          unit.name = unit.name.replace(' Squad', ''); // see HDF
-          unit.name = unit.name.replace(' Squads', ''); // see HDF
-          unit.name = unit.name.replace(' Mob', ''); // see Orc Marauders
-          //unit.name = unit.name.replace(' Team', ''); // see Custodian Brothers
-          unit.name = unit.name.replace(' Council', ''); // see High Elf Fleet
-        }
-        unit.name = unit.name.replace(' Herd', ''); // see Orc Marauders
-
-        // Pluralize according to unit size
-        unit.name = pluralize(unit.name, unit.size);
-
-        // Ensure unit equipment is named with the unit.size in mind
         unit.equipment = unit.equipment.map(weapon => {
 
           const name = weapon.label || weapon.name;
