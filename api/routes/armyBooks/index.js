@@ -264,8 +264,9 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
         // we only recompute for units size > 1
         if (originalUnit.models > 1) {
-          originalUnit.models = 1;
-          const cost = calc.unitCost(originalUnit);
+
+          const cost = calc.unitCost({...originalUnit, models: 1});
+
           if (cost >= 100) {
             // we discard this unit later
             unit.size = 1;
@@ -278,8 +279,50 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           }
 
           // reset the new size to compute the final cost
-          originalUnit.models = unit.size;
-          unit.cost = CalcHelper.round(calc.unitCost(originalUnit));
+          const adjustedUnit = {...originalUnit, models: unit.size};
+          unit.cost = CalcHelper.round(calc.unitCost(adjustedUnit));
+
+          // We remove some common sufixes that do not make sense for unit size 1
+          if (unit.size === 1) {
+
+            unit.name = unit.name.replace(' Squad', ''); // see HDF
+            unit.name = unit.name.replace(' Squads', ''); // see HDF
+            unit.name = unit.name.replace(' Mob', ''); // see Orc Marauders
+            //unit.name = unit.name.replace(' Team', ''); // see Custodian Brothers
+            unit.name = unit.name.replace(' Council', ''); // see High Elf Fleet
+            unit.name = unit.name.replace(' Herd', ''); // see Orc Marauders
+
+            // Pluralize according to unit size
+            unit.name = pluralize(unit.name, unit.size);
+
+            // Ensure unit equipment is named with the unit.size in mind
+            unit.equipment = unit.equipment.map(weapon => {
+
+              const name = weapon.label || weapon.name;
+
+              weapon.name = pluralize(name, unit.size);
+              weapon.label = pluralize(name, unit.size);
+
+              return weapon;
+            });
+
+            // restructure psychic units
+            const psyRuleNames = armyBook.specialRules.filter(sr => sr.description.startsWith('This unit counts as having Psychic(1)')).map(sr => sr.name); // ['Seer Council']
+            if (psyRuleNames.length > 0) {
+              if (unit.size === 1) {
+                const psyRuleIndex = unit.specialRules.findIndex(sr => psyRuleNames.some(psyRule => sr.name === psyRule));
+                if (psyRuleIndex >= 0) {
+                  unit.specialRules[psyRuleIndex] = {
+                    key: 'psychic',
+                    name: 'Psychic',
+                    rating: 1,
+                  };
+                }
+              }
+            }
+
+          }
+
         }
 
         // We remove some common sufixes that do not make sense for unit size 1
