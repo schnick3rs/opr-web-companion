@@ -285,6 +285,14 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           // We remove some common sufixes that do not make sense for unit size 1
           if (unit.size === 1) {
 
+            // TODO better Prime Exceptions
+            unit.name = unit.name.replace('Infiltration Squad', 'Infiltrator');
+            unit.name = unit.name.replace('Assault Squad', 'Assault Prime Brother');
+            unit.name = unit.name.replace('Blaster Squad', 'Blaster Prime Brother');
+            unit.name = unit.name.replace('Guard Squad', 'Guardian');
+            unit.name = unit.name.replace('Elimination Squad', 'Eliminator');
+            unit.name = unit.name.replace('Eradication Squad', 'Eradicator');
+
             unit.name = unit.name.replace(' Squad', ''); // see HDF
             unit.name = unit.name.replace(' Squads', ''); // see HDF
             unit.name = unit.name.replace(' Mob', ''); // see Orc Marauders
