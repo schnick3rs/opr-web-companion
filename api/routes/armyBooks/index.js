@@ -414,8 +414,10 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
         const usingUnits = armyBook.units.filter(unit => unit.upgrades.includes(pack.uid));
         const sizes = usingUnits.map(unit => unit.size);
         const maxSize = Math.max(...sizes);
-        if (maxSize === 1) {
-          pack.sections = pack.sections.map(section => {
+
+        pack.sections = pack.sections.map(section => {
+
+          if (maxSize === 1) {
             // TODO check how 'any' can be renamed better
             section.label = section.label.replace('Replace one', 'Replace');
             section.label = section.label.replace('Replace all', 'Replace');
@@ -425,9 +427,13 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
             section.label = section.label.replace('Upgrade all models', 'Upgrade');
             section.label = section.label.replace('Upgrade any model', 'Upgrade');
             section.label = pluralize(section.label, 1);
-            return section;
-          });
-        }
+          } else {
+            section.label = section.label.replace(/Replace up to \w+/, 'Replace one');
+            section.label = section.label.replace(/Replace with up to \w+/, 'Replace one');
+          }
+
+          return section;
+        });
 
         // TODO discard upgrades without prerequisite
 
@@ -664,6 +670,7 @@ router.patch('/:armyBookUid', async (request, response) => {
     'cover_image_credit',
     'is_live',
     'official',
+    'enable_generate_skirmish_book',
   ];
   const updateSetFields = [];
   const updateSetValues = [];
