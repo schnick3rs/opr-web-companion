@@ -254,6 +254,10 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
     // TODO check if this book is allowed to minify
     if (minify === true && armyBook.enableGenerateSkirmishBook === true) {
 
+      pluralize.addSingularRule(/Spear-Fuses$/, 'Spear-Fuse'); // see Custodian Brothers
+      pluralize.addSingularRule(/Claws$/, 'Claws'); // See Alien Hives and other bestials
+      pluralize.addPluralRule(/Squads$/, 'Squad'); // See HDF and others
+
       armyBook.units = armyBook.units.map(unit => {
 
         let originalUnit = CalcHelper.normalizeUnit(unit);
