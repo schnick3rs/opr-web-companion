@@ -255,6 +255,7 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
     if (minify === true && armyBook.enableGenerateSkirmishBook === true) {
 
       pluralize.addSingularRule(/Spear-Fuses$/, 'Spear-Fuse'); // see Custodian Brothers
+      pluralize.addSingularRule(/Axes$/, 'Axe'); // see Dwaves
       pluralize.addSingularRule(/Claws$/, 'Claws'); // See Alien Hives and other bestials
       pluralize.addPluralRule(/Squads$/, 'Squad'); // See HDF and others
 
@@ -333,13 +334,11 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
         }
 
+        // Little helper
         unit.equipment = unit.equipment.map(weapon => {
-
           const name = weapon.label || weapon.name;
-
           weapon.name = name;
           weapon.label = name;
-
           return weapon;
         });
 
@@ -363,8 +362,12 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           'The hero and up to half of its army get the Ambush special rule (must deploy within 3” of the hero).'); // see RL
 
         sr.description = sr.description.replace(
-          'Once per activation, before attacking, pick 2 friendly units within 12”, which get +2 to their next morale roll.',
-          'Once per activation, before attacking, pick 2 friendly units within 12”. Those units, and all friendly units within 6", get +2 to their next morale roll.'); // see HDF
+          /pick (\w+) (friendly|enemy) (units) (within \d+..*), which (.*)/gm,
+          `pick $1 $2 $3 $4. Those units, and all $2 $3 within 6" $5`);
+
+        sr.description = sr.description.replace(
+          /pick (\w+) (friendly|enemy) (unit) (within \d+..*), which (.*)/gm,
+          `pick $1 $2 $3 $4. That unit, and all $2 $3 within 6" $5`);
 
         sr.description = sr.description.replace(
           'The hero and its unit',
@@ -434,6 +437,8 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
             section.label = section.label.replace('Upgrade one model', 'Upgrade');
             section.label = section.label.replace('Upgrade all models', 'Upgrade');
             section.label = section.label.replace('Upgrade any model', 'Upgrade');
+            section.label = section.label.replace('One model may take', 'Take');
+
             section.label = pluralize(section.label, 1);
           } else {
             section.label = section.label.replace(/Replace up to \w+/, 'Replace one');
