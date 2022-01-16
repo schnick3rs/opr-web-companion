@@ -362,6 +362,10 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
           'The hero and up to half of its army get the Ambush special rule (must deploy within 3” of the hero).'); // see RL
 
         sr.description = sr.description.replace(
+          'Whenever the hero’s unit fails a morale test, you must kill one of its models, and the morale test counts as passed instead.',
+          'Whenever a friendly unit within 12" fails a morale test, you must kill one friendly model within 12", and then all friendly units within 12" of the killed model automatically pass morale tests until the end of the round.'); // see HDF
+
+        sr.description = sr.description.replace(
           /pick (\w+) (friendly|enemy) (units) (within \d+..*), which (.*)/gm,
           `pick $1 $2 $3 $4. Those units, and all $2 $3 within 6" $5`);
 
