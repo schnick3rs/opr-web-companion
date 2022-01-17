@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid';
 import pluralize from 'pluralize';
 
 import * as armyBookService from './army-book-service';
+import * as pdfService from './pdf-service';
 import * as gameSystemService from '../gameSystems/game-system-service';
 import * as upgradePackagesService from './upgradePackages/upgrade-packages-service';
 import * as unitService from './units/unit-service';
@@ -17,6 +18,7 @@ import spells from './spells';
 import {CalcHelper} from "opr-army-book-helper";
 import calc from "opr-point-calculator-lib";
 import {sortUnitsSkirmish} from "./units/unit-service";
+import {generateViaHtml2pdf, generateViaHtmlpdfapi, generateViaSejda} from "./pdf-service";
 
 const router = new Router();
 
@@ -444,6 +446,18 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
             section.label = section.label.replace('One model may take', 'Take');
 
             section.label = pluralize(section.label, 1);
+
+            // TODO singlularize options
+            section.options = section.options.map(option => {
+              option.gains = option.gains.map(gain => {
+                if (gain.type === 'ArmyBookWeapon') {
+                  gain.name = pluralize.singular(gain.name);
+                }
+                return gain;
+              });
+              return option;
+            });
+
           } else {
             section.label = section.label.replace(/Replace up to \w+/, 'Replace one');
             section.label = section.label.replace(/Replace with up to \w+/, 'Replace one');
@@ -557,24 +571,21 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
 
     if (!pdfByteArray) {
 
-      console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching from serice provider...`);
+      console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching from service provider...`);
 
-      const params = {
-        url: `https://webapp.onepagerules.com/army-books/view/${armyBookUid}/print`,
-        apiKey: process.env.HTML2PDF_API_KEY,
-        media: 'print',
-      };
-      const res = await axios.get('https://api.html2pdf.app/v1/generate',
-        {
-          params: params,
-          responseType: 'arraybuffer',
-        },
-      );
-      pdfByteArray = res.data;
-      console.info(`[${armyBook.name}]#${armyBook.uid} :: Save pdf bytes ${pdfByteArray.length}...`);
-      await armyBookService.savePdfA4(armyBookUid, pdfByteArray, new Date(armyBook.modifiedAt.toISOString()));
+      //const res = await pdfService.generateViaHtml2pdf(armyBookUid);
+      const res = await pdfService.generateViaHtml2pdf(armyBookUid);
+
+      if (res) {
+        pdfByteArray = res.data;
+        console.info(`[${armyBook.name}] #${armyBook.uid} :: Save pdf bytes ${pdfByteArray.length}...`);
+        await armyBookService.savePdfA4(armyBookUid, pdfByteArray, new Date(armyBook.modifiedAt.toISOString()), 'Html2pdf');
+      } else {
+        console.error(`[${armyBook.name}] #${armyBook.uid} :: PDF could not be generated!`);
+      }
+
     } else {
-      console.info(`[${armyBook.name}]#${armyBook.uid} :: PDF found.`);
+      console.info(`[${armyBook.name}] #${armyBook.uid} :: PDF found.`);
     }
 
     response.setHeader('Content-Type', 'application/pdf');

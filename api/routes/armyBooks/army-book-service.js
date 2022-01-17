@@ -355,13 +355,13 @@ export async function updateArmyBook(armyBookUid, userId, fields, values) {
 }
 
 // https://stackoverflow.com/questions/39573219/can-i-store-a-word-document-in-a-postgresql-database
-export async function savePdfA4(armyBookUid, data, timestamp) {
+export async function savePdfA4(armyBookUid, data, timestamp, service = 'unknown') {
   await pool.query(
-    'INSERT INTO opr_companion.army_books_pdfs (army_book_uid, pdf_a4, pdf_a4_created_at) ' +
-    'VALUES ($1, $2::bytea, $3) ' +
+    'INSERT INTO opr_companion.army_books_pdfs (army_book_uid, pdf_a4, pdf_a4_created_at, service) ' +
+    'VALUES ($1, $2::bytea, $3, $4) ' +
     'ON CONFLICT (army_book_uid) DO '+
-    'UPDATE SET pdf_a4 = $2::bytea, pdf_a4_created_at = $3',
-    [armyBookUid, data, timestamp],
+    'UPDATE SET pdf_a4 = $2::bytea, pdf_a4_created_at = $3, service = $4',
+    [armyBookUid, data, timestamp, service],
   );
 }
 
