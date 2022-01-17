@@ -14,7 +14,7 @@ import units from './units';
 import upgradePackages from './upgradePackages';
 import specialRules from './specialRules';
 import spells from './spells';
-import {CalcHelper} from "opr-army-book-helper";
+import {CalcHelper, ArmyBook} from "opr-army-book-helper";
 import calc from "opr-point-calculator-lib";
 
 const router = new Router();
@@ -432,8 +432,37 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
         pack.sections = pack.sections.map(section => {
 
           if (maxSize === 1) {
-            // TODO check how 'any' can be renamed better
 
+            // TODO check how 'any' can be renamed better
+            if (section.label.startsWith('Replace any')) {
+              console.info('### Replace ->', section.label);
+              const armySection = ArmyBook.UpgradeSection.FromString(section.label);
+              if (armySection && armySection.lose.length === 1) {
+                const remove = armySection.lose[0];
+                console.info('### Lose ->', remove);
+                // check that every unit having that weapon has a count of <= 1
+                const onlySingleUses = usingUnits.every(unit => {
+                  const unitEquip = unit.equipment.find(equipment => {
+                    const name = equipment.label || equipment.name;
+                    console.info('### Checking ->', unit.name, 'having -> ', name);
+                    return name === remove;
+                  });
+                  if (unitEquip) {
+                    console.info('### ', unit.name, 'has', unitEquip.label, 'count', unitEquip.count);
+                    if (unitEquip.count > 1) {
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  } else {
+                    return true;
+                  }
+                });
+                if (onlySingleUses) {
+                  section.label = section.label.replace('Replace any', 'Replace');
+                }
+              }
+            }
 
             section.label = section.label.replace('Replace one', 'Replace');
             section.label = section.label.replace('Replace all', 'Replace');
