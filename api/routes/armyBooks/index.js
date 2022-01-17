@@ -433,6 +433,8 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
           if (maxSize === 1) {
             // TODO check how 'any' can be renamed better
+
+
             section.label = section.label.replace('Replace one', 'Replace');
             section.label = section.label.replace('Replace all', 'Replace');
             section.label = section.label.replace(/Replace up to \w+/, 'Replace');
@@ -448,7 +450,7 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
             section.options = section.options.map(option => {
               option.gains = option.gains.map(gain => {
                 if (gain.type === 'ArmyBookWeapon') {
-                  gain.name = pluralize.singular(gain.name);
+                  //gain.name = pluralize.singular(gain.name);
                 }
                 return gain;
               });
