@@ -1,6 +1,5 @@
 import Router from 'express-promise-router';
 import cors from 'cors';
-import axios from 'axios';
 import { nanoid } from 'nanoid';
 import pluralize from 'pluralize';
 
@@ -17,8 +16,6 @@ import specialRules from './specialRules';
 import spells from './spells';
 import {CalcHelper} from "opr-army-book-helper";
 import calc from "opr-point-calculator-lib";
-import {sortUnitsSkirmish} from "./units/unit-service";
-import {generateViaHtml2pdf, generateViaHtmlpdfapi, generateViaSejda} from "./pdf-service";
 
 const router = new Router();
 
