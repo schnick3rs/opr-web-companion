@@ -433,13 +433,15 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
           if (maxSize === 1) {
 
-            // TODO check how 'any' can be renamed better
+            // Check if we can remove "any"
             if (section.label.startsWith('Replace any')) {
-              console.info('### Replace ->', section.label);
+
               const armySection = ArmyBook.UpgradeSection.FromString(section.label);
+
+              // currently we only check if the replace affects one weapon. might catch all cases
               if (armySection && armySection.lose.length === 1) {
                 const remove = armySection.lose[0];
-                console.info('### Lose ->', remove);
+
                 // check that every unit having that weapon has a count of <= 1
                 const onlySingleUses = usingUnits.every(unit => {
                   const unitEquip = unit.equipment.find(equipment => {
@@ -449,11 +451,7 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
                   });
                   if (unitEquip) {
                     console.info('### ', unit.name, 'has', unitEquip.label, 'count', unitEquip.count);
-                    if (unitEquip.count > 1) {
-                      return false;
-                    } else {
-                      return true;
-                    }
+                    return !(unitEquip.count > 1);
                   } else {
                     return true;
                   }
