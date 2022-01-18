@@ -309,7 +309,7 @@ export default {
       unit.specialRules = unit.specialRules.map(sr => {
         return {
           ...sr,
-          key: sr.key === 'tough-skirmish' ? 'tough' : sr.key,
+          key: sr.key.replace('-skirmish', ''),
         };
       });
       this.calculatedCost = this.$oprPointCalculator

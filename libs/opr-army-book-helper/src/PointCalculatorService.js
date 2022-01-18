@@ -66,7 +66,7 @@ const normalizeUnit = (unit) => {
     clone.specialRules = clone.specialRules.map(sr => {
       return {
         ...sr,
-        key: sr.key === 'tough-skirmish' ? 'tough' : sr.key,
+        key: sr.key.replace('-skirmish', '')
       };
     });
     calculatableUnit.rules = clone.specialRules.map(sr => sr.name);
@@ -325,7 +325,7 @@ const calculateUnitCost = (unit, pointCalculator, customRules = {}) => {
   unit.specialRules = unit.specialRules.map(sr => {
     return {
       ...sr,
-      key: sr.key === 'tough-skirmish' ? 'tough' : sr.key,
+      key: sr.key.replace('-skirmish', '')
     };
   });
   return pointCalculator.unitCost(calculatableUnit, customRules);
