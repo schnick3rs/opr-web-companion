@@ -254,6 +254,7 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
     if (minify === true && armyBook.enableGenerateSkirmishBook === true) {
 
       pluralize.addSingularRule(/Spear-Fuses$/, 'Spear-Fuse'); // see Custodian Brothers
+      pluralize.addSingularRule(/Fuses$/, 'Fuse'); // see Custodian Brothers
       pluralize.addSingularRule(/Axes$/, 'Axe'); // see Dwaves
       pluralize.addSingularRule(/Claws$/, 'Claws'); // See Alien Hives and other bestials
       pluralize.addPluralRule(/Squads$/, 'Squad'); // See HDF and others
@@ -305,7 +306,6 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 
             // Ensure unit equipment is named with the unit.size in mind
             unit.equipment = unit.equipment.map(weapon => {
-
               const name = weapon.label || weapon.name;
 
               weapon.name = pluralize(name, unit.size);
