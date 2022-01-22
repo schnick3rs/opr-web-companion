@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import marked from 'marked';
+import { marked } from 'marked';
 import OprPage from "@/components/shared/print/OprPage";
 
 export default {
@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     markdown(text = '') {
-      return marked(text);
+      return marked.parse(text);
     },
     saveDebounced() {
       clearTimeout(this._timerId);
@@ -189,7 +189,7 @@ export default {
       },
     },
     backgroundText() {
-      return marked(this.armyBookBackground || '');
+      return marked.parse(this.armyBookBackground || '');
     },
   }
 }

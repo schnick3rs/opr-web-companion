@@ -381,7 +381,7 @@
 import OprArmyBookWeaponEditor from '~/components/army-book/OprArmyBookWeaponEditor';
 import OprDialog from "~/components/shared/OprDialog";
 import OprUtils from "~/mixins/OprUtils";
-import marked from 'marked';
+import { marked } from 'marked';
 import { ArmyBook, CalcHelper } from 'opr-army-book-helper';
 import { toCustomRule } from '~/assets/js/CustomArmyRulesService';
 import OprArmyBookUnitWeaponRow from "./OprArmyBookUnitWeaponRow";
@@ -738,7 +738,7 @@ export default {
       this.saveUnitDebounced(2000);
     },
     markdown(text = '') {
-      return marked(text);
+      return marked.parse(text);
     },
     computeRuleCost(ruleName) {
       if (this.calculatableUnit && this.$oprPointCalculator) {

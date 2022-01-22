@@ -56,7 +56,7 @@
 <script>
 import {BLOCKS} from "@contentful/rich-text-types";
 import {documentToHtmlString} from "@contentful/rich-text-html-renderer";
-import marked from "marked";
+import {marked} from "marked";
 
 const renderEmbeddedNode = (node) => {
   switch (node.data.target.sys.contentType.sys.id) {
@@ -67,7 +67,7 @@ const renderEmbeddedNode = (node) => {
 
     case 'oprMarkdownSnippet':
       const { markdownText } = node.data.target.fields;
-      return marked(markdownText || '');
+      return marked.parse(markdownText || '');
   }
   return '';
 }

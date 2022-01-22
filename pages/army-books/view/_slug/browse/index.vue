@@ -119,7 +119,7 @@
 
 <script>
 import OprBreadcrumbsRow from '@/components/shared/OprBreadcrumbsRow';
-import marked from 'marked';
+import { marked } from 'marked';
 
 export default {
   name: 'armybook',
@@ -175,7 +175,7 @@ export default {
       return `${item.label || item.name} (${content.join(', ')})`;
     },
     markdown(text) {
-      return marked(text);
+      return marked.parse(text);
     }
   },
   filters: {

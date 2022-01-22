@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import marked from "marked";
+import { marked } from "marked";
 import OprPage from "@/components/shared/print/OprPage";
 import OprPrintUpgradeOptionRow from "@/components/shared/print/OprPrintUpgradeOptionRow";
 import OprUnitSpecialRulesString from "../OprUnitSpecialRulesString";
@@ -362,7 +362,7 @@ export default {
       return '?';
     },
     markdown(text = '') {
-      return marked(text);
+      return marked.parse(text);
     },
     markdownInline(text = '') {
       return marked.parseInline(text, []);

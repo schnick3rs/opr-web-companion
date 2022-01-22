@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import marked from "marked";
+import { marked } from 'marked';
 import OprPage from "@/components/shared/print/OprPage";
 import OprArmyBookUnitPage from "@/components/shared/print/OprArmyBookUnitPage";
 
@@ -268,7 +268,7 @@ export default {
   },
   methods: {
     markdown(text = '') {
-      return marked(text);
+      return marked.parse(text);
     },
     markdownInline(text = '') {
       return marked.parseInline(text, []);

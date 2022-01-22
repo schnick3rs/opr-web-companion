@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import marked from 'marked';
+import { marked } from 'marked';
 
 export default {
   name: 'OprArmyBookSpecialRuleEditor',
@@ -169,7 +169,7 @@ export default {
       this.saveDebounced();
     },
     markdown(text = '') {
-      return marked(text);
+      return marked.parse(text);
     },
     updateCostField(){
       let cost = isNaN(this.cost) ? this.cost : parseInt(this.cost);
