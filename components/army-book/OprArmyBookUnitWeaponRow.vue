@@ -86,6 +86,7 @@ export default {
       weaponRangeOptions: [
         { text: 'melee', value: 0 },
         { text: '6"', value: 6 },
+        { text: '9"', value: 9 },
         { text: '12"', value: 12 },
         { text: '18"', value: 18 },
         { text: '24"', value: 24 },
