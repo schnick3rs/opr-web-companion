@@ -66,3 +66,5 @@ npx @squoosh/cli --resize '{"enabled":true,"width":1283,"height":800,"method":"l
 ## avif
 
 npx @squoosh/cli --avif '{"cqLevel":0,"cqAlphaLevel":-1,"subsample":3,"tileColsLog2":0,"tileRowsLog2":0,"speed":6,"chromaDeltaQ":false,"sharpness":0,"denoiseLevel":0,"tune":0}'
+
+npx @squoosh/cli --avif '{"cqLevel":33,"cqAlphaLevel":-1,"denoiseLevel":0,"tileColsLog2":0,"tileRowsLog2":0,"speed":6,"subsample":1,"chromaDeltaQ":false,"sharpness":0,"tune":0}'
