@@ -1,5 +1,6 @@
 import Router from 'express-promise-router';
 const { pool } = require('../../db');
+import * as gameSystemService from './game-system-service';
 
 const router = new Router();
 
@@ -64,18 +65,10 @@ router.get('/:slug', async (request, response) => {
 router.get('/:slug/special-rules', async (request, response) => {
   const { slug } = request.params;
 
-  const { rows } = await pool.query(
-    'SELECT ' +
-    'game_special_rules.* ' +
-    'FROM opr_companion.game_systems ' +
-    'INNER JOIN opr_companion.game_special_rules ON game_special_rules."gameSystemId" = game_systems.id ' +
-    'WHERE slug = $1 ' +
-    'ORDER BY game_special_rules.name ASC',
-    [slug]
-  );
+  const rules = await gameSystemService.getGameSystemSpecialRules(slug);
 
   response.set('Cache-Control', 'public, max-age=3600');
-  response.status(200).json(rows);
+  response.status(200).json(rules);
 });
 
 export default router;

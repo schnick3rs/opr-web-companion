@@ -37,3 +37,20 @@ export async function getGameSystemById(id) {
   );
   return rows[0];
 }
+
+export async function getGameSystemSpecialRules(slug) {
+  try {
+    const { rows } = await pool.query(
+      'SELECT ' +
+      'special_rules.* ' +
+      'FROM opr_companion.game_systems ' +
+      'INNER JOIN opr_companion.special_rules ON special_rules."gameSystemId" = game_systems.id ' +
+      'WHERE slug = $1 ' +
+      'ORDER BY special_rules.name ASC',
+      [slug]
+    );
+    return rows;
+  } catch (e) {
+    console.error(e.message);
+  }
+}
