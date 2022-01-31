@@ -723,6 +723,7 @@ router.patch('/:armyBookUid', async (request, response) => {
     'cover_image_path',
     'cover_image_credit',
     'is_live',
+    'public',
     'official',
     'enable_generate_skirmish_book',
   ];

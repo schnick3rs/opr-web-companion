@@ -863,6 +863,7 @@ export const actions = {
         cover_image_path: armyBook.coverImagePath,
         cover_image_credit: armyBook.coverImageCredit,
         is_live: armyBook.isLive,
+        public: armyBook.public,
         official: armyBook.official,
         enable_generate_skirmish_book: armyBook.enableGenerateSkirmishBook,
       };
