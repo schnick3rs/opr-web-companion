@@ -45,6 +45,19 @@
             :value="selectedRuleVariant.cost"
           ></v-text-field>
 
+          <v-row no-gutters>
+            <v-col cols="4">
+              <v-select
+                dense outlined
+                :items="costFunctionNames"
+                item-text="name" item-value="name"
+              ></v-select>
+            </v-col>
+            <v-col>
+              <v-text-field dense outlined></v-text-field>
+            </v-col>
+          </v-row>
+
           <v-checkbox label="with Rating" v-model="editor.hasRating"></v-checkbox>
 
           <v-chip-group
@@ -110,6 +123,7 @@ export default {
         description: undefined,
         hasRating: undefined,
         cost: undefined,
+        costFunctions: [],
       },
       selectedGameSystem: null,
       selectedRuleVariantDescription: '',
@@ -117,6 +131,25 @@ export default {
       saving: false,
       errorMessage: null,
       description: null,
+      costFunctionNames: [
+        // units
+        { name: 'addRules', arguments: [] },
+        { name: 'properties', arguments: ['unit'] },
+        { name: 'unitPropertiesForWeapons', arguments: ['unit', 'weapon'] },
+        { name: 'modifyWeapons', arguments: ['weapon'] },
+        { name: 'weaponBaseCostMultiplier', arguments: ['weapon'] },
+        { name: 'weaponCost', arguments: ['unit'] },
+        { name: 'cost', arguments: ['unit|weapon'] },
+        { name: 'unitCost', arguments: ['unit'] },
+        // weapons
+        { name: 'addRules', arguments: [] },
+        { name: 'addUnitRules', arguments: [] },
+        { name: 'baseCostMultiplier', arguments: ['weapon'] },
+        { name: 'newQuality', arguments: ['quality'] },
+        { name: 'addQualityCost', arguments: ['weapon'] },
+        // Impact?
+        { name: 'modifyUnit', arguments: ['unit', 'weapon'] },
+      ],
     };
   },
   computed: {
