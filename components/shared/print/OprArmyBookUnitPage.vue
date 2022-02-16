@@ -117,7 +117,7 @@
           </template>
 
           <div class="column-item" v-if="showSpells">
-            <div class="spell-book__headline">Psychic Spells</div>
+            <div class="spell-book__headline">{{spellHeadline}}</div>
             <div class="spell-book__spells">
               <div
                 v-for="spell in sortedSpells"
@@ -281,6 +281,13 @@ export default {
       if (this.forcePrintAllArmySpecialRules) mergedRules.push(...this.specialRules);
       mergedRules = mergedRules.filter((thing, index, self) => self.findIndex(t => t.name === thing.name) === index);
       return mergedRules;
+    },
+    spellHeadline() {
+      switch (this.universe) {
+        case 'Grimdark Future': return 'Psychic Spells';
+        case 'Age of Fantasy': return 'Psychic Spells';
+        default: return 'Spells';
+      }
     },
     /**
      * we only want to display special rules that are used by units or upgrades
