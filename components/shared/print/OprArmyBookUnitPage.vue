@@ -285,7 +285,7 @@ export default {
     spellHeadline() {
       switch (this.universe) {
         case 'Grimdark Future': return 'Psychic Spells';
-        case 'Age of Fantasy': return 'Psychic Spells';
+        case 'Age of Fantasy': return 'Wizard Spells';
         default: return 'Spells';
       }
     },
