@@ -75,6 +75,9 @@ export default {
         if (gs.slug === 'grimdark-future-firefight') {
           gs.disabled = false;
         }
+        if (gs.slug === 'age-of-fantasy-skirmish') {
+          gs.disabled = true;
+        }
         return gs;
       });
     return {
