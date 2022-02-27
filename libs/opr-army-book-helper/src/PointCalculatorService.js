@@ -298,7 +298,7 @@ const calculateUnitCost = (unit, pointCalculator, customRules = {}) => {
     });
     let weapon = {
       name: e.label,
-      range: e.range > 0 ? e.range : undefined,
+      range: e.range > 0 ? e.range : 'melee',
       attacks: e.attacks,
       rules: equipmentSpecialRules.map(sr => sr.name),
     };
