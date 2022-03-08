@@ -5,38 +5,25 @@
         <v-row>
 
           <v-col :cols="12">
-            <v-card>
-              <v-list-item-group
-                multiple
-                v-model="armyBookEnabledGameSystems"
+            <v-chip-group
+              multiple
+              v-model="armyBookEnabledGameSystems"
+              active-class="info"
+            >
+              <v-chip
+                v-for="gameSystem in gameSystems"
+                :key="gameSystem.id"
+                :value="gameSystem.id"
               >
-                <v-list-item
-                  v-for="gameSystem in gameSystems"
-                  :key="gameSystem.id"
-                  :value="gameSystem.id"
-                >
-                  <template v-slot:default="{ active }">
-                    <v-list-item-avatar size="32" tile>
-                      <img
-                        alt="Avatar"
-                        :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
-                        :class="{ 'img--greyscale': !active }"
-                        :data-active="active"
-                      />
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title>{{ gameSystem.shortname}}</v-list-item-title>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                      <v-checkbox
-                        :input-value="active"
-                        color="info"
-                      ></v-checkbox>
-                    </v-list-item-action>
-                  </template>
-                </v-list-item>
-              </v-list-item-group>
-            </v-card>
+                <v-avatar left>
+                  <v-img
+                    alt="Avatar"
+                    :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
+                  />
+                </v-avatar>
+                {{ gameSystem.aberration}}
+              </v-chip>
+            </v-chip-group>
           </v-col>
 
           <v-col :cols="12">
@@ -79,6 +66,42 @@
           </v-col>
 
         </v-row>
+      </v-col>
+
+      <v-col :cols="12" :md="6" v-if="armyBookEnabledGameSystems">
+        <v-card>
+          <v-list>
+            <v-list-item
+              v-for="gameSystem in gameSystems.filter(gameSystem => armyBookEnabledGameSystems.includes(gameSystem.id))"
+              :key="gameSystem.id"
+              :value="gameSystem.id"
+              :disabled="!armyBookEnabledGameSystems.includes(gameSystem.id)"
+            >
+              <v-list-item-avatar size="32" tile>
+                <img
+                  alt="Avatar"
+                  :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
+                  :class="{ 'img--greyscale': !armyBookEnabledGameSystems.includes(gameSystem.id) }"
+                />
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ gameSystem.shortname}}</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-btn
+                  icon
+                  color="info"
+                  :disabled="!armyBookEnabledGameSystems.includes(gameSystem.id)"
+                  nuxt
+                  target="_blank"
+                  :to="`/army-books/view/${armyBookId}~${gameSystem.id}/print`"
+                >
+                  <v-icon>mdi-printer</v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list>
+        </v-card>
       </v-col>
     </v-row>
 

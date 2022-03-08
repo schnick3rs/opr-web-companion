@@ -114,15 +114,16 @@ router.get('/special-rules', cors(), async (request, response) => {
 
   let commonSpecialRules = items
     .map(item => {
+      const { name, slug, description, hasRating, defaultRating, tags } = item.fields;
       return {
-        key: item.fields.name.toLowerCase().replace(/\W/gm, '-'),
-        slug: item.fields.slug,
-        name: item.fields.name,
-        description: item.fields.description,
+        key: name.toLowerCase().replace(/\W/gm, '-'),
+        slug,
+        name,
+        description,
         descriptions: {},
-        hasRating: item.fields.hasRating,
-        defaultRating: item.fields.defaultRating,
-        tags: item.fields.tags,
+        hasRating,
+        defaultRating,
+        tags,
       };
     })
     .reduce(reducer, [])
