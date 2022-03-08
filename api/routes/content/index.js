@@ -1,6 +1,7 @@
 import Router from 'express-promise-router';
 import cors from 'cors';
 import { createClient } from 'contentful';
+import _ from 'lodash';
 
 const router = new Router();
 
@@ -79,6 +80,59 @@ router.get('/rule-books/:id', async (request, response) => {
   const ruleBook = ruleBookResponse.fields;
 
   response.status(200).json(ruleBook);
+});
+
+router.get('/special-rules', cors(), async (request, response) => {
+
+  const query = {
+    'content_type': 'oprSpecialRuleSnippet',
+  };
+  const { items } = await client.getEntries(query);
+
+  const reducer = (previousValue, currentValue) => {
+    const number = previousValue.findIndex(rule => rule.key === currentValue.key);
+    if (number >= 0) {
+      if (currentValue.slug.endsWith('-skirmish')) {
+        previousValue[number].descriptions[3] = currentValue.description;
+        previousValue[number].descriptions[5] = currentValue.description;
+      } else if (currentValue.slug.endsWith('-regiments')) {
+        previousValue[number].descriptions[6] = currentValue.description;
+      } else {
+        previousValue[number].description = currentValue.description;
+      }
+    } else {
+      if (currentValue.slug.endsWith('-skirmish')) {
+        currentValue.descriptions[3] = currentValue.description;
+        currentValue.descriptions[5] = currentValue.description;
+      } else if (currentValue.slug.endsWith('-regiments')) {
+        currentValue.descriptions[6] = currentValue.description;
+      }
+      previousValue.push(currentValue);
+    }
+    return previousValue;
+  };
+
+  let commonSpecialRules = items
+    .map(item => {
+      return {
+        key: item.fields.name.toLowerCase().replace(/\W/gm, '-'),
+        slug: item.fields.slug,
+        name: item.fields.name,
+        description: item.fields.description,
+        descriptions: {},
+        hasRating: item.fields.hasRating,
+        defaultRating: item.fields.defaultRating,
+        tags: item.fields.tags,
+      };
+    })
+    .reduce(reducer, [])
+    .map(rule => {
+      rule.slug = rule.key;
+      return rule;
+    });
+
+  response.set('Cache-Control', 'public, max-age=3600'); // one hour
+  response.status(200).json(commonSpecialRules);
 });
 
 export default router;

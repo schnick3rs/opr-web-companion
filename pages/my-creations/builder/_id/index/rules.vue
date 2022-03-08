@@ -150,8 +150,10 @@ export default {
     OprArmyBookSpecialRuleEditor,
     OprDialog,
   },
-  async asyncData({ params }) {
+  async asyncData({ params, $axios }) {
+    const { data } = await $axios.get(`/api/content/special-rules`);
     return {
+      commonSpecialRules: data,
       armyBookId: params.id,
     };
   },
@@ -171,21 +173,7 @@ export default {
       },
     };
   },
-  watch: {
-    armyBookGameSystemSlug: {
-      handler(gameSystemSlug) {
-        if (gameSystemSlug) {
-          this.loadGameSystemSpecialRules(gameSystemSlug);
-        }
-      },
-      immediate: true,
-    },
-  },
   methods: {
-    async loadGameSystemSpecialRules(slug) {
-      const { data } = await this.$axios.get(`/api/content/game-systems/${slug}/special-rules`);
-      this.commonSpecialRules = data;
-    },
     parseSpecialRulesInput(event = undefined) {
       let parsableString = this.specialRuleEditor.importString;
       if (event) {

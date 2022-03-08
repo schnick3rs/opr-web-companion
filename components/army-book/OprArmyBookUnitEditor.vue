@@ -569,7 +569,7 @@ export default {
   },
   methods: {
     async loadArmyBookAndAssets() {
-      const { data } = await this.$axios.get(`/api/content/game-systems/${this.armyBookGameSystemSlug}/special-rules`);
+      const { data } = await this.$axios.get(`/api/content/special-rules`);
       this.commonSpecialRules = data;
     },
     loadSyncInformation() {

@@ -241,17 +241,28 @@
           hide-default-footer
         >
           <template v-slot:item.name="{ item }">
-            <v-list-item two-line>
-              <v-list-item-avatar>
-                <v-avatar size="32" tile>
-                  <img alt="Avatar" :src="`/img/game-systems/${item.gameSystemSlug}-avatar.jpg`"/>
-                </v-avatar>
-              </v-list-item-avatar>
+            <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>{{ item.name }}</v-list-item-title>
-                <v-list-item-subtitle>{{ item.gameSystemShortname }}</v-list-item-subtitle>
+                <v-list-item-subtitle v-show="false">{{ item.hint }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
+          </template>
+
+          <template v-slot:item.system="{ item }">
+            <v-avatar
+              :size="24"
+              class="mr-2"
+              tile
+              v-for="gameSystem in gameSystems"
+              v-show="item.enabledGameSystems.includes(gameSystem.id)"
+            >
+              <img
+                alt="Avatar"
+                :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
+                :class="{ 'greyscale': !item.enabledGameSystems.includes(gameSystem.id)}"
+              />
+            </v-avatar>
           </template>
 
           <template v-slot:item.isLive="{ item }">
@@ -365,6 +376,7 @@ export default {
       ],
       headers: [
         {text: 'Name', align: 'start', value: 'name'},
+        {text: 'Systems', align: 'start', value: 'system'},
         {text: 'Version', align: 'start', value: 'versionString'},
         {text: 'Published', align: 'start', value: 'isLive'},
         {text: 'Visibility', align: 'start', value: 'public'},
@@ -422,7 +434,7 @@ export default {
         if (this.selectedGameSystems.length > 0) {
           this.selectedGameSystems.forEach(i => {
             const gameSystem = this.gameSystems[i];
-            const matchedBooks = this.armyBookSets.filter(ab => ab.gameSystemSlug === gameSystem.slug);
+            const matchedBooks = this.armyBookSets.filter(ab => ab.enabledGameSystems.includes(gameSystem.id));
             filteredBooks.push(...matchedBooks);
           })
         } else {
@@ -442,11 +454,11 @@ export default {
     gameSystemOptions() {
       if (this.gameSystems) {
         return this.gameSystems
-          .filter(system => system.armyBookBuilderEnabled)
-          .map(system => {
+          .filter(gameSystem => gameSystem.armyBookBuilderEnabled)
+          .map(gameSystem => {
             return {
-              text: system.fullname,
-              value: system.id,
+              text: gameSystem.fullname,
+              value: gameSystem.id,
             };
           });
       }

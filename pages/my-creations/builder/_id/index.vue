@@ -49,6 +49,7 @@
               {{ child.label }}
             </v-tab>
             <v-tab
+              v-show="false"
               nuxt
               exact
               :to="`/army-books/view/${armyBookId}/print`"
