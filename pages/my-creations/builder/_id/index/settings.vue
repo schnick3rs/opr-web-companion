@@ -87,7 +87,10 @@
               <v-list-item-content>
                 <v-list-item-title>{{ gameSystem.shortname}}</v-list-item-title>
               </v-list-item-content>
-              <v-list-item-action>
+              <v-list-item-action style="display: inline;">
+                <v-btn icon color="primary" @click="shareViaWebShare(gameSystem.id)">
+                  <v-icon>mdi-share-variant</v-icon>
+                </v-btn>
                 <v-btn
                   icon
                   color="info"
@@ -127,6 +130,13 @@ export default {
     save() {
       this.$store.dispatch('armyBooks/updateGeneralInformation', { armyBookUid: this.armyBookId });
     },
+    shareViaWebShare(gameSystemId) {
+      navigator.share({
+        title: this.armyBookName,
+        text: this.armyBookHint,
+        url: `/army-books/view/${this.armyBookId}~${gameSystemId}/print`
+      })
+    },
   },
   computed: {
     hasPointCalcRights() {
@@ -150,6 +160,12 @@ export default {
     },
     armyBookGameSystemId() {
       return this.$store.getters['armyBooks/armyBookGameSystemId'](this.armyBookId);
+    },
+    armyBookName() {
+      return this.$store.getters['armyBooks/armyBookName'](this.armyBookId);
+    },
+    armyBookHint() {
+      return this.$store.getters['armyBooks/armyBookHint'](this.armyBookId);
     },
     armyBookVersionString: {
       get() {
