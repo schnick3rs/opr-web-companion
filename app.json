@@ -2,6 +2,9 @@
   "addons": [],
   "buildpacks": [
     {
+      "url": "https://github.com/debitoor/ssh-private-key-buildpack"
+    },
+    {
       "url": "heroku/nodejs"
     }
   ],
