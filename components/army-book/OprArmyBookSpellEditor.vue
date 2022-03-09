@@ -16,7 +16,6 @@
       v-else
       :elevation="elevation"
     >
-      <v-card-title>{{ spell.name }}</v-card-title>
 
       <v-card-text>
 
