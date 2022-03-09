@@ -273,16 +273,15 @@ router.get('/:armyBookUid', cors(), async (request, response) => {
 router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
 
   const { armyBookUid } = request.params;
-  let originArmyBookUid = armyBookUid;
-  let minify = false;
+  let unflavoredArmyBookUid = armyBookUid;
   let userId = request?.me?.userId || 0;
 
-  if (armyBookUid.endsWith('-skirmish')) {
-    originArmyBookUid = armyBookUid.split('-skirmish')[0];
-    minify = true;
+  if (armyBookUid.indexOf('~') >= 0) {
+    const split = armyBookUid.split('~');
+    unflavoredArmyBookUid = split[0];
   }
 
-  const armyBook = await armyBookService.getArmyBookPublicOrOwner(originArmyBookUid, userId);
+  const armyBook = await armyBookService.getArmyBookPublicOrOwner(unflavoredArmyBookUid, userId);
 
   if (!armyBook) {
     response.status(404).json({});
@@ -300,14 +299,14 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
 
     if (!pdfByteArray) {
 
-      console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching from service provider...`);
+      console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching ${armyBookUid} from service provider...`);
 
       const res = await pdfService.generateViaHtml2pdf(armyBookUid);
       //const res = await pdfService.generateViaSejda(armyBookUid);
 
       if (res) {
         pdfByteArray = res.data;
-        console.info(`[${armyBook.name}] #${armyBook.uid} :: Save pdf bytes ${pdfByteArray.length}...`);
+        console.info(`[${armyBook.name}] #${armyBook.uid} :: Save pdf, ${pdfByteArray.length} bytes ...`);
         await armyBookService.savePdfA4(armyBookUid, pdfByteArray, new Date(armyBook.modifiedAt.toISOString()), 'Html2pdf');
       } else {
         console.error(`[${armyBook.name}] #${armyBook.uid} :: PDF could not be generated!`);
