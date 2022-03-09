@@ -226,10 +226,10 @@ export async function getAllByUserId(userId) {
     'army_books.hint, ' +
     'army_books.background, ' +
     'army_books.army_wide_rule AS "armyWideRule", ' +
-    'army_books.units, ' +
-    'army_books.upgrade_packages AS "upgradePackages", ' +
-    'army_books.special_rules AS "specialRules", ' +
-    'army_books.spells, ' +
+    'jsonb_array_length(army_books.units) AS "unitCount", ' +
+    'jsonb_array_length(army_books.upgrade_packages) AS "upgradePackageCount", ' +
+    'jsonb_array_length(army_books.special_rules) AS "specialRulesPackageCount", ' +
+    'jsonb_array_length(army_books.spells) AS "spellCount", ' +
     'army_books.modified_at AS "modifiedAt", ' +
     'army_books.official, ' +
     'army_books.public, ' +

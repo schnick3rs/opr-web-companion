@@ -271,8 +271,8 @@
             <v-chip small label color="warning" v-else>Private</v-chip>
           </template>
 
-          <template v-slot:item.units.length="{ item }">
-            {{ item.units.length }} <v-icon>mdi-account-multiple</v-icon>
+          <template v-slot:item.unitCount="{ item }">
+            {{ item.unitCount }} <v-icon>mdi-account-multiple</v-icon>
           </template>
 
           <template v-slot:item.system="{ item }">
@@ -282,6 +282,7 @@
               nuxt :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
               target="_blank"
               icon
+              :title="gameSystem.shortname"
             >
               <v-avatar
                 :size="24"
@@ -393,10 +394,11 @@ export default {
         {text: 'Version', align: 'start', value: 'versionString'},
         //{text: 'Published', align: 'start', value: 'isLive'},
         {text: 'Visibility', align: 'start', value: 'public'},
-        {text: '#Units', align: 'center', value: 'units.length'},
+        {text: '#Units', align: 'center', value: 'unitCount'},
         {text: 'Games', align: 'start', value: 'system'},
         {text: 'Actions', align: 'center', value: 'actions'},
       ],
+      armyBookSets: [],
       search: '',
       selectedGameSystems: [],
       showNewArmyBookDialog: false,
@@ -436,7 +438,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      armyBookSets: 'armyBooks/armyBookSets',
+      //armyBookSets: 'armyBooks/armyBookSets',
     }),
     isAdmin() {
       return this.$store.state.auth.user.isAdmin;
@@ -483,7 +485,13 @@ export default {
   watch: {
     user: {
       handler(newValue) {
-        this.$store.dispatch('armyBooks/loadAll');
+        //this.$store.dispatch('armyBooks/loadAll');
+        this.$store.commit('armyBooks/LOADING', { status: true, message: 'Loading your army books...' });
+        this.$axios.get(`/api/army-books/mine`).then(({ data }) => {
+          this.armyBookSets = data;
+        }).finally(() => {
+          this.$store.commit('armyBooks/LOADING', { status: false });
+        });
       },
       immediate: true, // make this watch function is called when component created
     },
