@@ -159,7 +159,10 @@ export async function getPublicArmyBooksListView(gameSystemId = 0) {
     'ORDER BY army_books.name ASC',
     [[gameSystemId], gameSystemId === 0]
   );
-  return rows;
+  return rows.map(armyBook => {
+    armyBook.flavoredUid = gameSystemId ? `${armyBook.uid}~${gameSystemId}` : undefined;
+    return armyBook;
+  });
 }
 
 export async function getArmyBookPublicOrOwner(armyBookUid, userId) {

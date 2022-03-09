@@ -200,8 +200,6 @@ router.post('/import', async (request, response) => {
  */
 router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
 
-  console.info('/:armyBookUid~:gameSystemId')
-  console.info(request.params)
   const { armyBookUid, gameSystemId } = request.params;
   let userId = request?.me?.userId || 0;
 
@@ -226,6 +224,7 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
       armyBook.aberration = gameSystem.aberration;
       armyBook.universe = gameSystem.universe;
       armyBook.shortname = gameSystem.shortname;
+      armyBook.flavoredUid = `${armyBook.uid}~${gameSystemId}`;
     } else {
       console.warn(`No GameSystem found for gameSystem=${gameSystemId}.`);
     }
