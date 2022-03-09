@@ -609,9 +609,13 @@ export function skirmify(armyBook) {
     // group by section label
     pack.sections = pack.sections.reduce((previousValue, currentValue) => {
 
-        let sameSectionIndex = previousValue.findIndex(
-          (section) => section.label === currentValue.label
-        );
+        let sameSectionIndex = previousValue.findIndex((section) => {
+          if (section.label.startsWith('Upgrade with ') ) {
+            // We do not want to merge upgrades which have a limit like 'Upgrade with one'
+            return false;
+          }
+          return section.label === currentValue.label
+        });
 
         if (sameSectionIndex >= 0) {
           let options = currentValue.options;
