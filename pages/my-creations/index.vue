@@ -265,6 +265,61 @@
             </v-avatar>
           </template>
 
+          <template v-slot:item.view="{ item }">
+
+            <v-menu bottom offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs" v-on="on"
+                  icon small
+                >
+                  <v-icon>mdi-file-pdf-box</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="gameSystem in gameSystems.filter(gameSystem => item.enabledGameSystems.includes(gameSystem.id))"
+                  :key="gameSystem.id"
+                  nuxt :to="`/army-books/view/${item.uid}~${gameSystem.id}/pdf`"
+                  target="_blank" dense
+                >
+                  <v-list-item-avatar size="16" tile>
+                    <v-img
+                      :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
+                    />
+                  </v-list-item-avatar>
+                  <v-list-item-title>{{ gameSystem.shortname}}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
+            <v-menu bottom offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs" v-on="on"
+                    icon small
+                  >
+                    <v-icon>mdi-printer</v-icon>
+                  </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="gameSystem in gameSystems.filter(gameSystem => item.enabledGameSystems.includes(gameSystem.id))"
+                  :key="gameSystem.id"
+                  nuxt :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
+                  target="_blank" dense
+                >
+                  <v-list-item-avatar size="16" tile>
+                    <v-img
+                      :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
+                    />
+                  </v-list-item-avatar>
+                  <v-list-item-title>{{ gameSystem.shortname}}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </template>
+
           <template v-slot:item.isLive="{ item }">
             <v-chip small label color="primary" v-if="item.isLive">Live</v-chip>
             <v-chip small label color="warning" v-else>Draft</v-chip>
@@ -286,19 +341,6 @@
               color="success"
             >
               <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn
-              nuxt :to="`/army-books/view/${item.uid}/print`"
-              icon small
-            >
-              <v-icon>mdi-printer</v-icon>
-            </v-btn>
-            <v-btn
-              :href="`/api/army-books/${item.uid}/pdf`"
-              download
-              icon small
-            >
-              <v-icon>mdi-file-pdf-box</v-icon>
             </v-btn>
             <v-btn
               @click="openDeleteArmyBookDialog(item.uid, item.name)"
@@ -376,9 +418,10 @@ export default {
       ],
       headers: [
         {text: 'Name', align: 'start', value: 'name'},
-        {text: 'Systems', align: 'start', value: 'system'},
+        {text: 'Enabled Systems', align: 'start', value: 'system'},
+        {text: 'View', align: 'center', value: 'view'},
+        //{text: 'Published', align: 'start', value: 'isLive'},
         {text: 'Version', align: 'start', value: 'versionString'},
-        {text: 'Published', align: 'start', value: 'isLive'},
         {text: 'Visibility', align: 'start', value: 'public'},
         {text: '#Units', align: 'center', value: 'units.length'},
         {text: 'Actions', align: 'center', value: 'actions'},

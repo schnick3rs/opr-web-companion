@@ -47,7 +47,7 @@ router.get('/mine', async (request, response) => {
 router.post('/', async (request, response) => {
   const { name, hint, gameSystemId, background } = request.body;
 
-  const armyBook = await armyBookService.createArmyBook(request.me.userId, gameSystemId, name, hint, background);
+  const armyBook = await armyBookService.createArmyBook(request.me.userId, [gameSystemId], name, hint, background);
 
   if (armyBook) {
     response.status(200).json(armyBook);
@@ -61,7 +61,7 @@ router.post('/detachment', async (request, response) => {
   const { name, hint, gameSystemId, parentArmyBookId, clones, syncs } = request.body;
 
   // create new army book
-  const newArmyBook = await armyBookService.createArmyBook(request.me.userId, gameSystemId, name, hint);
+  const newArmyBook = await armyBookService.createArmyBook(request.me.userId, [gameSystemId], name, hint);
 
   // fetch units from parent
   const parentArmyBook = await armyBookService.getArmyBookPublicOrOwner(parentArmyBookId, request.me.userId);
@@ -165,7 +165,7 @@ router.post('/import', async (request, response) => {
   })
 
   try {
-    const { uid } = await armyBookService.createArmyBook(request.me.userId, gameSystemId, name, hint, background);
+    const { uid } = await armyBookService.createArmyBook(request.me.userId, [gameSystemId], name, hint, background);
 
     const updateSetFields = [];
     const updateSetValues = [];

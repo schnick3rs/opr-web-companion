@@ -10,17 +10,18 @@ import calc from "opr-point-calculator-lib";
 
 /* CREATE */
 
-export async function createArmyBook(userId, gameSystemId, name, hint, background) {
+export async function createArmyBook(userId, enabledGameSystems, name, hint, background) {
   try {
     const insert = await pool.query(
-      'INSERT INTO opr_companion.army_books (uid, user_id, name, hint, background) ' +
-      'VALUES ($1, $2, $3, $4, $5) RETURNING uid',
-      [ nanoid(16), userId, gameSystemId, name, hint, background ],
+      'INSERT INTO opr_companion.army_books (uid, user_id, enabled_game_systems, name, hint, background) ' +
+      'VALUES ($1, $2, $3, $4, $5, $6) RETURNING uid',
+      [ nanoid(16), userId, enabledGameSystems, name, hint, background ],
     );
     const { uid } = insert.rows[0];
     const { rows } = await pool.query(
       'SELECT ' +
       'army_books.uid, ' +
+      'army_books.enabled_game_systems AS "enabledGameSystems", ' +
       'army_books.name, ' +
       'army_books.hint, ' +
       'army_books.background, ' +

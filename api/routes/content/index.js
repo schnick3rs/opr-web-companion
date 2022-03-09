@@ -130,7 +130,8 @@ router.get('/special-rules', cors(), async (request, response) => {
     .map(rule => {
       rule.slug = rule.key;
       return rule;
-    });
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   response.set('Cache-Control', 'public, max-age=3600'); // one hour
   response.status(200).json(commonSpecialRules);
