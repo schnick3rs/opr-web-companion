@@ -230,14 +230,26 @@
     </v-item-group>
 
     <v-row>
-      <v-col>
+      <v-col :cols="12">
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          label="Search"
+          single-line
+          outlined dense
+          hide-details
+          clearable
+        ></v-text-field>
+      </v-col>
+      <v-col :cols="12">
         <v-data-table
           :headers="headers"
           :items="filteredArmyBooks"
+          :search="search"
           :loading="vuexLoading"
           :loading-text="vuexLoadingMessage"
           dense
-          :items-per-page="50"
+          :items-per-page="-1"
           hide-default-footer
         >
           <template v-slot:item.name="{ item }">
@@ -247,77 +259,6 @@
                 <v-list-item-subtitle v-show="false">{{ item.hint }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-          </template>
-
-          <template v-slot:item.system="{ item }">
-            <v-avatar
-              :size="24"
-              class="mr-2"
-              tile
-              v-for="gameSystem in gameSystems"
-              v-show="item.enabledGameSystems.includes(gameSystem.id)"
-            >
-              <img
-                alt="Avatar"
-                :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
-                :class="{ 'greyscale': !item.enabledGameSystems.includes(gameSystem.id)}"
-              />
-            </v-avatar>
-          </template>
-
-          <template v-slot:item.view="{ item }">
-
-            <v-menu bottom offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs" v-on="on"
-                  icon small
-                >
-                  <v-icon>mdi-file-pdf-box</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item
-                  v-for="gameSystem in gameSystems.filter(gameSystem => item.enabledGameSystems.includes(gameSystem.id))"
-                  :key="gameSystem.id"
-                  nuxt :to="`/army-books/view/${item.uid}~${gameSystem.id}/pdf`"
-                  target="_blank" dense
-                >
-                  <v-list-item-avatar size="16" tile>
-                    <v-img
-                      :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
-                    />
-                  </v-list-item-avatar>
-                  <v-list-item-title>{{ gameSystem.shortname}}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-
-            <v-menu bottom offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    v-bind="attrs" v-on="on"
-                    icon small
-                  >
-                    <v-icon>mdi-printer</v-icon>
-                  </v-btn>
-              </template>
-              <v-list>
-                <v-list-item
-                  v-for="gameSystem in gameSystems.filter(gameSystem => item.enabledGameSystems.includes(gameSystem.id))"
-                  :key="gameSystem.id"
-                  nuxt :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
-                  target="_blank" dense
-                >
-                  <v-list-item-avatar size="16" tile>
-                    <v-img
-                      :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
-                    />
-                  </v-list-item-avatar>
-                  <v-list-item-title>{{ gameSystem.shortname}}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
           </template>
 
           <template v-slot:item.isLive="{ item }">
@@ -334,6 +275,28 @@
             {{ item.units.length }} <v-icon>mdi-account-multiple</v-icon>
           </template>
 
+          <template v-slot:item.system="{ item }">
+            <v-btn
+              v-for="gameSystem in gameSystems"
+              v-show="item.enabledGameSystems.includes(gameSystem.id)"
+              nuxt :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
+              target="_blank"
+              icon
+            >
+              <v-avatar
+                :size="24"
+                class="mr-2"
+                tile
+              >
+                <img
+                  alt="Avatar"
+                  :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
+                  :class="{ 'greyscale': !item.enabledGameSystems.includes(gameSystem.id)}"
+                />
+              </v-avatar>
+            </v-btn>
+          </template>
+
           <template v-slot:item.actions="{ item }">
             <v-btn
               nuxt :to="`/my-creations/builder/${item.uid}`"
@@ -341,6 +304,15 @@
               color="success"
             >
               <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn
+              icon small
+              color="primary"
+              @click="recalculateArmyBook(item.uid)"
+              title="recalculate army book"
+              disabled
+            >
+              <v-icon>mdi-autorenew</v-icon>
             </v-btn>
             <v-btn
               @click="openDeleteArmyBookDialog(item.uid, item.name)"
@@ -418,14 +390,14 @@ export default {
       ],
       headers: [
         {text: 'Name', align: 'start', value: 'name'},
-        {text: 'Enabled Systems', align: 'start', value: 'system'},
-        {text: 'View', align: 'center', value: 'view'},
-        //{text: 'Published', align: 'start', value: 'isLive'},
         {text: 'Version', align: 'start', value: 'versionString'},
+        //{text: 'Published', align: 'start', value: 'isLive'},
         {text: 'Visibility', align: 'start', value: 'public'},
         {text: '#Units', align: 'center', value: 'units.length'},
+        {text: 'Games', align: 'start', value: 'system'},
         {text: 'Actions', align: 'center', value: 'actions'},
       ],
+      search: '',
       selectedGameSystems: [],
       showNewArmyBookDialog: false,
       newArmyBookForm: {
@@ -626,6 +598,14 @@ export default {
         this.$store.dispatch('armyBooks/delete', uid);
         this.$ga.event('Army Book', 'delete', `${uid}`, 1);
         this.showDeleteArmyBookDialog = false;
+      }
+    },
+    recalculateArmyBook(armyBookUid) {
+      if (this.$oprPointCalculator) {
+        const payload = { armyBookUid };
+        this.$store.dispatch('armyBooks/recalculateArmyBook', payload);
+      } else {
+        console.info('Point Calculator Feature disabled.');
       }
     },
   },
