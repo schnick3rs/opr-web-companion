@@ -30,7 +30,7 @@ router.get('/', cors(), async (request, response) => {
 
   // all original army books for this system
   const gameSystem = await gameSystemService.getGameSystemBySlug(gameSystemSlug);
-  let items = await armyBookService.getPublicArmyBooksListView(gameSystem.id);
+  let items = await armyBookService.getPublicArmyBooksListView(gameSystem?.id || 0);
 
   response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
   response.status(200).json(items);
