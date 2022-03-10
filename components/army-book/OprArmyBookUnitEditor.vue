@@ -17,7 +17,16 @@
       :elevation="elevation"
     >
       <v-card-title>
-        {{ unit.name }}
+        <v-text-field
+          ref="entry"
+          v-model="unit.name"
+          @input="updateName(unit.name)"
+          label="Unit Name"
+          outlined dense
+          aria-required="true"
+          hide-details
+          :rules="[rules.required]"
+        ></v-text-field>
         <v-spacer></v-spacer>
         <template v-if="hasSync">
           <v-tooltip left>
@@ -27,6 +36,7 @@
                 v-on="on"
                 @mouseover="loadSyncInformation"
                 @click="updateSync"
+                class="mr-1"
               >
                 mdi-dna
               </v-icon>
@@ -38,10 +48,6 @@
             <v-progress-circular v-else indeterminate color="warning"></v-progress-circular>
           </v-tooltip>
         </template>
-      </v-card-title>
-      <v-divider></v-divider>
-
-      <v-card-actions>
         <v-btn
           color="primary"
           :disabled="!unsavedChanges"
@@ -51,31 +57,34 @@
           <v-icon class="mdi-spin" left v-if="saving">mdi-loading</v-icon>
           <template>Save</template>
         </v-btn>
-        <v-spacer></v-spacer>
-        <v-switch
-          inset dense
-          v-model="costModeAutomatic"
-          label="Cost Mode"
-          persistent-hint
-          :hint="costModeAutomatic ? 'Calculate automatic' : 'Edit manually'"
-        ></v-switch>
-      </v-card-actions>
+      </v-card-title>
 
       <v-divider></v-divider>
 
       <v-card-text>
 
         <v-row>
-          <v-col cols="12" :sm="6">
-            <v-text-field
-              ref="entry"
-              v-model="unit.name"
-              @input="updateName(unit.name)"
-              label="Unit Name"
+          <v-col cols="6" :sm="3">
+            <v-select
               outlined dense
-              aria-required="true"
-              :rules="[rules.required]"
-            ></v-text-field>
+              label="Quality"
+              v-model="unit.quality"
+              :items="qualityOptions"
+              @input="updateQuality(unit.quality)"
+              :readonly="!!unit.sync"
+              :append-icon="unit.sync ? 'mdi-lock' : ''"
+            ></v-select>
+          </v-col>
+          <v-col cols="6" :sm="3">
+            <v-select
+              outlined dense
+              label="Defense"
+              v-model="unit.defense"
+              :items="qualityOptions"
+              @input="updateDefense(unit.defense)"
+              :readonly="!!unit.sync"
+              :append-icon="unit.sync ? 'mdi-lock' : ''"
+            ></v-select>
           </v-col>
           <v-col cols="6" :sm="3">
             <v-text-field
@@ -102,31 +111,6 @@
             automatic: on change, adjust pointcost accordingly append-outer-icon="mdi-lock"
             manually: don't adjust automatically
             -->
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="6" :sm="3">
-            <v-select
-              outlined dense
-              label="Quality"
-              v-model="unit.quality"
-              :items="qualityOptions"
-              @input="updateQuality(unit.quality)"
-              :readonly="!!unit.sync"
-              :append-icon="unit.sync ? 'mdi-lock' : ''"
-            ></v-select>
-          </v-col>
-          <v-col cols="6" :sm="3">
-            <v-select
-              outlined dense
-              label="Defense"
-              v-model="unit.defense"
-              :items="qualityOptions"
-              @input="updateDefense(unit.defense)"
-              :readonly="!!unit.sync"
-              :append-icon="unit.sync ? 'mdi-lock' : ''"
-            ></v-select>
           </v-col>
         </v-row>
 
@@ -243,7 +227,6 @@
             </v-text-field>
           </v-col>
         </v-row>
-
         <!-- deprecated -->
         <v-row v-if="false">
           <v-col cols="6">
@@ -323,6 +306,21 @@
           </v-col>
         </v-row>
       </v-card-text>
+
+
+      <v-divider></v-divider>
+
+      <v-card-actions>
+
+        <v-spacer></v-spacer>
+        <v-switch
+          inset dense
+          v-model="costModeAutomatic"
+          label="Cost Mode"
+          persistent-hint
+          :hint="costModeAutomatic ? 'Calculate automatic' : 'Edit manually'"
+        ></v-switch>
+      </v-card-actions>
 
       <template v-if="isAdmin">
         <v-divider></v-divider>
@@ -569,7 +567,7 @@ export default {
   },
   methods: {
     async loadArmyBookAndAssets() {
-      const { data } = await this.$axios.get(`/api/content/game-systems/${this.armyBookGameSystemSlug}/special-rules`);
+      const { data } = await this.$axios.get(`/api/content/special-rules`);
       this.commonSpecialRules = data;
     },
     loadSyncInformation() {

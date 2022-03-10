@@ -81,4 +81,59 @@ router.get('/rule-books/:id', async (request, response) => {
   response.status(200).json(ruleBook);
 });
 
+router.get('/special-rules', cors(), async (request, response) => {
+
+  const query = {
+    'content_type': 'oprSpecialRuleSnippet',
+  };
+  const { items } = await client.getEntries(query);
+
+  const reducer = (previousValue, currentValue) => {
+    const number = previousValue.findIndex(rule => rule.key === currentValue.key);
+    if (number >= 0) {
+      if (currentValue.slug.endsWith('-skirmish')) {
+        previousValue[number].descriptions[3] = currentValue.description;
+        previousValue[number].descriptions[5] = currentValue.description;
+      } else if (currentValue.slug.endsWith('-regiments')) {
+        previousValue[number].descriptions[6] = currentValue.description;
+      } else {
+        previousValue[number].description = currentValue.description;
+      }
+    } else {
+      if (currentValue.slug.endsWith('-skirmish')) {
+        currentValue.descriptions[3] = currentValue.description;
+        currentValue.descriptions[5] = currentValue.description;
+      } else if (currentValue.slug.endsWith('-regiments')) {
+        currentValue.descriptions[6] = currentValue.description;
+      }
+      previousValue.push(currentValue);
+    }
+    return previousValue;
+  };
+
+  let commonSpecialRules = items
+    .map(item => {
+      const { name, slug, description, hasRating, defaultRating, tags } = item.fields;
+      return {
+        key: name.toLowerCase().replace(/\W/gm, '-'),
+        slug,
+        name,
+        description,
+        descriptions: {},
+        hasRating,
+        defaultRating,
+        tags,
+      };
+    })
+    .reduce(reducer, [])
+    .map(rule => {
+      rule.slug = rule.key;
+      return rule;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  response.set('Cache-Control', 'public, max-age=3600'); // one hour
+  response.status(200).json(commonSpecialRules);
+});
+
 export default router;

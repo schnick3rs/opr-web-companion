@@ -10,6 +10,7 @@ import armyBooks from './armyBooks';
 import content from './content';
 import admin from './admin';
 import myminifactory from './myminifactory';
+import parser from './parser';
 
 export default {
   warfleetsFtl,
@@ -23,5 +24,6 @@ export default {
   armyBooks,
   content,
   admin,
+  parser,
   myminifactory,
 };

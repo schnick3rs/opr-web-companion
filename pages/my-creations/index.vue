@@ -230,26 +230,33 @@
     </v-item-group>
 
     <v-row>
-      <v-col>
+      <v-col :cols="12">
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          label="Search"
+          single-line
+          outlined dense
+          hide-details
+          clearable
+        ></v-text-field>
+      </v-col>
+      <v-col :cols="12">
         <v-data-table
           :headers="headers"
           :items="filteredArmyBooks"
+          :search="search"
           :loading="vuexLoading"
           :loading-text="vuexLoadingMessage"
           dense
-          :items-per-page="50"
+          :items-per-page="-1"
           hide-default-footer
         >
           <template v-slot:item.name="{ item }">
-            <v-list-item two-line>
-              <v-list-item-avatar>
-                <v-avatar size="32" tile>
-                  <img alt="Avatar" :src="`/img/game-systems/${item.gameSystemSlug}-avatar.jpg`"/>
-                </v-avatar>
-              </v-list-item-avatar>
+            <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>{{ item.name }}</v-list-item-title>
-                <v-list-item-subtitle>{{ item.gameSystemShortname }}</v-list-item-subtitle>
+                <v-list-item-subtitle v-show="false">{{ item.hint }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </template>
@@ -264,8 +271,31 @@
             <v-chip small label color="warning" v-else>Private</v-chip>
           </template>
 
-          <template v-slot:item.units.length="{ item }">
-            {{ item.units.length }} <v-icon>mdi-account-multiple</v-icon>
+          <template v-slot:item.unitCount="{ item }">
+            {{ item.unitCount }} <v-icon>mdi-account-multiple</v-icon>
+          </template>
+
+          <template v-slot:item.system="{ item }">
+            <v-btn
+              v-for="gameSystem in gameSystems"
+              v-show="item.enabledGameSystems.includes(gameSystem.id)"
+              nuxt :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
+              target="_blank"
+              icon
+              :title="gameSystem.shortname"
+            >
+              <v-avatar
+                :size="24"
+                class="mr-2"
+                tile
+              >
+                <img
+                  alt="Avatar"
+                  :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
+                  :class="{ 'greyscale': !item.enabledGameSystems.includes(gameSystem.id)}"
+                />
+              </v-avatar>
+            </v-btn>
           </template>
 
           <template v-slot:item.actions="{ item }">
@@ -277,17 +307,13 @@
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
             <v-btn
-              nuxt :to="`/army-books/view/${item.uid}/print`"
               icon small
+              color="primary"
+              @click="recalculateArmyBook(item.uid)"
+              title="recalculate army book"
+              disabled
             >
-              <v-icon>mdi-printer</v-icon>
-            </v-btn>
-            <v-btn
-              :href="`/api/army-books/${item.uid}/pdf`"
-              download
-              icon small
-            >
-              <v-icon>mdi-file-pdf-box</v-icon>
+              <v-icon>mdi-autorenew</v-icon>
             </v-btn>
             <v-btn
               @click="openDeleteArmyBookDialog(item.uid, item.name)"
@@ -366,11 +392,14 @@ export default {
       headers: [
         {text: 'Name', align: 'start', value: 'name'},
         {text: 'Version', align: 'start', value: 'versionString'},
-        {text: 'Published', align: 'start', value: 'isLive'},
+        //{text: 'Published', align: 'start', value: 'isLive'},
         {text: 'Visibility', align: 'start', value: 'public'},
-        {text: '#Units', align: 'center', value: 'units.length'},
+        {text: '#Units', align: 'center', value: 'unitCount'},
+        {text: 'Games', align: 'start', value: 'system'},
         {text: 'Actions', align: 'center', value: 'actions'},
       ],
+      armyBookSets: [],
+      search: '',
       selectedGameSystems: [],
       showNewArmyBookDialog: false,
       newArmyBookForm: {
@@ -409,7 +438,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      armyBookSets: 'armyBooks/armyBookSets',
+      //armyBookSets: 'armyBooks/armyBookSets',
     }),
     isAdmin() {
       return this.$store.state.auth.user.isAdmin;
@@ -422,7 +451,7 @@ export default {
         if (this.selectedGameSystems.length > 0) {
           this.selectedGameSystems.forEach(i => {
             const gameSystem = this.gameSystems[i];
-            const matchedBooks = this.armyBookSets.filter(ab => ab.gameSystemSlug === gameSystem.slug);
+            const matchedBooks = this.armyBookSets.filter(ab => ab.enabledGameSystems.includes(gameSystem.id));
             filteredBooks.push(...matchedBooks);
           })
         } else {
@@ -442,11 +471,11 @@ export default {
     gameSystemOptions() {
       if (this.gameSystems) {
         return this.gameSystems
-          .filter(system => system.armyBookBuilderEnabled)
-          .map(system => {
+          .filter(gameSystem => gameSystem.armyBookBuilderEnabled)
+          .map(gameSystem => {
             return {
-              text: system.fullname,
-              value: system.id,
+              text: gameSystem.fullname,
+              value: gameSystem.id,
             };
           });
       }
@@ -456,7 +485,13 @@ export default {
   watch: {
     user: {
       handler(newValue) {
-        this.$store.dispatch('armyBooks/loadAll');
+        //this.$store.dispatch('armyBooks/loadAll');
+        this.$store.commit('armyBooks/LOADING', { status: true, message: 'Loading your army books...' });
+        this.$axios.get(`/api/army-books/mine`).then(({ data }) => {
+          this.armyBookSets = data;
+        }).finally(() => {
+          this.$store.commit('armyBooks/LOADING', { status: false });
+        });
       },
       immediate: true, // make this watch function is called when component created
     },
@@ -571,6 +606,14 @@ export default {
         this.$store.dispatch('armyBooks/delete', uid);
         this.$ga.event('Army Book', 'delete', `${uid}`, 1);
         this.showDeleteArmyBookDialog = false;
+      }
+    },
+    recalculateArmyBook(armyBookUid) {
+      if (this.$oprPointCalculator) {
+        const payload = { armyBookUid };
+        this.$store.dispatch('armyBooks/recalculateArmyBook', payload);
+      } else {
+        console.info('Point Calculator Feature disabled.');
       }
     },
   },

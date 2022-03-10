@@ -48,15 +48,7 @@
               <v-icon left small>{{child.icon}}</v-icon>
               {{ child.label }}
             </v-tab>
-            <v-tab
-              nuxt
-              exact
-              :to="`/army-books/view/${armyBookId}/print`"
-            >
-              <v-icon left small>mdi-printer</v-icon>
-              Print
-              <v-icon right small>mdi-launch</v-icon>
-            </v-tab>
+
           </v-tabs>
         </v-col>
       </v-row>
@@ -160,6 +152,9 @@ export default {
     unitCount() {
       return this.$store.getters['armyBooks/units'](this.armyBookId)?.length || '?';
     },
+    armyBookEnabledGameSystems() {
+      return this.$store.getters['armyBooks/armyBookEnabledGameSystems'](this.armyBookId);
+    }
   },
   watch: {
     armyBookId: {

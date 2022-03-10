@@ -41,7 +41,7 @@
                   v-for="(item, index) in armyBook.items"
                   :key="index"
                   nuxt
-                  :to="`/army-books/view/${item.uid}/print`"
+                  :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
                 >
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
                 </v-list-item>
@@ -51,7 +51,7 @@
           <picture
             v-else
             style="cursor: pointer;"
-            @click="$router.push(`/army-books/view/${armyBook.uid}/print`)"
+            @click="$router.push(`/army-books/view/${armyBook.uid}~${gameSystem.id}/print`)"
             :class="{ inverted: $vuetify.theme.dark }"
           >
             <source
@@ -82,7 +82,7 @@
                 <v-list-item
                   v-for="(item, index) in armyBook.items"
                   :key="index"
-                  :href="`/api/army-books/${item.uid}/pdf`"
+                  :href="`/api/army-books/${item.uid}~${gameSystem.id}/pdf`"
                 >
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
                 </v-list-item>
@@ -92,7 +92,7 @@
           <v-btn
             v-else
             text small color="primary"
-            :href="`/api/army-books/${armyBook.uid}/pdf`"
+            :href="`/api/army-books/${armyBook.uid}~${gameSystem.id}/pdf`"
           >
             <v-icon left>mdi-printer</v-icon>pdf
           </v-btn>
@@ -116,7 +116,7 @@
                   v-for="(item, index) in armyBook.items"
                   :key="index"
                   target="_blank"
-                  :href="`https://army-forge.onepagerules.com/files?gameSystem=${item.aberration.toLowerCase()}&armyId=${item.uid}`"
+                  :href="`https://army-forge.onepagerules.com/files?gameSystem=${gameSystem.aberration.toLowerCase()}&armyId=${item.uid}~${gameSystem.id}`"
                 >
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
                 </v-list-item>
@@ -129,7 +129,7 @@
             small
             color="primary"
             target="_blank"
-            :href="`https://army-forge.onepagerules.com/files?gameSystem=${armyBook.aberration.toLowerCase()}&armyId=${armyBook.uid}`"
+            :href="`https://army-forge.onepagerules.com/files?gameSystem=${gameSystem.aberration.toLowerCase()}&armyId=${armyBook.uid}~${gameSystem.id}`"
           >
             <v-icon left>$forge</v-icon>
             <span v-show="$vuetify.breakpoint.smAndUp">army forge</span>

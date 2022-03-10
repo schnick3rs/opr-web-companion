@@ -7,6 +7,7 @@
         type="number"
         min="1" max="9"
         style="width: 2em;"
+        :class="[ $vuetify.theme.dark ? 'white--text' : 'black--text' ]"
         :value="count"
         @change="$emit('update', {field: 'count', value: parseInt($event.target.value)})"
       >
@@ -16,6 +17,7 @@
       <input
         v-else
         size="10"
+        :class="[ $vuetify.theme.dark ? 'white--text' : 'black--text' ]"
         :value="name"
         @keydown.enter="updateName($event.target.value)"
         @blur="updateName($event.target.value)"
@@ -26,6 +28,7 @@
       <select
         v-else
         class="text-center"
+        :class="[ $vuetify.theme.dark ? 'white--text' : 'black--text' ]"
         style="width: 3.2em; text-align-last: center;"
         @change="$emit('update', {field: 'range', value: parseInt($event.target.value)})"
       >
@@ -39,6 +42,7 @@
         type="number"
         min="1" max="99"
         class="text-right"
+        :class="[ $vuetify.theme.dark ? 'white--text' : 'black--text' ]"
         style="width: 2.5em;"
         :value="weapon.attacks"
         @change="$emit('update', {field: 'attacks', value: parseInt($event.target.value)})"
@@ -49,6 +53,7 @@
       <input
         v-else
         size="10"
+        :class="[ $vuetify.theme.dark ? 'white--text' : 'black--text' ]"
         :value="specialRulesString"
         @blur="updateRules($event.target.value)"
       >

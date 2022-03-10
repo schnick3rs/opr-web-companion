@@ -35,6 +35,7 @@ app.use('/gf-arena', routes.gfArena);
 //
 app.use('/content', routes.content);
 app.use('/mmf', routes.myminifactory);
+app.use('/parser', routes.parser);
 
 module.exports = {
   path: '/api',

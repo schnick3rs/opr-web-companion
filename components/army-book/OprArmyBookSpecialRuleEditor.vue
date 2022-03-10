@@ -16,10 +16,6 @@
       v-else
       :elevation="elevation"
     >
-      <v-card-title>{{ specialRule.name }}</v-card-title>
-
-      <v-divider></v-divider>
-
       <v-card-text>
 
         <v-row>
