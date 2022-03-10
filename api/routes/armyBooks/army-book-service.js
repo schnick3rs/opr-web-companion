@@ -569,15 +569,17 @@ export function skirmify(armyBook) {
               }
             });
             if (onlySingleUses) {
-              section.label = section.label.replace('Replace any', 'Replace');
+              //section.label = section.label.replace('Replace any', 'Replace');
+              // ToDo disable all any
             }
           }
         }
 
         section.label = section.label.replace('Replace one', 'Replace');
         section.label = section.label.replace('Replace all', 'Replace');
-        section.label = section.label.replace(/Replace up to \w+/, 'Replace');
+        section.label = section.label.replace(/Replace up to \w+/, 'Replace any');
         section.label = section.label.replace(/Replace with up to \w+/, 'Replace');
+        section.label = section.label.replace('Any model may replace', 'Replace');
         section.label = section.label.replace('Upgrade one model', 'Upgrade');
         section.label = section.label.replace('Upgrade all models', 'Upgrade');
         section.label = section.label.replace('Upgrade any model', 'Upgrade');
