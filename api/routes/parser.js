@@ -1,5 +1,5 @@
 import Router from 'express-promise-router';
-import { ArmyBook } from "opr-army-book-helper";
+import { DataParsingService } from "opr-data-service";
 
 const router = new Router();
 
@@ -7,9 +7,13 @@ router.get('/upgrade-section', async (request, response) => {
 
   const { input } = request.query;
 
-  const armySection = ArmyBook.UpgradeSection.FromString(input);
+  try {
+    const armySection = DataParsingService.parseUpgradeText(input);
+    response.status(200).json(armySection);
+  } catch ({ message }) {
+    response.status(404).json({ input, message });
+  }
 
-  response.status(200).json(armySection);
 });
 
 export default router;
