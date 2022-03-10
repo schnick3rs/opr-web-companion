@@ -227,7 +227,6 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
       armyBook.aberration = gameSystem.aberration;
       armyBook.universe = gameSystem.universe;
       armyBook.shortname = gameSystem.shortname;
-      armyBook.flavouredUid = `${armyBook.uid}~${gameSystemId}`;
     } else {
       console.warn(`No GameSystem found for gameSystem=${gameSystemId}.`);
     }
