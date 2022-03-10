@@ -49,34 +49,6 @@
               {{ child.label }}
             </v-tab>
 
-            <v-menu bottom offset-y v-if="false">
-              <template v-slot:activator="{ on, attrs }">
-                <v-tab v-bind="attrs" v-on="on">
-                  <v-icon left small>mdi-printer</v-icon>
-                  Print
-                  <v-icon right small>mdi-launch</v-icon>
-                </v-tab>
-              </template>
-              <v-list-item
-                v-for="gameSystem in gameSystems.filter(gameSystem => armyBookEnabledGameSystems.includes(gameSystem.id))"
-                :key="gameSystem.id"
-                nuxt
-                exact
-                target="_blank"
-                :to="`/army-books/view/${armyBookId}~${gameSystem.id}/print`"
-              >
-                <v-list-item-avatar size="32" tile>
-                  <img
-                    alt="Avatar"
-                    :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
-                  />
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>{{ gameSystem.shortname}}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-menu>
-
           </v-tabs>
         </v-col>
       </v-row>

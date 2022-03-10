@@ -1,7 +1,6 @@
 import Router from 'express-promise-router';
 import cors from 'cors';
 import { createClient } from 'contentful';
-import _ from 'lodash';
 
 const router = new Router();
 
