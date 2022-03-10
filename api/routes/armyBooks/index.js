@@ -203,7 +203,6 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
 
   const { armyBookUid, gameSystemId } = request.params;
   const { armyForge } = request.query;
-  console.log(armyForge);
 
   let userId = request?.me?.userId || 0;
 
