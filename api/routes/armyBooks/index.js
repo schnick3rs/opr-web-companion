@@ -16,6 +16,7 @@ import specialRules from './specialRules';
 import spells from './spells';
 import {CalcHelper, ArmyBook} from "opr-army-book-helper";
 import calc from "opr-point-calculator-lib";
+import { DataParsingService } from 'opr-data-service';
 
 const router = new Router();
 
@@ -201,6 +202,8 @@ router.post('/import', async (request, response) => {
 router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
 
   const { armyBookUid, gameSystemId } = request.params;
+  const { armyForge } = request.query;
+
   let userId = request?.me?.userId || 0;
 
   // we fetch the source for further handling
@@ -227,6 +230,10 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
       armyBook.flavoredUid = `${armyBook.uid}~${gameSystemId}`;
     } else {
       console.warn(`No GameSystem found for gameSystem=${gameSystemId}.`);
+    }
+
+    if (armyForge) {
+      armyBook = DataParsingService.transformApiData(armyBook);
     }
 
     response.set('Cache-Control', 'public, max-age=60'); // 1 minute

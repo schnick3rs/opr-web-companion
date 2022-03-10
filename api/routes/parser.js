@@ -1,9 +1,11 @@
 import Router from 'express-promise-router';
+import cors from 'cors';
+
 import { DataParsingService } from "opr-data-service";
 
 const router = new Router();
 
-router.get('/upgrade-section', async (request, response) => {
+router.get('/upgrade-section', cors(), async (request, response) => {
 
   const { input } = request.query;
 
