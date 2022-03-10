@@ -82,14 +82,14 @@ export default class DataParsingService {
         delete (u as any).costMode;
         delete (u as any).costModeAutomatic;
         delete (u as any).splitPageNumber;
-        
+
         return {
           ...u,
           // Transform this into a collection of upgrades
           equipment: u.equipment.map(e => {
             // Capture the count digit from the name
             const countMatch = countRegex.exec(e.label);
-            const label = e.label.replace(countRegex, "");
+            const label = (e.label ?? e.name).replace(countRegex, "");
             const count = e.count
               ? e.count * u.size
               : (countMatch ? parseInt(countMatch[1]) * u.size : u.size);
@@ -137,7 +137,8 @@ export default class DataParsingService {
               for (let what of section.replaceWhat) {
 
                 // Does equipment contain this thing?
-                const equipmentMatch = u.equipment.some(e => EquipmentService.compareEquipment({ ...e, label: e.label.replace(countRegex, "") }, what));
+                const equipmentMatch = u.equipment
+                  .some(e => EquipmentService.compareEquipment({ ...e, label: (e.label ?? e.name).replace(countRegex, "") }, what));
                 // If equipment, then we won't be disabling this section...
                 if (equipmentMatch)
                   continue;
@@ -182,7 +183,9 @@ export default class DataParsingService {
       }
 
       return data;
-    } catch (err) { if (typeof (fallback) == "function") fallback(err) }
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   // Only 0-9 covered - probably OK?
@@ -389,7 +392,7 @@ export default class DataParsingService {
           });
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
         console.log(line);
       }
     }
