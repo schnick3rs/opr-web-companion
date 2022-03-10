@@ -160,7 +160,7 @@ export async function getPublicArmyBooksListView(gameSystemId = 0) {
     [[gameSystemId], gameSystemId === 0]
   );
   return rows.map(armyBook => {
-    armyBook.flavoredUid = gameSystemId ? `${armyBook.uid}~${gameSystemId}` : undefined;
+    armyBook.flavouredUid = gameSystemId ? `${armyBook.uid}~${gameSystemId}` : undefined;
     return armyBook;
   });
 }
