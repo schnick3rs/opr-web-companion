@@ -232,7 +232,12 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
     }
 
     if (armyForge) {
-      armyBook = DataParsingService.transformApiData(armyBook);
+      try {
+        armyBook = DataParsingService.transformApiData(armyBook);
+      }
+      catch (e) {
+        console.error(e);
+      }
     }
 
     response.set('Cache-Control', 'public, max-age=60'); // 1 minute
