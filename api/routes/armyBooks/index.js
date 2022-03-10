@@ -234,9 +234,14 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
     if (armyForge) {
       try {
         armyBook = DataParsingService.transformApiData(armyBook);
+        if (!armyBook) {
+          response.status(400).json({ message: 'Could not transform army book' });
+          return;
+        }
       }
       catch (e) {
         console.error(e);
+        response.status(400).json({ message: 'Could not transform army book' });
       }
     }
 
