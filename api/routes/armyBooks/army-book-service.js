@@ -370,6 +370,7 @@ export function skirmify(armyBook) {
   pluralize.addSingularRule(/Claws$/, 'Claws'); // See Alien Hives and other bestials
   pluralize.addSingularRule(/Martial Arts$/, 'Martial Arts'); // See ED
   pluralize.addPluralRule(/Squads$/, 'Squad'); // See HDF and others
+  pluralize.addPluralRule(/CCW$/, 'CCWs'); // See all the armies
 
   armyBook.units = armyBook.units.map(unit => {
 
