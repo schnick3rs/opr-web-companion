@@ -215,7 +215,7 @@ export default class DataParsingService {
         select: 1
       };
 
-    const takeMatch = /^Take\s([\d]+|one|two|any)?\s?(.+?)\sattachments?:/.exec(text);
+    const takeMatch = /^Take\s([\d]+|one|two|any)?\s?(.+?)\s(attachment|upgrade)s?:/.exec(text);
     if (takeMatch)
       return {
         id: nanoid(7),
