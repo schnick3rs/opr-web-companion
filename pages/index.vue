@@ -76,7 +76,7 @@ export default {
           gs.disabled = false;
         }
         if (gs.slug === 'age-of-fantasy-skirmish') {
-          gs.disabled = true;
+          //gs.disabled = false;
         }
         return gs;
       });
