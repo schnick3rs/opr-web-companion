@@ -1,9 +1,9 @@
 import Router from 'express-promise-router';
 import cors from 'cors';
 import { nanoid } from 'nanoid';
-import pluralize from 'pluralize';
 
 import * as armyBookService from './army-book-service';
+import * as skirmificationService from './skirmification-service';
 import * as pdfService from './pdf-service';
 import * as gameSystemService from '../gameSystems/game-system-service';
 import * as upgradePackagesService from './upgradePackages/upgrade-packages-service';
@@ -14,12 +14,14 @@ import units from './units';
 import upgradePackages from './upgradePackages';
 import specialRules from './specialRules';
 import spells from './spells';
-import {CalcHelper, ArmyBook} from "opr-army-book-helper";
+import statistics from './statistics';
+import { CalcHelper, ArmyBook } from "opr-army-book-helper";
 import calc from "opr-point-calculator-lib";
 import { DataParsingService } from 'opr-data-service';
 
 const router = new Router();
 
+router.use('/statistics', statistics);
 router.use('/:armyBookUid/units', units);
 router.use('/:armyBookUid/upgrade-packages', upgradePackages);
 router.use('/:armyBookUid/special-rules', specialRules);
@@ -215,7 +217,7 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
     // armyBook.uid = armyBookUid;
 
     if ([3,5].includes(parseInt(gameSystemId))) {
-      armyBook = armyBookService.skirmify(armyBook);
+      armyBook = skirmificationService.skirmify(armyBook);
     }
 
     // add flavor
