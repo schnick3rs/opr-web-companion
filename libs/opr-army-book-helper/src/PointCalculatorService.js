@@ -218,6 +218,22 @@ const applyUpgrade = (unit, section, option) => {
 
   // add gains
   let gains = ArmyBook.UpgradeOption.ExtractGains(option);
+
+  const checkCondition = ((condition) => {
+    switch (condition) {
+      case 'in melee': return (weapon) => {
+        const { range } = weapon;
+        return range === 0 || range === undefined || range === null;
+      };
+      case 'when shooting': return (weapon) => {
+        const { range } = weapon;
+        return parseInt(range) > 0;
+      };
+      default:
+        console.warn(`Unexpected condition -> ${condition}, use 'in melee' or 'when shooting'`);
+    }
+  });
+
   gains.forEach(g => {
     if (g instanceof ArmyBook.Defense) unit.defense = unit.defense - parseInt(g.rating);
     if (g instanceof ArmyBook.Weapon) unit.equipment.push(g);
@@ -227,7 +243,7 @@ const applyUpgrade = (unit, section, option) => {
         unit.equipment = unit.equipment.map(weapon => {
           // check for the condition
           console.info(`Upgraded ${weapon.name} with ${g.label}.`);
-          if (weapon.range === 0 || weapon.range === undefined || weapon.range === null) {
+          if (checkCondition(g.condition)(weapon)) {
             if (g.modify) {
               console.info(` Modify ${weapon.name} with ${g.label}.`);
               const existingRule = weapon.specialRules.find(sr => sr.name === g.name);

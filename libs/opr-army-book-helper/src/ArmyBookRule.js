@@ -34,7 +34,7 @@ export default class ArmyBookRule {
   }
 
   static FromString(ruleString) {
-    const match = /^(?<name>[\w\d \-&\\']+?[\w\d])\(?(?<modify>\+?)(?<rating>[\d]*)\)?\s?(?<condition>in melee)?$/gmi.exec(ruleString);
+    const match = /^(?<name>[\w\d \-&\\']+?[\w\d])\(?(?<modify>\+?)(?<rating>[\d]*)\)?\s?(?<condition>in melee|when shooting)?$/gmi.exec(ruleString);
     if (match) {
       const { name, rating, modify, condition} = match.groups;
       return new ArmyBookRule(name, rating, !!modify, condition);
@@ -44,7 +44,7 @@ export default class ArmyBookRule {
   }
 
   static Is(ruleString) {
-    return !!/^(?<name>[\w\d \-&\\']+?[\w\d])\(?(?<modify>\+?)(?<rating>[\d]*)\)?\s?(?<condition>in melee)?$/gmi.exec(ruleString);
+    return !!/^(?<name>[\w\d \-&\\']+?[\w\d])\(?(?<modify>\+?)(?<rating>[\d]*)\)?\s?(?<condition>in melee|when shooting)?$/gmi.exec(ruleString);
   }
 
   toString() {
