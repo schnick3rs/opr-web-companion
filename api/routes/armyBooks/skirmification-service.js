@@ -18,9 +18,19 @@ export function skirmifyRulesText(battleText) {
     'The hero and its unit get the Ambush special rule.',
     'The hero and up to half of its army get the Ambush special rule (must deploy within 3” of the hero).'); // see RL
 
+  // HDF - Set Example
+  // Whenever the hero’s unit fails a morale test you must kill one of its models and the morale test counts as passed instead.
+  // Whenever the hero’s unit fails a morale test you must kill one of its models and the morale test counts as passed instead.
+  // Whenever the hero’s unit fails a morale test, it takes D3 wounds, and the morale test counts as passed instead.
+  // Whenever the hero’s unit fails a morale test you must kill one of its models and the morale test counts as passed.
   skirmishText = skirmishText.replace(
-    'Whenever the hero’s unit fails a morale test, you must kill one of its models, and the morale test counts as passed instead.',
-    'Whenever a friendly unit within 12" fails a morale test, you must kill one friendly model within 12", and then all friendly units within 12" of the killed model automatically pass morale tests until the end of the round.'); // see HDF
+    /Whenever the hero’s unit fails a morale test (.*) and the morale test counts as passed( instead)?\./gm,
+    'Whenever a friendly unit within 12" fails a morale test, $1", and then all friendly units within 12" of the killed model automatically pass morale tests until the end of the round.');
+
+  // E.g. Beastman - Madness
+  skirmishText = skirmishText.replace(
+    /pick (\w+) (friendly|enemy) (units) (within \d+..*). Those units (.*)/gm,
+    `pick $1 $2 $3 $4. Those units, and all $2 $3 within 6" $5`);
 
   skirmishText = skirmishText.replace(
     /pick (\w+) (friendly|enemy) (units) (within \d+..*), which (.*)/gm,
@@ -31,16 +41,16 @@ export function skirmifyRulesText(battleText) {
     `pick $1 $2 $3 $4. That unit, and all $2 $3 within 6" $5`);
 
   skirmishText = skirmishText.replace(
-    'The hero and its unit',
+    /(The|This) (hero|model) and (its|his|her) unit/gm,
     'This model and all friendly units within 12”');
 
   skirmishText = skirmishText.replace(
-    'his model and its unit',
-    'his model and all friendly units within 12”');
+    /when attacking (the|this) (hero|model) and (its|his|her) unit/gm,
+    'when attacking this model or any friendly unit within 12”');
 
   skirmishText = skirmishText.replace(
-    'The model and its unit',
-    'This model and all friendly units within 12”');
+    /(this|the) (model|hero) and (its|his@her) unit/gm,
+    'this model and all friendly units within 12”');
 
   skirmishText = skirmishText.replace(
     /If the hero is part of a unit of (.*), the unit counts/,
