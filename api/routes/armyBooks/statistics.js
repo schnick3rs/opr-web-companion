@@ -47,6 +47,7 @@ router.get('/upgrade-options', async (request, response) => {
             sectionLabel: section.label,
             optionLabel: option.label,
             optionCost: option.cost,
+            optionGainsJson: JSON.stringify(option.gains),
           });
         });
       });
