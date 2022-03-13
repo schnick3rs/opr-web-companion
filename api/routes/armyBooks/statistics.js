@@ -39,6 +39,7 @@ router.get('/upgrade-options', async (request, response) => {
     armyBook.upgradePackages.forEach(pack => {
       pack.sections.forEach(section => {
         section.options.forEach(option => {
+          if (isNaN(option.cost) || parseInt(option.cost) === 0)
           upgrades.push({
             armyBookUid: armyBook.uid,
             armyBookName: armyBook.name,
