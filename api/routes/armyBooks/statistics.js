@@ -27,9 +27,33 @@ router.get('/special-rules', async (request, response) => {
 
   response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
   response.status(200).json(specialRules);
-  //response.type('text/plain');
-  //response.send('text');
+});
 
+router.get('/upgrade-options', async (request, response) => {
+
+  let armyBooks = await armyBookService.getPublicArmyBooks();
+
+  let upgrades = [];
+
+  armyBooks.forEach(armyBook => {
+    armyBook.upgradePackages.forEach(pack => {
+      pack.sections.forEach(section => {
+        section.options.forEach(option => {
+          upgrades.push({
+            armyBookUid: armyBook.uid,
+            armyBookName: armyBook.name,
+            packHint: pack.hint,
+            sectionLabel: section.label,
+            optionLabel: option.label,
+            optionCost: option.cost,
+          });
+        });
+      });
+    });
+  });
+
+  response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
+  response.status(200).json(upgrades);
 });
 
 export default router;
