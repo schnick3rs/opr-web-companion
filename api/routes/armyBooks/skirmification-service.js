@@ -271,7 +271,11 @@ export function skirmify(armyBook) {
     pack.sections = pack.sections.reduce((previousValue, currentValue) => {
 
         let sameSectionIndex = previousValue.findIndex((section) => {
-          if (section.label.startsWith('Upgrade with ') ) {
+          if (section.label.startsWith('Upgrade with ')) {
+            // We do not want to merge upgrades which have a limit like 'Upgrade with one'
+            return false;
+          }
+          if (section.label.startsWith('Upgrade all models with') ) {
             // We do not want to merge upgrades which have a limit like 'Upgrade with one'
             return false;
           }

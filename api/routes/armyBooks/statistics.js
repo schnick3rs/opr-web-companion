@@ -29,6 +29,33 @@ router.get('/special-rules', async (request, response) => {
   response.status(200).json(specialRules);
 });
 
+router.get('/upgrade-sections', async (request, response) => {
+
+  let armyBooks = await armyBookService.getPublicArmyBooks();
+
+  let sections = [];
+
+  armyBooks.forEach(armyBook => {
+    armyBook.upgradePackages.forEach(pack => {
+      pack.sections.forEach(section => {
+        sections.push({
+          armyBookUid: armyBook.uid,
+          armyBookName: armyBook.name,
+          sectionUid: section.uid,
+          sectionLabel: section.label,
+          sectionType: section.type,
+          sectionSelect: section.select,
+          sectionAffects: section.affects,
+          sectionOptionCount: section.option.length,
+        });
+      });
+    });
+  });
+
+  response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
+  response.status(200).json(sections);
+});
+
 router.get('/upgrade-options', async (request, response) => {
 
   let armyBooks = await armyBookService.getPublicArmyBooks();
