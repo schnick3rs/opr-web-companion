@@ -46,7 +46,7 @@ router.get('/upgrade-sections', async (request, response) => {
           sectionType: section.type,
           sectionSelect: section.select,
           sectionAffects: section.affects,
-          sectionOptionCount: section.option.length,
+          sectionOptionCount: section.options?.length,
         });
       });
     });
