@@ -1,7 +1,7 @@
 import Router from 'express-promise-router';
 import * as armyBookService from './army-book-service';
 import * as skirmificationService from './skirmification-service';
-import {getPublicArmyBooks} from "./army-book-service";
+import { ArmyBook } from "opr-army-book-helper";
 
 const router = new Router();
 
@@ -38,15 +38,17 @@ router.get('/upgrade-sections', async (request, response) => {
   armyBooks.forEach(armyBook => {
     armyBook.upgradePackages.forEach(pack => {
       pack.sections.forEach(section => {
+        const armySection = ArmyBook.UpgradeSection.FromString(section.label);
         sections.push({
           armyBookUid: armyBook.uid,
           armyBookName: armyBook.name,
-          sectionUid: section.uid,
-          sectionLabel: section.label,
-          sectionType: section.type,
-          sectionSelect: section.select,
-          sectionAffects: section.affects,
-          sectionOptionCount: section.options?.length,
+          packHint: pack.hint,
+          sectionUid: armySection.uid,
+          sectionLabel: armySection.label,
+          sectionType: armySection.type,
+          sectionSelect: armySection.select,
+          sectionAffects: armySection.affects,
+          sectionOptionCount: armySection.options?.length,
         });
       });
     });
