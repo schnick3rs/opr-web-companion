@@ -270,6 +270,11 @@ export function skirmify(armyBook) {
     // group by section label
     pack.sections = pack.sections.reduce((previousValue, currentValue) => {
 
+      // Replace all
+      // Replace any
+      // Upgrade all models with
+      // Upgrade all X with:
+
         let sameSectionIndex = previousValue.findIndex((section) => {
           if (section.label.startsWith('Upgrade with ')) {
             // We do not want to merge upgrades which have a limit like 'Upgrade with one'
