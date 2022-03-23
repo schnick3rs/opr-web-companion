@@ -44,7 +44,6 @@ router.get('/migrate/equipment-label-to-name', async (request, response) => {
   response.status(200).json({message: 'done', log});
 });
 
-
 router.get('/migrate/upgrades-add-relation-ids', async (request, response) => {
   const { isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
 

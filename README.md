@@ -72,8 +72,8 @@ npx @squoosh/cli --avif '{"cqLevel":33,"cqAlphaLevel":-1,"denoiseLevel":0,"tileC
 
 Less dependency heavy options
 
-https://www.npmjs.com/package/bcrypt (268kb, 2dep) -> htps://www.npmjs.com/package/bcryptjs (21kb, 0dep)
-https://www.npmjs.com/package/jsonwebtoken (39kb, 10dep) -> @types/jsonwebtoken (smaller, 1dep)
+bcrypt (268kb, 2dep) -> bcryptjs (21kb, 0dep)
+jsonwebtoken (39kb, 10dep) -> @types/jsonwebtoken (smaller, 1dep)
 marked (46kb, 0dep)
 nanoid (1kb, 0dep)
 pluralize (6kb, 0dep)

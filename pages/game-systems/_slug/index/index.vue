@@ -116,7 +116,7 @@
                   v-for="(item, index) in armyBook.items"
                   :key="index"
                   target="_blank"
-                  :href="`https://army-forge.onepagerules.com/files?gameSystem=${gameSystem.aberration.toLowerCase()}&armyId=${item.uid}`"
+                  :href="`${item.armyForgeUrl}&gameSystem=${gameSystem.aberration.toLowerCase()}`"
                 >
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
                 </v-list-item>
@@ -129,7 +129,7 @@
             small
             color="primary"
             target="_blank"
-            :href="`https://army-forge.onepagerules.com/files?gameSystem=${gameSystem.aberration.toLowerCase()}&armyId=${armyBook.uid}`"
+            :href="`${armyBook.armyForgeUrl}&gameSystem=${gameSystem.aberration.toLowerCase()}`"
           >
             <v-icon left>$forge</v-icon>
             <span v-show="$vuetify.breakpoint.smAndUp">army forge</span>
