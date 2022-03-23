@@ -49,7 +49,7 @@
                     color="white"
                     fab
                     target="_blank"
-                    :href="`${armyBook.armyForgeUrl}&gameSystem=${gameSystem.aberration.toLowerCase()}`"
+                    :href="`${armyBook.armyForgeUrl}&gameSystem=${armyBook.aberration.toLowerCase()}`"
                   >
                     <v-icon >$forge</v-icon>
                   </v-btn>
