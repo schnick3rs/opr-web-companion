@@ -158,7 +158,7 @@ export async function getPublicArmyBooksListView(gameSystemId = 0) {
   );
   return rows.map(armyBook => {
     armyBook.flavouredUid = gameSystemId ? `${armyBook.uid}~${gameSystemId}` : undefined;
-    armyBook.armyForgeUrl = `https://army-forge.onepagerules.com/listConfiguration?armyId=${armyBook.uid}${armyBook.factionName ? 'faction='+armyBook.factionName : ''}`
+    armyBook.armyForgeUrl = `https://army-forge.onepagerules.com/listConfiguration?armyId=${armyBook.uid}${armyBook.factionName ? '&faction='+armyBook.factionName : ''}`
     return armyBook;
   });
 }
