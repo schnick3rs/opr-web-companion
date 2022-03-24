@@ -115,7 +115,6 @@
                 <v-list-item
                   v-for="(item, index) in armyBook.items"
                   :key="index"
-                  target="_blank"
                   :href="`${item.armyForgeUrl}&gameSystem=${gameSystem.aberration.toLowerCase()}`"
                 >
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
@@ -128,7 +127,6 @@
             text
             small
             color="primary"
-            target="_blank"
             :href="`${armyBook.armyForgeUrl}&gameSystem=${gameSystem.aberration.toLowerCase()}`"
           >
             <v-icon left>$forge</v-icon>
