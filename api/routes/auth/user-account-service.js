@@ -8,7 +8,7 @@ const PASSWORD_SALT_ROUNDS = 12;
 
 import bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
-import { pbkdf2Sync } from 'pbkdf2';
+import pbkdf2Hmac from 'pbkdf2-hmac';
 
 import { pool } from '../../db';
 
@@ -79,10 +79,16 @@ async function createUser(username, email, password) {
   return rows[0].uuid;
 }
 
+function buf2hex(buffer) { // buffer is an ArrayBuffer
+  return [...new Uint8Array(buffer)]
+    .map(x => x.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 async function hashEmail(email) {
-  const hashedEmail = pbkdf2Sync(email, EMAIL_SALT, 1000, 128, 'sha512').toString('hex');
+  const hashedEmail = await pbkdf2Hmac(email, EMAIL_SALT, 1000, 128, 'SHA-512');
   // console.info(`Hashed email ${email} -> ${hashedEmail}`);
-  return hashedEmail;
+  return buf2hex(hashedEmail);
 }
 
 function validateEmail(email) {
