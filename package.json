@@ -22,7 +22,7 @@
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/sitemap": "^2.4.0",
-    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
     "contentful": "^9.1.10",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",

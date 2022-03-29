@@ -3,9 +3,10 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
-const salt = process.env.AUTH_EMAIL_SALT;
+const EMAIL_SALT = process.env.AUTH_EMAIL_SALT;
+const PASSWORD_SALT_ROUNDS = 12;
 
-import { hashSync } from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
 import { pbkdf2Sync } from 'pbkdf2';
 
@@ -57,7 +58,7 @@ async function createNewPasswordResetRequest(user) {
 
 async function updateUserResetPassword(email, token, password) {
   const emailHash = await hashEmail(email);
-  const passwordHash = hashSync(password, 12);
+  const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
   await pool.query(
     'UPDATE opr_companion.user_accounts ' +
     'SET password = $1, password_reset_token = null ' +
@@ -69,7 +70,7 @@ async function updateUserResetPassword(email, token, password) {
 
 async function createUser(username, email, password) {
   const emailHash = await hashEmail(email);
-  const passwordHash = hashSync(password, 12);
+  const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
   const uuid = nanoid(11);
   const { rows } = await pool.query(
     'INSERT INTO opr_companion.user_accounts (email_hashed, password, username, uuid, enabled) VALUES ($1, $2, $3, $4, $5) RETURNING uuid',
@@ -79,7 +80,7 @@ async function createUser(username, email, password) {
 }
 
 async function hashEmail(email) {
-  const hashedEmail = pbkdf2Sync(email, salt, 1000, 128, 'sha512').toString('hex');
+  const hashedEmail = pbkdf2Sync(email, EMAIL_SALT, 1000, 128, 'sha512').toString('hex');
   // console.info(`Hashed email ${email} -> ${hashedEmail}`);
   return hashedEmail;
 }
