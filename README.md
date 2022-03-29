@@ -80,4 +80,4 @@ Less dependency heavy options
 * rfc6902 (, 0dep)
 * unique-names-generator (67kb, 0dep)
 * uuid (, 0dep)
-* pbkdf2 (57kb, 5dep) -> crypto-js? (50kb, 0dep) || pbkdf2-hmac (2kb, 0dep)
+* pbkdf2 (57kb, 5dep) -> crypto-js? (50kb, 0dep) || pbkdf2-hmac (2kb, 0dep) (/)
