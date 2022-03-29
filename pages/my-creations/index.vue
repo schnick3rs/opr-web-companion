@@ -2,6 +2,26 @@
 
   <v-container>
 
+    <v-dialog
+      v-model="recalcInProgress"
+      persistent
+      width="500"
+    >
+      <v-card
+        color="primary"
+        dark
+      >
+        <v-card-text>
+          {{ recalcInProgressMessage }}
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <opr-breadcrumbs-row :items="breadcrumbItems"></opr-breadcrumbs-row>
 
     <v-row justify-sm="center">
@@ -79,6 +99,7 @@
           </opr-dialog>
         </v-dialog>
       </v-col>
+
       <v-col>
         <v-btn
           block outlined large
@@ -90,6 +111,19 @@
           New Detachment
         </v-btn>
       </v-col>
+
+      <v-col>
+        <v-btn
+          block outlined large
+          color="primary"
+          @click="recalculateArmyBooks"
+          disabled
+        >
+          <v-icon left>mdi-file-multiple</v-icon>
+          Calculon!
+        </v-btn>
+      </v-col>
+
       <v-col v-if="isAdmin">
         <v-btn
           block outlined large
@@ -311,9 +345,8 @@
               color="primary"
               @click="recalculateArmyBook(item.uid)"
               title="recalculate army book"
-              disabled
             >
-              <v-icon>mdi-autorenew</v-icon>
+              <v-icon :class="{ 'mdi-spin': false }">mdi-autorenew</v-icon>
             </v-btn>
             <v-btn
               @click="openDeleteArmyBookDialog(item.uid, item.name)"
@@ -400,6 +433,8 @@ export default {
       ],
       armyBookSets: [],
       search: '',
+      recalcInProgress: false,
+      recalcInProgressMessage: '',
       selectedGameSystems: [],
       showNewArmyBookDialog: false,
       newArmyBookForm: {
@@ -608,10 +643,35 @@ export default {
         this.showDeleteArmyBookDialog = false;
       }
     },
+    async recalculateArmyBooks() {
+      this.recalcInProgressMessage = 'Loading ...';
+      this.recalcInProgress = true;
+      for (const armyBook of this.armyBookSets) {
+        this.recalcInProgressMessage = `Recalculate '${armyBook.name} ...`;
+        try {
+          const response = await this.$axios.post(`/api/army-books/${armyBook.uid}/calculate`);
+        } catch (e) {
+          console.error(`Could not recalc ${armyBook.name} -> ${e.message}`, e);
+        }
+      }
+      this.recalcInProgress = false;
+    },
     recalculateArmyBook(armyBookUid) {
       if (this.$oprPointCalculator) {
-        const payload = { armyBookUid };
-        this.$store.dispatch('armyBooks/recalculateArmyBook', payload);
+        //const payload = { armyBookUid };
+        //this.$store.dispatch('armyBooks/recalculateArmyBook', payload);
+        this.recalcInProgress = true;
+        this.$axios.post(`/api/army-books/${armyBookUid}/calculate`)
+          .then((result) => {
+            console.info(result);
+          })
+          .catch((error) => {
+            console.warn(error);
+          })
+          .finally((status) => {
+            console.info(status);
+            this.recalcInProgress = false;
+          });
       } else {
         console.info('Point Calculator Feature disabled.');
       }
