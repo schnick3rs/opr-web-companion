@@ -1,7 +1,7 @@
 import Router from 'express-promise-router';
 
 import * as userAccountService from "./user-account-service";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs';
 import { sign } from "../authProvider";
 import { sendPasswordResetMail } from "./mail-service";
 
