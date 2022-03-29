@@ -75,6 +75,7 @@ module.exports = {
   */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
+    'nuxt-vite',
     '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
     ['@nuxtjs/google-analytics', {id: 'UA-178265978-1'}],
