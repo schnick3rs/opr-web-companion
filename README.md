@@ -74,10 +74,17 @@ Less dependency heavy options
 
 * bcrypt (268kb, 2dep) -> bcryptjs (21kb, 0dep) (/)
 * jsonwebtoken (39kb, 10dep) -> @types/jsonwebtoken (smaller, 1dep)
-* marked (46kb, 0dep)
+* marked (46kb, 0dep) -> maybe remarkable@2.0.1 (46kb, 0dep) -> snarkdown@2.0.0 (2kb, 0dep)
 * nanoid (1kb, 0dep)
 * pluralize (6kb, 0dep)
-* rfc6902 (, 0dep)
+* rfc6902 (7kb, 0dep)
 * unique-names-generator (67kb, 0dep)
 * uuid (, 0dep)
 * pbkdf2 (57kb, 5dep) -> crypto-js? (50kb, 0dep) || pbkdf2-hmac (2kb, 0dep) (/)
+
+
+- npm i @contentful/rich-text-html-renderer
+- npm i dotenv
+- npm i lodash (parts?)
+- npm i sass-loader
+- npm i vuex-persistedstate@4.1.0
