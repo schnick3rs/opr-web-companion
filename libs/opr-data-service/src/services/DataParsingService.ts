@@ -33,7 +33,7 @@ export default class DataParsingService {
               ...upgrade,
               options: section.options.map((opt: IUpgradeOption) => {
                 const gains = [];
-                // Iterate backwards through gains array so we can push new 
+                // Iterate backwards through gains array so we can push new
                 if (opt.gains) for (let original of opt.gains) {
                   // Match "2x ", etc
 
@@ -79,6 +79,8 @@ export default class DataParsingService {
       });
 
       const units: IUnit[] = input.units.map((u: IUnit) => {
+
+        // cleanup WebApp meta data
         delete (u as any).costMode;
         delete (u as any).costModeAutomatic;
         delete (u as any).splitPageNumber;
@@ -89,14 +91,14 @@ export default class DataParsingService {
           equipment: u.equipment.map(e => {
             // Capture the count digit from the name
             const countMatch = countRegex.exec(e.label);
-            const label = (e.label ?? e.name).replace(countRegex, "");
+            const name = e.name.replace(countRegex, "");
             const count = e.count
               ? e.count * u.size
               : (countMatch ? parseInt(countMatch[1]) * u.size : u.size);
             return {
               ...e,
-              label: label,
-              name: e.name || label,
+              //label: name, // TODO consider removing for weapons
+              name: name,
               count: count,
               originalCount: count,
               type: "ArmyBookWeapon",
@@ -485,7 +487,7 @@ export default class DataParsingService {
 
     const groups = {
       count: 1,
-      label: 2,
+      name: 2,
       rules: 3,
       cost: 4
     };
@@ -654,8 +656,8 @@ export default class DataParsingService {
 
     const result: any = {
       id: nanoid(7),
-      label: (isUpgrade ? part : match[groups.label]).replace(costRegex, "").trim(),
-      name: isUpgrade ? match[groups.label].trim() : undefined
+      label: (isUpgrade ? part : match[groups.name]).replace(costRegex, "").trim(),
+      name: isUpgrade ? match[groups.name].trim() : undefined
     };
 
     if (!isUpgrade)
