@@ -84,7 +84,5 @@ Less dependency heavy options
 
 
 - npm i @contentful/rich-text-html-renderer
-- npm i dotenv
-- npm i lodash (parts?)
 - npm i sass-loader
-- npm i vuex-persistedstate@4.1.0
+- npm i vuex-persistedstate@4.1.0 (for vue 3+)
