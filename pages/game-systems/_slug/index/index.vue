@@ -15,26 +15,17 @@
           <template v-if="armyBook._type === 'faction'">
             <v-menu offset-y>
               <template v-slot:activator="{ on, attrs }">
-                <picture
-                  style="cursor: pointer;"
+                <v-img
+                  contain
+                  height="100px"
+                  max-height="100px"
+                  class="align-end"
                   :class="{ inverted: $vuetify.theme.dark }"
+                  :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
+                  style="cursor: pointer"
                   v-bind="attrs" v-on="on"
                 >
-                  <source
-                    class="book-image"
-                    :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.webp`"
-                    type="image/webp"
-                  >
-                  <source
-                    class="book-image"
-                    :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
-                    type="image/png"
-                  >
-                  <img
-                    class="book-image"
-                    :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
-                  >
-                </picture>
+                </v-img>
               </template>
               <v-list>
                 <v-list-item
@@ -48,27 +39,17 @@
               </v-list>
             </v-menu>
           </template>
-          <picture
+          <v-img
             v-else
-            style="cursor: pointer;"
-            @click="$router.push(`/army-books/view/${armyBook.uid}~${gameSystem.id}/print`)"
+            contain
+            height="100px"
+            max-height="100px"
+            class="align-end"
             :class="{ inverted: $vuetify.theme.dark }"
+            :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
+            style="cursor: pointer"
           >
-            <source
-              class="book-image"
-              :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.webp`"
-              type="image/webp"
-            >
-            <source
-              class="book-image"
-              :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
-              type="image/png"
-            >
-            <img
-              class="book-image"
-              :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
-            >
-          </picture>
+          </v-img>
         </div>
         <v-card-text v-text="armyBook.name" class="text-center font-weight-bold"></v-card-text>
         <v-divider></v-divider>
