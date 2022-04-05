@@ -47,7 +47,8 @@
             class="align-end"
             :class="{ inverted: $vuetify.theme.dark }"
             :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
-            style="cursor: pointer"
+            style="cursor: pointer;"
+            @click="$router.push(`/army-books/view/${armyBook.uid}~${gameSystem.id}/print`)"
           >
           </v-img>
         </div>
