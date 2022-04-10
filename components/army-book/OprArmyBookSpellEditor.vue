@@ -67,8 +67,6 @@
 </template>
 
 <script>
-import { marked } from 'marked';
-
 export default {
   name: 'OprArmyBookSpellEditor',
   props: {
@@ -118,9 +116,6 @@ export default {
       const spellId = this.spellId;
       this.$store.commit('armyBooks/setSpellField', { id, spellId, field, value });
       this.saveDebounced();
-    },
-    markdown(text = '') {
-      return marked.parse(text);
     },
   },
 }

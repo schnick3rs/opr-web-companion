@@ -312,6 +312,7 @@
           <template v-slot:item.system="{ item }">
             <v-btn
               v-for="gameSystem in gameSystems"
+              :key="gameSystem.id"
               v-show="item.enabledGameSystems.includes(gameSystem.id)"
               nuxt :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
               target="_blank"

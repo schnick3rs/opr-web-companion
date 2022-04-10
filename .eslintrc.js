@@ -5,12 +5,13 @@ module.exports = {
     es6: true,
     node: true
   },
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    parser: 'babel-eslint'
+    "sourceType": "module",
   },
   extends: [
     '@nuxtjs',
-    'airbnb-base'
+    //'airbnb-base'
   ],
   // add your custom rules here
   rules: {
@@ -24,7 +25,7 @@ module.exports = {
     'vuetify/no-legacy-grid': 'error',
   },
   plugins: [
-    'html',
+    //'html',
     'vuetify',
   ],
 };

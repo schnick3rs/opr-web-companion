@@ -14,7 +14,12 @@
       <span v-if="value.amount">{{ value.amount }}x&nbsp;</span>{{ value.name }} <span class="glue">{{ value.label.substr(value.name.length) }}</span>
     </template>
     <template v-else-if="value.type === 'ArmyBookMultiWeapon'">
-      {{ value.name }}: <opr-print-glues v-for="(profile, index) in value.profiles" :value="profile" :is-last="index >= value.profiles.length-1"></opr-print-glues>
+      {{ value.name }}: <opr-print-glues
+      v-for="(profile, index) in value.profiles"
+      :key="index"
+      :value="profile"
+      :is-last="index >= value.profiles.length-1"
+    ></opr-print-glues>
     </template>
     <span v-else>{{value.label}}</span><template v-if="showSeparator">,&nbsp;</template><template v-if="append">{{append}}</template>
   </span>

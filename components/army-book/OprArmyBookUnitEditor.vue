@@ -227,45 +227,6 @@
             </v-text-field>
           </v-col>
         </v-row>
-        <!-- deprecated -->
-        <v-row v-if="false">
-          <v-col cols="6">
-            <v-select
-              outlined dense
-              label="Special Rule"
-              v-model="unitEditor.specialRule"
-              @change="unitEditor.specialRuleRating = unitEditor.specialRule.defaultRating"
-              :items="unitSpecialRules"
-              item-text="name"
-              item-value="key"
-              return-object
-              persistent-hint :hint="unitEditor.specialRule ? unitEditor.specialRule.hint : ''"
-            ></v-select>
-          </v-col>
-
-          <v-col cols="3">
-            <v-text-field
-              outlined dense
-              type="Number"
-              label="Rating"
-              v-model="unitEditor.specialRuleRating"
-              :disabled="!enableRating"
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="3">
-            <v-btn
-              color="success"
-              outlined block
-              @click="unitAddSpecialRule"
-            >Add</v-btn>
-          </v-col>
-
-          <v-col cols="12" v-if="unitEditor.specialRule && unitEditor.specialRule.description">
-            <v-alert color="info" dense text v-html="markdown(unitEditor.specialRule.description)"></v-alert>
-          </v-col>
-
-        </v-row>
 
       </v-card-text>
 
@@ -379,7 +340,6 @@
 import OprArmyBookWeaponEditor from '~/components/army-book/OprArmyBookWeaponEditor';
 import OprDialog from "~/components/shared/OprDialog";
 import OprUtils from "~/mixins/OprUtils";
-import { marked } from 'marked';
 import { ArmyBook, CalcHelper } from 'opr-army-book-helper';
 import { toCustomRule } from '~/assets/js/CustomArmyRulesService';
 import OprArmyBookUnitWeaponRow from "./OprArmyBookUnitWeaponRow";
@@ -734,9 +694,6 @@ export default {
       const defense = parseInt(defenseString);
       this.$store.commit('armyBooks/unitSetDefense', { id: this.armyBookId, unitId: this.unitId, defense });
       this.saveUnitDebounced(2000);
-    },
-    markdown(text = '') {
-      return marked.parse(text);
     },
     computeRuleCost(ruleName) {
       if (this.calculatableUnit && this.$oprPointCalculator) {

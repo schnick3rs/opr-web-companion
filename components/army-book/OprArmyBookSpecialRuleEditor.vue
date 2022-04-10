@@ -105,8 +105,6 @@
 </template>
 
 <script>
-import { marked } from 'marked';
-
 export default {
   name: 'OprArmyBookSpecialRuleEditor',
   props: {
@@ -163,9 +161,6 @@ export default {
       const { specialRuleId } = this;
       this.$store.commit('armyBooks/setSpecialRuleField', { id, specialRuleId, field, value });
       this.saveDebounced();
-    },
-    markdown(text = '') {
-      return marked.parse(text);
     },
     updateCostField(){
       let cost = isNaN(this.cost) ? this.cost : parseInt(this.cost);
