@@ -19,6 +19,7 @@ app.use((req, res, next) => {
 // auth
 app.use('/auth', routes.auth);
 app.use('/admin', routes.admin);
+app.use('/account', routes.account);
 
 // db access
 app.use('/game-systems', routes.gameSystems);

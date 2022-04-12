@@ -30,6 +30,9 @@
           v-model="email"
         ></v-text-field>
       </v-col>
+      <v-col cols="8">
+        <a href="https://www.patreon.com/oauth2/authorize?response_type=code&client_id=6qXBQh6Orvw5-n51Kiyn7jdX1x9aQa2HzlhpEq96DOJvAb5i-AHmy2F-89KTQkBE&redirect_uri=http://localhost:3000/api/account/patreon&scope=identity%20identity.memberships">Connect with Patreon</a>
+      </v-col>
     </v-row>
 
   </v-container>

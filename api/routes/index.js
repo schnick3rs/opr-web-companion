@@ -11,6 +11,7 @@ import content from './content';
 import admin from './admin';
 import myminifactory from './myminifactory';
 import parser from './parser';
+import account from './account';
 
 export default {
   warfleetsFtl,
@@ -26,4 +27,5 @@ export default {
   admin,
   parser,
   myminifactory,
+  account
 };
