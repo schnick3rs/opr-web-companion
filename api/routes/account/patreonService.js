@@ -2,10 +2,10 @@ import axios from "axios";
 import querystring from "querystring";
 import { pool } from "../../db";
 
-const patreonClientId =
-  "6qXBQh6Orvw5-n51Kiyn7jdX1x9aQa2HzlhpEq96DOJvAb5i-AHmy2F-89KTQkBE";
-const patreonClientSecret =
-  "QLTL-IMuMrL_t0HGfRbgRfMs_TBmgu-6R_DC2VeN771Jox4auFrWODyTSBLhqGe0";
+const config = {
+  patreonClientId: process.env.PATREON_CLIENT_ID,
+  patreonClientSecret: process.env.PATREON_CLIENT_SECRET,
+};
 
 const oprId = "7de51c6d-e6eb-4e5a-8763-db04d3deb5b1";
 
@@ -13,8 +13,6 @@ export async function getPatreonOauthTokensFromCode(code) {
   const oauthData = {
     code: code,
     grant_type: "authorization_code",
-    client_id: patreonClientId,
-    client_secret: patreonClientSecret,
     redirect_uri: "http://localhost:3000/api/account/patreon",
   };
 
@@ -25,8 +23,6 @@ export async function getPatreonOauthTokensFromRefresh(refreshToken) {
   const oauthData = {
     refresh_token: refreshToken,
     grant_type: "refresh_token",
-    client_id: patreonClientId,
-    client_secret: patreonClientSecret,
   };
 
   return await getPatreonOauthTokens(oauthData);
@@ -38,7 +34,11 @@ async function getPatreonOauthTokens(oauthData) {
       method: "POST",
       url: "https://www.patreon.com/api/oauth2/token",
       headers: { "content-type": "application/x-www-form-urlencoded" },
-      data: querystring.stringify(oauthData),
+      data: querystring.stringify({
+        ...oauthData,
+        client_id: config.patreonClientId,
+        client_secret: config.patreonClientSecret,
+      }),
     });
 
     return res.data;
@@ -78,9 +78,7 @@ export async function isActiveOnePageRulesMember(token) {
   const { data } = await getMemberships();
 
   try {
-    const oprCampaign = data.included.find(
-      (campaign) => campaign.id === oprId
-    );
+    const oprCampaign = data.included.find((campaign) => campaign.id === oprId);
 
     console.log("OPR Campaign", oprCampaign);
 
