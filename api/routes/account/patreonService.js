@@ -5,9 +5,8 @@ import { pool } from "../../db";
 const config = {
   patreonClientId: process.env.PATREON_CLIENT_ID,
   patreonClientSecret: process.env.PATREON_CLIENT_SECRET,
+  patreonCreatorId: process.env.PATREON_CREATOR_ID,
 };
-
-const oprId = "7de51c6d-e6eb-4e5a-8763-db04d3deb5b1";
 
 export async function getPatreonOauthTokensFromCode(code) {
   const oauthData = {
@@ -49,11 +48,13 @@ async function getPatreonOauthTokens(oauthData) {
   return null;
 }
 
+async function fetchIdentity() {}
+
 export async function isActiveOnePageRulesMember(token) {
   async function getMemberships() {
     try {
       const query = querystring.stringify({
-        include: "memberships",
+        include: "memberships,memberships.currently_entitled_tiers",
         "fields[member]": "patron_status",
       });
       const membershipsResponse = await axios({
@@ -78,16 +79,25 @@ export async function isActiveOnePageRulesMember(token) {
   const { data } = await getMemberships();
 
   try {
-    const oprCampaign = data.included.find((campaign) => campaign.id === oprId);
 
-    console.log("OPR Campaign", oprCampaign);
+    if (data.included) {
+      const oprCampaign = data.included
+        .filter((item) => item.type === 'member')
+        .find((member) => member.id === config.patreonCreatorId);
 
-    // user is not an OPR member
-    if (!oprCampaign) return false;
+      // user is not an OPR member
+      if (!oprCampaign) {
+        return false;
+      }
 
-    const patronStatus = oprCampaign.attributes["patron_status"];
+      const patronStatus = oprCampaign.attributes["patron_status"];
+      const entitledTiers = oprCampaign.relationships.currently_entitled_tiers.data;
 
-    return patronStatus === "active_patron";
+      const isActivePatron = patronStatus === "active_patron";
+      const hasActiveTier = entitledTiers.length >= 1;
+
+      return isActivePatron && hasActiveTier;
+    }
   } catch (e) {
     console.error(e);
     return false;
