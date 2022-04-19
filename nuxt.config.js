@@ -25,13 +25,13 @@ module.exports = {
       // Facebook Data
       { hid: 'og:title', name: 'og:title', content: 'Home | OPR WebApp' },
       { hid: 'og:description', name: 'og:description', content: 'Browse & create Army Books for the main games an build lists for FTL, DoubleTab, ArmyManCombat or WarStuff.' },
-      { hid: 'og:image', name: 'og:image', content: '/img/army-books-grimdark-future-tile.jpg' },
+      //{ hid: 'og:image', name: 'og:image', content: '/img/army-books-grimdark-future-tile.jpg' },
       // Twitter Card
       { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
       { hid: 'twitter:title', name: 'twitter:title', content: 'Home | OPR WebApp' },
       { hid: 'twitter:description', name: 'twitter:description', content: 'Browse & create Army Books for the main games an build lists for FTL, DoubleTab, ArmyManCombat or WarStuff.' },
-      { hid: 'twitter:image', name: 'twitter:image', content: '/img/army-books-grimdark-future-tile.jpg' },
-      { hid: 'twitter:image', name: 'twitter:image:alt', content: 'OPR WebApp' },
+      //{ hid: 'twitter:image', name: 'twitter:image', content: '/img/army-books-grimdark-future-tile.jpg' },
+      //{ hid: 'twitter:image', name: 'twitter:image:alt', content: 'OPR WebApp' },
     ],
     link: [
       { rel: 'manifest', href: '/manifest.webmanifest' },

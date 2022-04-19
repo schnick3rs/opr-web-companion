@@ -82,11 +82,11 @@ export default {
       });
     return {
       gameSystems,
-    }
+    };
   },
   head() {
     const title = 'WebApp for OnePageRules';
-    const description = "A Companion Website to support army building for FTL, WarStuff and Double Tab.";
+    const description = "A Companion Website to browse army books for Grimdark Future and Age of Fantasy.";
     const image = '/img/army-books-grimdark-future-tile.jpg';
     return {
       title: 'Select your game system',
@@ -94,11 +94,11 @@ export default {
         { hid: 'description', name: 'description', content: description },
         { hid: 'og:title', name: 'og:title', content: title },
         { hid: 'og:description', name: 'og:description', content: description },
-        { hid: 'og:image', name: 'og:image', content: image },
+        //{ hid: 'og:image', name: 'og:image', content: image },
         { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
         { hid: 'twitter:title', name: 'twitter:title', content: title },
         { hid: 'twitter:description', name: 'twitter:description', content: description },
-        { hid: 'twitter:image', name: 'twitter:image', content: image },
+        //{ hid: 'twitter:image', name: 'twitter:image', content: image },
       ],
     };
   },
