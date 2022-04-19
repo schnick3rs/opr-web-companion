@@ -283,8 +283,7 @@
           :loading="vuexLoading"
           :loading-text="vuexLoadingMessage"
           dense
-          :items-per-page="-1"
-          hide-default-footer
+          :items-per-page="15"
         >
           <template v-slot:item.name="{ item }">
             <v-list-item>
