@@ -11,6 +11,7 @@ module.exports = {
     requireConfigFile: false
   },
   extends: [
+    'plugin:nuxt/base',
     '@nuxtjs',
     //'airbnb-base'
   ],
@@ -26,7 +27,6 @@ module.exports = {
     'vuetify/no-legacy-grid': 'error',
   },
   plugins: [
-    //'html',
     'vuetify',
   ],
 };

@@ -30,10 +30,21 @@ async function getAllUsersWithoutHash(email) {
 
 async function getUserByUuid(uuid) {
   const { rows } = await pool.query(
-      'SELECT id, username, enabled, uuid, is_opa "isOpa", is_super_admin "isAdmin", created_at "createdAt"  ' +
+      'SELECT id, username, enabled, uuid, is_opa "isOpa", is_super_admin "isAdmin", created_at "createdAt", patreon_active_until "patreonActiveUntil" ' +
       'FROM opr_companion.user_accounts ' +
       'WHERE uuid = $1', [uuid]);
-  return rows[0];
+  let user = {
+    ...rows[0],
+    roles: [],
+    scope: [],
+    patreon: new Date(rows[0].patreonActiveUntil) > new Date(),
+  };
+  if (user.isOpa) user.roles.push('opa');
+  if (user.isOpa || user.isAdmin) user.roles.push('staff');
+
+  if (user.isOpa || user.isAdmin || user.patreon) user.scope.push('army-books');
+
+  return user;
 }
 
 async function updateUserEmailHash(user) {

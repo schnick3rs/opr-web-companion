@@ -38,7 +38,7 @@ router.get("/patreon-refresh", async (request, response) => {
 
   const activeUntil = isActive ? getActiveUntil() : null;
 
-  await patreonService.setUserPatreonActive(request.me.userId);
+  await patreonService.setUserPatreonActive(request.me.userId, activeUntil);
 
   response.status(200).json({ isActive, activeUntil });
 });

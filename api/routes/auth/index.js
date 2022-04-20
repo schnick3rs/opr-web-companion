@@ -56,8 +56,8 @@ router.post('/user-account', async (request, response) => {
 router.get('/user', async (request, response) => {
   const { userUuid } = request.me;
   if (userUuid) {
-    const { username, uuid, isOpa, isAdmin, createdAt }  = await userAccountService.getUserByUuid(userUuid);
-    response.status(200).json({user: { username, uuid, isOpa, isAdmin, createdAt }});
+    const { username, uuid, isOpa, isAdmin, createdAt, roles, scope, patreon }  = await userAccountService.getUserByUuid(userUuid);
+    response.status(200).json({user: { username, uuid, isOpa, isAdmin, createdAt, roles, scope, patreon }});
     return;
   }
   response.status(403).json();

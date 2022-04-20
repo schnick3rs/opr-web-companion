@@ -31,9 +31,22 @@
         ></v-text-field>
       </v-col>
       <v-col cols="8">
-        <a :href="`https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${$config.patreonClientId}&redirect_uri=${$config.patreonRedirectBase}/api/account/patreon&scope=identity%20identity.memberships`">Connect with Patreon</a>
+        <v-alert
+          color="info"
+          :icon="$auth.user.patreon ? 'mdi-power-plug' : 'mdi-power-plug-off'"
+          prominent
+          text
+        >
+          <a
+            :href="$auth.user.patreon ? '' : patreonConnectUrl"
+          >
+            {{ $auth.user.patreon ? 'Connected with patreon' : 'Connect with Patreon' }}
+          </a>
+        </v-alert>
       </v-col>
     </v-row>
+
+    {{$auth.user}}
 
   </v-container>
 </template>
@@ -66,6 +79,16 @@ export default {
       title: 'My Account',
     };
   },
+  computed: {
+    patreonConnectUrl() {
+      let url = new URL('https://www.patreon.com/oauth2/authorize');
+      url.searchParams.append('response_type', 'code');
+      url.searchParams.append('client_id', this.$config.patreonClientId);
+      url.searchParams.append('redirect_uri', `${this.$config.patreonRedirectBase}/api/account/patreon`);
+      url.searchParams.append('scope', 'identity%20identity.memberships');
+      return url;
+    }
+  }
 }
 </script>
 
