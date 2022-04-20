@@ -32,7 +32,7 @@
       </v-col>
       <v-col cols="8">
         <v-alert
-          color="info"
+          :color="$auth.user.patreon ? 'success' : 'info'"
           :icon="$auth.user.patreon ? 'mdi-power-plug' : 'mdi-power-plug-off'"
           prominent
           text
