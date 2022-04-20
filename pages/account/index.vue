@@ -85,7 +85,7 @@ export default {
       url.searchParams.append('response_type', 'code');
       url.searchParams.append('client_id', this.$config.patreonClientId);
       url.searchParams.append('redirect_uri', `${this.$config.patreonRedirectBase}/api/account/patreon`);
-      url.searchParams.append('scope', 'identity%20identity.memberships');
+      url.searchParams.append('scope', 'identity identity.memberships');
       return url;
     }
   }
