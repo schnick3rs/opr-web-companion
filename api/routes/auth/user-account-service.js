@@ -41,7 +41,10 @@ async function getUserByUuid(uuid) {
   };
   if (user.isOpa) user.roles.push('opa');
   if (user.isOpa || user.isAdmin) user.roles.push('staff');
+  if (user.patreon) user.roles.push('patreon');
 
+  if (user.isOpa) user.scope.push('creators');
+  if (user.isOpa || user.isAdmin) user.scope.push('special-rules');
   if (user.isOpa || user.isAdmin || user.patreon) user.scope.push('army-books');
 
   return user;

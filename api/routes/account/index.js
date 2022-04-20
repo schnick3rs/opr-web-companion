@@ -3,6 +3,15 @@ import * as patreonService from "./patreonService.js";
 
 const router = new Router();
 
+function getActiveUntil() {
+  const now = new Date();
+  if (now.getMonth() === 11) {
+    return new Date(now.getFullYear() + 1, 0, 4);
+  } else {
+    return new Date(now.getFullYear(), now.getMonth() + 1, 4);
+  }
+}
+
 router.get("/patreon-refresh", async (request, response) => {
   const refreshToken = await patreonService.getUserPatreonRefreshToken(
     request.me.userId
@@ -25,18 +34,10 @@ router.get("/patreon-refresh", async (request, response) => {
     access_token
   );
 
-  console.log("User is Patreon", isActive);
-
-  function getActiveUntil() {
-    var now = new Date();
-    if (now.getMonth() == 11) {
-      return new Date(now.getFullYear() + 1, 0, 4);
-    } else {
-      return new Date(now.getFullYear(), now.getMonth() + 1, 4);
-    }
-  }
+  console.log("User is Patreon =", isActive);
 
   const activeUntil = isActive ? getActiveUntil() : null;
+  console.info('Users patreon is considered active until ', activeUntil);
 
   await patreonService.setUserPatreonActive(request.me.userId, activeUntil);
 
@@ -46,8 +47,8 @@ router.get("/patreon-refresh", async (request, response) => {
 router.get("/patreon", async (request, response) => {
   const { code } = request.query;
 
-  console.log("Patreon connection for user", request.me);
-  console.log("Patreon connection...", code);
+  console.info("Patreon connection for user", request.me);
+  console.info("Patreon connection...", code);
 
   if (!code) {
     const message = `Connection to Patreon failed.`;
@@ -72,10 +73,10 @@ router.get("/patreon", async (request, response) => {
       access_token
     );
 
-    await patreonService.setUserPatreonActive(
-      request.me.userId,
-      isActive ? new Date() : null
-    );
+    const activeUntil = isActive ? getActiveUntil() : null;
+    console.info('Users patreon is considered active until ', activeUntil);
+
+    await patreonService.setUserPatreonActive(request.me.userId, activeUntil);
 
     response.status(200).redirect("/account");
   } catch (e) {
