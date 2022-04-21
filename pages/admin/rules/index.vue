@@ -25,6 +25,7 @@ import OprBreadcrumbsRow from "@/components/shared/OprBreadcrumbsRow";
 export default {
   name: 'rules',
   components: {OprBreadcrumbsRow},
+  middleware: 'isSpecialRules',
   layout: 'admin',
   async asyncData() {
     return {

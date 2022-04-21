@@ -22,7 +22,7 @@
       </v-col>
     </v-row>
 
-    <v-row justify-sm="center" v-if="isAdmin">
+    <v-row justify-sm="center" v-if="$auth.hasScope('army-books')">
       <v-col
         :cols="10"
         v-for="(section, index) in cloudSections" :key="index"

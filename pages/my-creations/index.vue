@@ -407,7 +407,7 @@ import OprArmyBookTable from "../../components/shared/OprArmyBookTable";
 export default {
   name: 'my-army-book-creations',
   components: { OprArmyBookTable, OprBreadcrumbsRow, OprDialog },
-  middleware: 'auth',
+  middleware: 'isArmyBooks',
   async asyncData({ $axios }) {
     const { data: gameSystems } = await $axios.get('/api/game-systems/');
     //const { data: armyBooks } = await $axios.get(`/api/army-books/mine`);
