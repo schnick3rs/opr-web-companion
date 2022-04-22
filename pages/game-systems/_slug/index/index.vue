@@ -79,31 +79,16 @@
             <v-icon left>mdi-printer</v-icon>pdf
           </v-btn>
           <v-spacer></v-spacer>
-          <template v-if="armyBook._type === 'faction'">
-            <v-menu offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  text
-                  small
-                  color="primary"
-                  v-bind="attrs" v-on="on"
-                >
-                  <v-icon left>$forge</v-icon>
-                  <span v-show="$vuetify.breakpoint.smAndUp">army forge</span>
-                  <v-icon right>mdi-chevron-down</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item
-                  v-for="(item, index) in armyBook.items"
-                  :key="index"
-                  :href="`${item.armyForgeUrl}&gameSystem=${gameSystem.aberration.toLowerCase()}`"
-                >
-                  <v-list-item-title>{{ item.name }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </template>
+          <v-btn
+            v-if="armyBook._type === 'faction'"
+            text
+            small
+            color="primary"
+            :href="`${armyBook.items[0].armyForgeUrl}&gameSystem=${gameSystem.aberration.toLowerCase()}`"
+          >
+            <v-icon left>$forge</v-icon>
+            <span v-show="$vuetify.breakpoint.smAndUp">Build list</span>
+          </v-btn>
           <v-btn
             v-else
             text
@@ -112,8 +97,7 @@
             :href="`${armyBook.armyForgeUrl}&gameSystem=${gameSystem.aberration.toLowerCase()}`"
           >
             <v-icon left>$forge</v-icon>
-            <span v-show="$vuetify.breakpoint.smAndUp">army forge</span>
-            <v-icon v-show="$vuetify.breakpoint.smAndUp" right>mdi-launch</v-icon>
+            <span v-show="$vuetify.breakpoint.smAndUp">Build list</span>
           </v-btn>
         </v-card-actions>
       </v-card>

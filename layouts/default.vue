@@ -28,6 +28,10 @@
 
           <v-spacer />
 
+          <v-btn icon href="https://army-forge.onepagerules.com/">
+            <v-icon color="white">$forge</v-icon>
+          </v-btn>
+
           <v-btn icon @click="toggleDarkTheme">
             <v-icon v-if="theme === 'dark'">mdi-white-balance-sunny</v-icon>
             <v-icon v-else>mdi-weather-night</v-icon>
