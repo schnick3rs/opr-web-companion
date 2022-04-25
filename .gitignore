@@ -83,6 +83,7 @@ dist
 .idea
 .ideaDataSources
 dataSources
+.run
 
 # Service worker
 sw.*
