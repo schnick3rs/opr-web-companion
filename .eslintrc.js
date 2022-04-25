@@ -11,8 +11,8 @@ module.exports = {
     requireConfigFile: false
   },
   extends: [
-    'plugin:nuxt/base',
     '@nuxtjs',
+    'plugin:nuxt/recommended',
     //'airbnb-base'
   ],
   // add your custom rules here
