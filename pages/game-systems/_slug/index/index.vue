@@ -49,6 +49,7 @@
             :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
             style="cursor: pointer;"
             @click="$router.push(`/army-books/view/${armyBook.uid}~${gameSystem.id}/print`)"
+            @click.right="openPreview(armyBook)"
           >
           </v-img>
         </div>
@@ -102,12 +103,22 @@
         </v-card-actions>
       </v-card>
     </v-col>
+
+    <v-dialog
+      v-model="showPreview"
+      width="fit-content"
+    >
+      <opr-army-book :army-book="previewArmyBook"></opr-army-book>
+    </v-dialog>
+
   </v-row>
 </template>
 
 <script>
+import OprArmyBook from "@/components/shared/print/OprArmyBook";
 export default {
   name: "index",
+  components: {OprArmyBook},
   async asyncData({ $axios, params }) {
     const { slug } = params;
     const gameSystemResponse = await $axios.get(`/api/game-systems/${slug}`);
@@ -124,9 +135,20 @@ export default {
       ],
     }
   },
+  data() {
+    return {
+      showPreview: false,
+      previewArmyBook: null,
+    };
+  },
   methods: {
     filter(book) {
       return book.official;// && book.isLive;
+    },
+    async openPreview(armyBook) {
+      const { data } = await this.$axios.get(`/api/army-books/${armyBook.uid}`);
+      this.previewArmyBook = data;
+      this.showPreview = true;
     },
     groupedArmyBooks(armyBooks = []) {
 
