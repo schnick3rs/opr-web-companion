@@ -320,10 +320,10 @@ export function skirmify(armyBook) {
         section.options = section.options.filter(option => option.cost < 50);
         return section;
       })
-        // discard sections with options that are empty
-        .filter(section => section.options.length > 0)
-        // discard sections with add <> model -> Add one model with
-        .filter(section => section.label.startsWith('Add one model with') === false);
+      // discard sections with options that are empty
+      .filter(section => section.options.length > 0)
+      // discard sections with add <> model -> Add one model with
+      .filter(section => section.label.startsWith('Add one model with') === false);
 
       return pack;
     })
