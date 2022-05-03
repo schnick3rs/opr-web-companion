@@ -331,7 +331,6 @@ export function skirmify(armyBook) {
 
   // We remove upgrade references within units that are packages that are empty or gone
   const armyBookUpgrades = armyBook.upgradePackages.map((pack) => pack.uid);
-  console.info('armyBookUpgrades', armyBookUpgrades);
   armyBook.units = armyBook.units.map((unit) => {
     unit.upgrades = unit.upgrades.filter((upgrade) => {
       return armyBookUpgrades.includes(upgrade);
