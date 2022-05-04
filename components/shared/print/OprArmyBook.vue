@@ -189,6 +189,191 @@ export default {
 }
 </script>
 
-<style scoped>
 
+<style lang="scss">
+.page .special-rules__rule > p { margin-bottom: 0; }
+.page.page--grimdark-future .special-rules__rule > p > strong { font-weight: 500; }
 </style>
+
+<style scoped lang="scss">
+
+$font-size-default-text: 2.82mm;
+$font-size-army-book-name: 7.76111mm;
+$font-size-army-book-version-string: 3.88056mm;
+$font-size-intro-headline: 3.88056mm;
+$font-size-intro-text: 3.175mm;
+
+$font-size-block-headline: 3.52778mm;
+
+@font-face {
+  font-family: 'AgeOfFantasyTitle';
+  font-weight: normal;
+  src: url('~static/fonts/caslon-antique.regular.ttf')  format('truetype'),
+  url('~static/fonts/caslon-antique.regular.woff2') format('woff2'),
+  url('~static/fonts/caslon-antique.regular.woff') format('woff')
+}
+
+@font-face {
+  font-family: 'AgeOfFantasyText';
+  font-weight: normal;
+  src: url('~static/fonts/BKANT.ttf')  format('truetype'),
+  url('~static/fonts/BKANT.woff2') format('woff2'),
+  url('~static/fonts/BKANT.woff') format('woff')
+}
+
+
+.page {
+  //  page-break-inside: avoid;
+  position: relative;
+  line-height: 1.15;
+
+  &--din-a4 {
+    //height: 842.08pt;
+    //width: 595.41pt;
+    height: calc(297mm - 1mm);
+    width: 210mm;
+    overflow: hidden;
+    //margin: 5mm 10mm;
+    padding: 6mm 10mm;
+
+    font-size: $font-size-default-text;
+  }
+
+  &--letter-us {
+    //height: 842.08pt;
+    //width: 595.41pt;
+    height: calc(274mm - 1mm);
+    width: 215mm;
+    overflow: hidden;
+    //margin: 5mm 10mm;
+    padding: 6mm 10mm;
+
+    font-size: $font-size-default-text;
+  }
+
+  &--grimdark-future {
+    background-image: url('/img/army-books/border-grimdark-future.png');
+    //background-size: auto;
+    background-position: center;
+
+    font-family: GrimdarkText, sans-serif;
+
+    & .page-headline {
+      font-family: GrimdarkTitle, sans-serif;
+      margin-top: 5mm;
+      margin-bottom: 2mm;
+    }
+  }
+
+  .page--age-of-fantasy {
+    background-image: url('/img/army-books/border-age-of-fantasy.png');
+    //background-size: auto;
+    background-position: center;
+
+    font-family: AgeOfFantasyText, serif;
+
+    & .page-headline {
+      font-family: AgeOfFantasyTitle, serif;
+      text-transform: uppercase;
+      padding-top: 7mm;
+      padding-bottom: 1mm;
+      padding-left: 5mm;
+    }
+  }
+
+}
+
+.intro {
+
+  &__image-container {
+    width: 50%;
+    margin: 0 auto;
+    padding-top: 8mm;
+    padding-bottom: 8mm;
+  }
+
+  &__headline {
+    font-size: $font-size-intro-headline;
+    font-weight: 500;
+    margin-bottom: 2mm;
+  }
+
+  &__text-html {
+    font-size: $font-size-intro-text;
+    //font-weight: 600;
+    & > h1, h2, h3, h4, h5, h6 {
+      margin-bottom: 2mm;
+    }
+  }
+
+  &__footer {
+  }
+}
+
+.page-headline {
+  font-size: $font-size-army-book-name;
+  margin-left: 2mm;
+
+  &__version {
+    font-size: $font-size-army-book-version-string;
+  }
+}
+
+
+.credits {
+  position: absolute;
+  left: 14mm;
+  bottom: 18mm;
+}
+
+.config {
+  position: absolute;
+  right: 14mm;
+  bottom: 18mm;
+}
+
+
+@page {
+  //size: A4;
+  margin: 0;
+}
+
+@media print {
+  .page {
+    margin: 0;
+    border: initial;
+    border-radius: initial;
+    width: initial;
+    min-height: initial;
+    box-shadow: initial;
+    //background: initial;
+    page-break-after: always;
+  }
+
+  .unit-wrapper {
+
+  }
+
+  .unit__container {
+    page-break-inside: avoid;
+  }
+}
+
+@media screen {
+  .page--din-a4 {
+    border-style: dashed;
+    border-width: 1px;
+  }
+
+  .page--letter-us {
+    border-style: dashed;
+    border-width: 1px;
+  }
+}
+.alternating-grey {
+  &:nth-child(even) {
+    background: lightgrey;
+  }
+}
+</style>
+

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="armyBook" class="preview">
+  <div v-if="armyBook">
     <opr-army-book :army-book="armyBook" />
   </div>
 </template>
@@ -8,11 +8,11 @@
 import OprArmyBook from '@/components/shared/print/OprArmyBook';
 
 export default {
-  name: 'PrintView',
+  name: 'PrintPreview',
   components: {
     OprArmyBook,
   },
-  layout: 'print',
+  layout: 'armyBookPrintPreview',
   async asyncData({ params, $axios, error }) {
     const { slug } = params;
     const armyBookId = slug;
@@ -69,8 +69,5 @@ export default {
 </script>
 
 <style lang="scss">
-.preview {
-  margin: auto;
-  background-color: black;
-}
+
 </style>
