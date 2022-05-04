@@ -1,5 +1,5 @@
 <template>
-  <div v-if="armyBook" class="preview">
+  <div v-if="armyBook">
     <opr-army-book :army-book="armyBook" />
   </div>
 </template>
@@ -69,8 +69,4 @@ export default {
 </script>
 
 <style lang="scss">
-.preview {
-  margin: auto;
-  background-color: black;
-}
 </style>

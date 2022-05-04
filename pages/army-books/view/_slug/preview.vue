@@ -13,7 +13,7 @@
           nuxt
           :to="`/game-systems/${armyBook.gameSystemSlug}`"
         >
-          <v-icon>mdi-arrow-left</v-icon>
+          <v-icon>mdi-chevron-left</v-icon>
         </v-btn>
 
         <nuxt-link to="/">
@@ -29,6 +29,14 @@
 
         <v-btn
           icon
+          :href="`${armyBook.armyForgeUrl}&gameSystem=${armyBook.aberration.toLowerCase()}`"
+        >
+          <v-icon>$forge</v-icon>
+        </v-btn>
+
+        <v-btn
+          icon
+          @click="share()"
         >
           <v-icon>mdi-share-variant</v-icon>
         </v-btn>
@@ -125,8 +133,15 @@ export default {
   methods: {
     print() {
       window.print();
-    }
-  }
+    },
+    share() {
+      navigator.share({
+        url: `/api/army-books/${this.armyBook.uid}~${this.armyBook.gameSystemId}/preview`,
+        title: this.title,
+        text: this.armyBook.hint,
+      });
+    },
+  },
 };
 </script>
 

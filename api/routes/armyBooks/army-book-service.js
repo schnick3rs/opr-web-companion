@@ -245,8 +245,10 @@ export async function getArmyBookPublicOrOwner(armyBookUid, userId) {
     return {
       ...unit,
       splitPageNumber: parseInt(unit.splitPageNumber) || 1,
-    }
-  })
+    };
+  });
+
+  armyBook.armyForgeUrl = `https://army-forge.onepagerules.com/listConfiguration?armyId=${armyBook.uid}${armyBook.factionName ? '&faction=' + armyBook.factionName : ''}`;
 
   return armyBook;
 }
