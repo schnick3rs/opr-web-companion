@@ -5,6 +5,8 @@ const round = (preciseCost) => {
   return Math.round(preciseCost/5)*5;
 }
 
+const logVerbose = false;
+
 const normalizeWeapon = (weapon) => {
   if (weapon === undefined) return undefined
 
@@ -355,7 +357,7 @@ const recalculateUpgradePackage = (armyBookUid, upgradePackage, units, calc, cus
         ? ArmyBook.UpgradeSection.FromObject(section)
         : ArmyBook.UpgradeSection.FromString(section.label);
 
-      console.info('Checking upgrade package ->', upgradeSection);
+      if (logVerbose) console.debug('Checking upgrade package ->', upgradeSection);
 
       if (upgradeSection === undefined) {
         console.warn(`Upgrade section is undefined for ->`, section);
@@ -437,8 +439,8 @@ const recalculateUpgradePackage = (armyBookUid, upgradePackage, units, calc, cus
           isValid,
         };
       });
-      console.info(`Cost proposal for ${option.label}:`);
-      console.table(upgradeCostSet);
+      if (logVerbose) console.info(`Cost proposal for ${option.label}:`);
+      if (logVerbose) console.table(upgradeCostSet);
 
       // select the largest cost
       let proposedCost = undefined;
