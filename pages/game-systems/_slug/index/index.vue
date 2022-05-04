@@ -49,7 +49,7 @@
             :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
             style="cursor: pointer;"
             @click="$router.push(`/army-books/view/${armyBook.uid}~${gameSystem.id}/print`)"
-            @click.right="openPreview(armyBook)"
+            @click.right="$router.push(`/army-books/view/${armyBook.uid}~${gameSystem.id}/preview`)"
           >
           </v-img>
         </div>
