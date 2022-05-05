@@ -1,5 +1,5 @@
 <template>
-  <v-app style="color: black; background: black;">
+  <v-app class="preview">
     <nuxt />
   </v-app>
 </template>
@@ -17,5 +17,13 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.preview {
+  color: black;
+  background-color: black;
+
+  @media print {
+    background-color: transparent;
+  }
+}
 </style>

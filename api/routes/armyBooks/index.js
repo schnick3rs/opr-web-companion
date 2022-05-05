@@ -293,14 +293,31 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
 
   const { armyBookUid } = request.params;
   let unflavoredArmyBookUid = armyBookUid;
-  let userId = request?.me?.userId || 0;
+  let gameSystemId;
+  const userId = request?.me?.userId || 0;
 
   if (armyBookUid.indexOf('~') >= 0) {
     const split = armyBookUid.split('~');
     unflavoredArmyBookUid = split[0];
+    gameSystemId = split[1];
   }
 
   const armyBook = await armyBookService.getArmyBookPublicOrOwner(unflavoredArmyBookUid, userId);
+
+  if (gameSystemId) {
+    const gameSystem = await gameSystemService.getGameSystemById(gameSystemId);
+    if (gameSystem) {
+      armyBook.gameSystemId = gameSystem.id;
+      armyBook.gameSystemSlug = gameSystem.slug;
+      armyBook.fullname = gameSystem.fullname;
+      armyBook.aberration = gameSystem.aberration;
+      armyBook.universe = gameSystem.universe;
+      armyBook.shortname = gameSystem.shortname;
+      armyBook.flavouredUid = `${armyBook.uid}~${gameSystemId}`;
+    } else {
+      console.warn(`No GameSystem found for gameSystem=${gameSystemId}.`);
+    }
+  }
 
   if (!armyBook) {
     response.status(404).json({});
@@ -321,7 +338,7 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
       console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching ${armyBookUid} from service provider...`);
 
       const res = await pdfService.generateViaHtml2pdf(armyBookUid);
-      //const res = await pdfService.generateViaSejda(armyBookUid);
+      // const res = await pdfService.generateViaSejda(armyBookUid);
 
       if (res) {
         pdfByteArray = res.data;

@@ -75,60 +75,6 @@
         </div>
       </div>
 
-      <div class="config d-print-none">
-        <v-expand-transition>
-          <v-card v-show="expand">
-            <v-card-subtitle>
-              Page / print configurations
-              <v-icon class="float-right" @click="expand = !expand">
-                mdi-window-restore
-              </v-icon>
-            </v-card-subtitle>
-            <v-card-text>
-              <v-select
-                v-model="paperSize"
-                label="Paper Size"
-                outlined
-                dense
-                :items="[{text: 'DIN A4', value: 'din-a4'},{text: 'Letter', value: 'letter-us'}]"
-              />
-              <v-checkbox
-                v-model="eagerColumnWrap"
-                label="force column wrap"
-                persistent-hint
-                hint="force wrap on special rules section"
-              />
-              <v-checkbox
-                v-if="false"
-                v-model="showAllSpecialRules"
-                label="print all army wide special rules"
-                persistent-hint
-                hint="[beta] disable to let the app decide which rules to print"
-              />
-              <v-checkbox
-                v-if="false"
-                v-model="showSpellsOnAllPages"
-                label="print spells on each page"
-                persistent-hint
-                hint="[beta] disable to let the app decide when spells are to print"
-              />
-            </v-card-text>
-          </v-card>
-        </v-expand-transition>
-        <v-btn
-          v-show="!expand"
-          class="ma-2"
-          color="primary float-right"
-          outlined
-          small
-          @click="expand = !expand"
-        >
-          <v-icon left small>
-            mdi-window-restore
-          </v-icon>
-          open print config
-        </v-btn>
-      </div>
     </opr-page>
 
     <template v-for="(page, index) in unitPages">
@@ -169,11 +115,14 @@ export default {
       type: Object,
       default: () => {},
     },
+    paperSize: {
+      type: String,
+      default: 'din-a4',
+    },
   },
   data() {
     return {
       expand: false,
-      paperSize: 'din-a4',
       eagerColumnWrap: false,
       showAllSpecialRules: false,
       showSpellsOnAllPages: false,
