@@ -27,15 +27,6 @@ export default {
       error({ statusCode: 404, message: 'Army Book not found.' });
     }
   },
-  data() {
-    return {
-      expand: false,
-      paperSize: 'din-a4',
-      eagerColumnWrap: false,
-      showAllSpecialRules: false,
-      showSpellsOnAllPages: false,
-    };
-  },
   head() {
     // .toLowerCase().replace(/\W/gm, '-');
     const title = `${this.armyBook.aberration} - ${this.armyBook.name} ${this.armyBook.versionString}`;

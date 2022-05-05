@@ -3,37 +3,37 @@
     <opr-page
       :universe="armyBook.universe"
       :paper-size="paperSize"
-      pageNumber="1"
+      page-number="1"
     >
-
-      <template v-slot:headline>
+      <template #headline>
         <div>
           <strong>{{ armyBook.aberration }} - {{ armyBook.name }}</strong>
-          <strong class="page-headline__version" v-if="armyBook.versionString">
-            {{armyBook.versionString}}
+          <strong v-if="armyBook.versionString" class="page-headline__version">
+            {{ armyBook.versionString }}
           </strong>
         </div>
       </template>
 
       <section
-        class="intro__image-container"
         v-if="armyBook.coverImagePath || armyBook.official"
+        class="intro__image-container"
       >
         <v-img
           min-height="150"
           max-height="400"
           contain
           :src="armyBook.coverImagePath || introImageSrc"
-        ></v-img>
+        />
       </section>
 
       <section class="intro__wrapper">
-
         <v-container style="padding: 2mm;">
           <v-row>
             <!-- Disclaimer -->
             <v-col cols="6">
-              <h2 class="intro__headline">About OPR</h2>
+              <h2 class="intro__headline">
+                About OPR
+              </h2>
               <div class="intro__text-html">
                 <p>
                   OPR (<a href="https//www.onepagerules.com">www.onepagerules.com</a>) is the home of many free games which are designed to be fast to learn and easy to play.
@@ -45,33 +45,96 @@
                   If you’d like to support the continued development of our games you can donate on <a href="https://www.patreon.com/onepagerules">patreon.com/onepagerules</a>.
                 </p>
               </div>
-              <h2 class="intro__headline">Thank you for playing!</h2>
+              <h2 class="intro__headline">
+                Thank you for playing!
+              </h2>
             </v-col>
 
             <!-- Background Story -->
-            <v-col cols="6" v-if="armyBook.background">
-              <h2 class="intro__headline">Background Story</h2>
-              <div class="intro__text-html" v-html="markdown(armyBook.background)"></div>
+            <v-col v-if="armyBook.background" cols="6">
+              <h2 class="intro__headline">
+                Background Story
+              </h2>
+              <div class="intro__text-html" v-html="markdown(armyBook.background)" />
             </v-col>
-
           </v-row>
-
         </v-container>
       </section>
 
       <div class="credits">
         <div><strong>Game Design:</strong> Gaetano Ferrara</div>
         <div><strong>Illustrations:</strong> Brandon Gillam</div>
-        <div v-if="!armyBook.official"><strong>Army Book by:</strong> {{ armyBook.username }}</div>
-        <div v-if="armyBook.coverImageCredit"><strong>Cover Image by:</strong> <span v-html="markdownInline(armyBook.coverImageCredit)"></span></div>
-        <div v-if="!armyBook.official"><strong>Created with:</strong> <a target="_blank" href="https://webapp.onepagerules.com/">OPR WebApp</a></div>
+        <div v-if="!armyBook.official">
+          <strong>Army Book by:</strong> {{ armyBook.username }}
+        </div>
+        <div v-if="armyBook.coverImageCredit">
+          <strong>Cover Image by:</strong> <span v-html="markdownInline(armyBook.coverImageCredit)" />
+        </div>
+        <div v-if="!armyBook.official">
+          <strong>Created with:</strong> <a target="_blank" href="https://webapp.onepagerules.com/">OPR WebApp</a>
+        </div>
       </div>
 
+      <div class="config d-print-none">
+        <v-expand-transition>
+          <v-card v-show="expand">
+            <v-card-subtitle>
+              Page / print configurations
+              <v-icon class="float-right" @click="expand = !expand">
+                mdi-window-restore
+              </v-icon>
+            </v-card-subtitle>
+            <v-card-text>
+              <v-select
+                v-model="paperSize"
+                label="Paper Size"
+                outlined
+                dense
+                :items="[{text: 'DIN A4', value: 'din-a4'},{text: 'Letter', value: 'letter-us'}]"
+              />
+              <v-checkbox
+                v-model="eagerColumnWrap"
+                label="force column wrap"
+                persistent-hint
+                hint="force wrap on special rules section"
+              />
+              <v-checkbox
+                v-if="false"
+                v-model="showAllSpecialRules"
+                label="print all army wide special rules"
+                persistent-hint
+                hint="[beta] disable to let the app decide which rules to print"
+              />
+              <v-checkbox
+                v-if="false"
+                v-model="showSpellsOnAllPages"
+                label="print spells on each page"
+                persistent-hint
+                hint="[beta] disable to let the app decide when spells are to print"
+              />
+            </v-card-text>
+          </v-card>
+        </v-expand-transition>
+        <v-btn
+          v-show="!expand"
+          class="ma-2"
+          color="primary float-right"
+          outlined
+          small
+          @click="expand = !expand"
+        >
+          <v-icon left small>
+            mdi-window-restore
+          </v-icon>
+          open print config
+        </v-btn>
+      </div>
     </opr-page>
 
     <template v-for="(page, index) in unitPages">
       <opr-army-book-unit-page
         v-if="page.units.length > 0"
+        :key="index"
         :universe="armyBook.universe"
         :paper-size="paperSize"
         :headline="`${armyBook.aberration} - ${armyBook.name}`"
@@ -85,15 +148,15 @@
         :eager-column-wrap="eagerColumnWrap"
         :force-print-all-army-special-rules="showAllSpecialRules"
         :force-print-spells="showSpellsOnAllPages"
-      ></opr-army-book-unit-page>
+      />
     </template>
   </div>
 </template>
 
 <script>
 import { marked } from 'marked';
-import OprPage from "@/components/shared/print/OprPage";
-import OprArmyBookUnitPage from "@/components/shared/print/OprArmyBookUnitPage";
+import OprPage from '@/components/shared/print/OprPage';
+import OprArmyBookUnitPage from '@/components/shared/print/OprArmyBookUnitPage';
 
 export default {
   name: 'OprArmyBook',
@@ -102,15 +165,15 @@ export default {
     OprArmyBookUnitPage,
   },
   props: {
-    armyBook: Object,
-    paperSize: {
-      type: String,
-      default: 'din-a4',
+    armyBook: {
+      type: Object,
+      default: () => {},
     },
   },
   data() {
     return {
       expand: false,
+      paperSize: 'din-a4',
       eagerColumnWrap: false,
       showAllSpecialRules: false,
       showSpellsOnAllPages: false,
@@ -118,7 +181,7 @@ export default {
   },
   computed: {
     unitPages() {
-      let pages = [];
+      const pages = [];
       if (this.armyBook.units) {
         const { units, upgradePackages, specialRules, spells, armyWideRule } = this.armyBook;
 
@@ -127,7 +190,7 @@ export default {
           .map(unit => parseInt(unit.splitPageNumber));
         const uniqueSplitPageNumbers = [...new Set(splitPageNumbers)];
 
-        uniqueSplitPageNumbers.forEach(splitPageNumber => {
+        uniqueSplitPageNumbers.forEach((splitPageNumber) => {
           const taggedUnits = units.filter(unit => unit.splitPageNumber && unit.splitPageNumber === splitPageNumber);
 
           const upgradePackagesIds = [];
@@ -135,7 +198,7 @@ export default {
             .filter(unit => unit.upgrades) // only units with upgrades
             .forEach(unit => upgradePackagesIds.push(...unit.upgrades));
           const uniqueUpgradePackagesIds = [...new Set(upgradePackagesIds)];
-          const taggedUpgradePackages = upgradePackages.filter(upgradePackage => uniqueUpgradePackagesIds.includes(upgradePackage.uid) );
+          const taggedUpgradePackages = upgradePackages.filter(upgradePackage => uniqueUpgradePackagesIds.includes(upgradePackage.uid));
 
           const page = {
             splitPageNumber,
@@ -154,7 +217,7 @@ export default {
             .filter(unit => unit.upgrades) // only units with upgrades
             .forEach(unit => upgradePackagesIds.push(...unit.upgrades));
           const uniqueUpgradePackagesIds = [...new Set(upgradePackagesIds)];
-          const taggedUpgradePackages = upgradePackages.filter(upgradePackage => uniqueUpgradePackagesIds.includes(upgradePackage.uid) );
+          const taggedUpgradePackages = upgradePackages.filter(upgradePackage => uniqueUpgradePackagesIds.includes(upgradePackage.uid));
           const page = {
             units: taggedUnits,
             upgradePackages: taggedUpgradePackages,
@@ -186,9 +249,8 @@ export default {
       return marked.parseInline(text, []);
     },
   },
-}
+};
 </script>
-
 
 <style lang="scss">
 .page .special-rules__rule > p { margin-bottom: 0; }
@@ -220,7 +282,6 @@ $font-size-block-headline: 3.52778mm;
   url('~static/fonts/BKANT.woff2') format('woff2'),
   url('~static/fonts/BKANT.woff') format('woff')
 }
-
 
 .page {
   //  page-break-inside: avoid;
@@ -319,7 +380,6 @@ $font-size-block-headline: 3.52778mm;
   }
 }
 
-
 .credits {
   position: absolute;
   left: 14mm;
@@ -331,7 +391,6 @@ $font-size-block-headline: 3.52778mm;
   right: 14mm;
   bottom: 18mm;
 }
-
 
 @page {
   //size: A4;
@@ -376,4 +435,3 @@ $font-size-block-headline: 3.52778mm;
   }
 }
 </style>
-
