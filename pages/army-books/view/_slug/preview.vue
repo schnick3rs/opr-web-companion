@@ -46,16 +46,9 @@
           icon
           :href="`/api/army-books/${armyBook.uid}~${armyBook.gameSystemId}/pdf`"
           download
+          style="padding-top: 3px"
         >
           <v-icon>mdi-download</v-icon>
-        </v-btn>
-
-        <v-btn
-          v-if="$vuetify.breakpoint.smAndUp && false"
-          icon
-          @click="print()"
-        >
-          <v-icon>mdi-printer</v-icon>
         </v-btn>
 
         <v-menu
@@ -70,7 +63,7 @@
               v-bind="attrs"
               v-on="on"
             >
-              <v-icon>mdi-printer-settings</v-icon>
+              <v-icon>mdi-printer</v-icon>
             </v-btn>
           </template>
           <v-card class="d-print-none">
