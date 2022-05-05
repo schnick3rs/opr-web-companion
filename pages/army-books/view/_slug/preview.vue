@@ -23,7 +23,7 @@
 
         </nuxt-link>
 
-        <v-toolbar-title class="ml-4" v-if="$vuetify.breakpoint.smAndUp">{{ title }}</v-toolbar-title>
+        <span class="ml-4" v-if="$vuetify.breakpoint.smAndUp">{{ title }}</span>
 
         <v-spacer />
 
@@ -58,7 +58,12 @@
       </v-container>
     </v-app-bar>
     <v-main class="preview">
-      <opr-army-book :army-book="armyBook" />
+      <iframe
+        v-if="$vuetify.breakpoint.smAndDown"
+        :src="`https://docs.google.com/gview?url=https://webapp.onepagerules.com/api/army-books/${armyBook.uid}~${armyBook.gameSystemId}/pdf&embedded=true`"
+        style="position:fixed; top: 48px; left:0; bottom:0; right:0; width:100%; height:95%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"
+      ></iframe>
+      <opr-army-book v-else :army-book="armyBook" />
     </v-main>
   </div>
 </template>
