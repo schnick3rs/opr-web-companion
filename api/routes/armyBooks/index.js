@@ -2,22 +2,22 @@ import Router from 'express-promise-router';
 import cors from 'cors';
 import { nanoid } from 'nanoid';
 
+import calc from 'opr-point-calculator-lib';
+import { CalcHelper } from 'opr-army-book-helper';
+import { DataParsingService } from 'opr-data-service';
+import * as gameSystemService from '../gameSystems/game-system-service';
+import userAccountService from '../auth/user-account-service';
 import * as armyBookService from './army-book-service';
 import * as skirmificationService from './skirmification-service';
 import * as pdfService from './pdf-service';
-import * as gameSystemService from '../gameSystems/game-system-service';
 import * as upgradePackagesService from './upgradePackages/upgrade-packages-service';
 import * as unitService from './units/unit-service';
-import userAccountService from '../auth/user-account-service';
 
 import units from './units';
 import upgradePackages from './upgradePackages';
 import specialRules from './specialRules';
 import spells from './spells';
 import statistics from './statistics';
-import { CalcHelper, ArmyBook } from "opr-army-book-helper";
-import calc from "opr-point-calculator-lib";
-import { DataParsingService } from 'opr-data-service';
 
 const router = new Router();
 
@@ -28,22 +28,20 @@ router.use('/:armyBookUid/special-rules', specialRules);
 router.use('/:armyBookUid/spells', spells);
 
 router.get('/', cors(), async (request, response) => {
-
-  const { gameSystemSlug } = request.query;
+  const { gameSystemSlug, factionName } = request.query;
 
   // all original army books for this system
   const gameSystem = await gameSystemService.getGameSystemBySlug(gameSystemSlug);
-  let items = await armyBookService.getPublicArmyBooksListView(gameSystem?.id || 0);
+  const items = await armyBookService.getPublicArmyBooksListView(gameSystem?.id || 0, factionName);
 
   response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
   response.status(200).json(items);
-
 });
 
 router.get('/mine', async (request, response) => {
   const armyBooks = await armyBookService.getAllByUserId(request.me.userId);
 
-  //response.set('Cache-Control', 'public, max-age=300'); // 5 minutes
+  // response.set('Cache-Control', 'public, max-age=300'); // 5 minutes
   response.status(200).json(armyBooks);
 });
 
@@ -55,9 +53,8 @@ router.post('/', async (request, response) => {
   if (armyBook) {
     response.status(200).json(armyBook);
   } else {
-    response.status(400).json({message: 'Could not create army book.'});
+    response.status(400).json({ message: 'Could not create army book.' });
   }
-
 });
 
 router.post('/detachment', async (request, response) => {
@@ -71,9 +68,9 @@ router.post('/detachment', async (request, response) => {
 
   // set units synced from parent
   const clonedAndSyncedUnits = parentArmyBook.units
-    .filter((unit) => clones.includes(unit.id))
+    .filter(unit => clones.includes(unit.id))
     .map((unit) => {
-      let sync = undefined;
+      let sync;
       if (syncs.includes(unit.id)) {
         sync = {
           parentArmyBookId,
@@ -95,29 +92,29 @@ router.post('/detachment', async (request, response) => {
   await armyBookService.setUnits(newArmyBook.uid, request.me.userId, clonedAndSyncedUnits);
 
   // add upgrade packages
-  let clonedUpgradePackages = [];
+  const clonedUpgradePackages = [];
   clonedAndSyncedUnits.forEach(unit => clonedUpgradePackages.push(...unit.upgrades));
-  const uniqueUpgradePackages = [ ...new Set(clonedUpgradePackages)];
+  const uniqueUpgradePackages = [...new Set(clonedUpgradePackages)];
 
   const upgradePackages = parentArmyBook.upgradePackages
-    .filter((pck) => uniqueUpgradePackages.includes(pck.uid));
+    .filter(pck => uniqueUpgradePackages.includes(pck.uid));
   await armyBookService.setUpgradePackages(newArmyBook.uid, request.me.userId, upgradePackages);
 
   // add special rules
   // TODO only used special rules
-  await armyBookService.setSpecialRules(newArmyBook.uid, request.me.userId, parentArmyBook.specialRules)
+  await armyBookService.setSpecialRules(newArmyBook.uid, request.me.userId, parentArmyBook.specialRules);
 
   const updatedArmyBook = await armyBookService.getArmyBookPublicOrOwner(newArmyBook.uid, request.me.userId);
 
-  response.status(200).json({...updatedArmyBook});
+  response.status(200).json({ ...updatedArmyBook });
 });
 
 router.post('/import', async (request, response) => {
-    const { isOpa, isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isOpa, isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to upload
   if (isAdmin === false) {
-    response.status(403).json({message: 'Your account does not allow to import army books.'});
+    response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
 
@@ -136,7 +133,7 @@ router.post('/import', async (request, response) => {
   } = request.body;
 
   // make all units match the requested cost mode
-  units = units.map(unit => {
+  units = units.map((unit) => {
     unit.costMode = costModeAutomatic ? 'automatic' : 'manually';
     unit.costModeAutomatic = costModeAutomatic;
 
@@ -144,28 +141,28 @@ router.post('/import', async (request, response) => {
       // AF use label, but we use name
       // TODO remove once name can be used
       gear.name = gear.name || gear.label;
-      //gear.name = pluralize.singular(gear.name); // we singularize any name
+      // gear.name = pluralize.singular(gear.name); // we singularize any name
       gear.id = nanoid(5);
       if (gear.count && gear.count > 1 && !isNaN(gear.count)) {
         const count = gear.count;
         delete gear.count;
         for (let i = 1; i < count; i++) {
-          let duplicate = {
+          const duplicate = {
             ...gear,
             id: nanoid(5),
-          }
+          };
           unit.equipment.push(duplicate);
         }
       }
     });
 
     unit.equipment.sort((a, b) => {
-      if (a.name > b.name) return 1;
-      if (a.name < b.name) return -1;
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
     });
 
     return unit;
-  })
+  });
 
   try {
     const { uid } = await armyBookService.createArmyBook(request.me.userId, [gameSystemId], name, hint, background);
@@ -174,15 +171,15 @@ router.post('/import', async (request, response) => {
     const updateSetValues = [];
     const data = request.body;
     ['version_string', 'official'].forEach((column) => {
-      if(data[column] !== undefined) {
-        updateSetFields.push(`${column} = $${updateSetFields.length+1}`);
+      if (data[column] !== undefined) {
+        updateSetFields.push(`${column} = $${updateSetFields.length + 1}`);
         updateSetValues.push(data[column]);
       } else {
         console.info(`No entry found for ${column}`);
       }
-    })
+    });
     // INFO disabled for now
-    //await armyBookService.updateArmyBook(uid, request.me.userId, updateSetFields, updateSetValues);
+    // await armyBookService.updateArmyBook(uid, request.me.userId, updateSetFields, updateSetValues);
 
     await armyBookService.setUnits(uid, request.me.userId, units);
     await armyBookService.setSpecialRules(uid, request.me.userId, specialRules);
@@ -194,7 +191,7 @@ router.post('/import', async (request, response) => {
     response.status(200).json(armyBook);
   } catch (e) {
     console.error(e);
-    response.status(400).json({e});
+    response.status(400).json({ e });
   }
 });
 
@@ -202,21 +199,19 @@ router.post('/import', async (request, response) => {
  * we return a flavored and (optional) skirmified army book
  */
 router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
-
   const { armyBookUid, gameSystemId } = request.params;
   const { armyForge } = request.query;
 
-  let userId = request?.me?.userId || 0;
+  const userId = request?.me?.userId || 0;
 
   // we fetch the source for further handling
   let armyBook = await armyBookService.getArmyBookPublicOrOwner(armyBookUid, userId);
 
   if (armyBook && armyBook.enabledGameSystems.includes(parseInt(gameSystemId))) {
-
     // we overwrite with our pseudo xxx-skirmish id
     // armyBook.uid = armyBookUid;
 
-    if ([3,5].includes(parseInt(gameSystemId))) {
+    if ([3, 5].includes(parseInt(gameSystemId))) {
       armyBook = skirmificationService.skirmify(armyBook);
     }
 
@@ -241,8 +236,7 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
           response.status(400).json({ message: 'Could not transform army book' });
           return;
         }
-      }
-      catch (e) {
+      } catch (e) {
         console.error(e);
         response.status(400).json({ message: 'Could not transform army book' });
       }
@@ -250,53 +244,46 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
 
     response.set('Cache-Control', 'public, max-age=60'); // 1 minute
     response.status(200).json(armyBook);
-    //response.set('Last-Modified', new Date(armyBook.modifiedAt).toUTCString());
-    //return response.send({...armyBook, units});
-
+    // response.set('Last-Modified', new Date(armyBook.modifiedAt).toUTCString());
+    // return response.send({...armyBook, units});
   } else {
     response.status(404).json({});
   }
-
 });
 
 router.get('/:armyBookUid', cors(), async (request, response) => {
-
-  console.info('/:armyBookUid')
+  console.info('/:armyBookUid');
   const { armyBookUid } = request.params;
-  let userId = request?.me?.userId || 0;
+  const userId = request?.me?.userId || 0;
 
   // we fetch the source for further handling
   const armyBook = await armyBookService.getArmyBookPublicOrOwner(armyBookUid, userId);
 
   if (armyBook) {
-
     // enrich unit missing splitPageNumber
-    armyBook.units = armyBook.units.map(unit => {
+    armyBook.units = armyBook.units.map((unit) => {
       return {
         ...unit,
         splitPageNumber: parseInt(unit.splitPageNumber) || 1,
-      }
+      };
     });
 
     response.set('Cache-Control', 'public, max-age=0'); // 1 minute
     response.status(200).json(armyBook);
-    //response.set('Last-Modified', new Date(armyBook.modifiedAt).toUTCString());
-    //return response.send({...armyBook, units});
-
+    // response.set('Last-Modified', new Date(armyBook.modifiedAt).toUTCString());
+    // return response.send({...armyBook, units});
   } else {
     response.status(404).json({});
   }
-
 });
 
 router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
-
   const { armyBookUid } = request.params;
   let unflavoredArmyBookUid = armyBookUid;
   let gameSystemId;
   const userId = request?.me?.userId || 0;
 
-  if (armyBookUid.indexOf('~') >= 0) {
+  if (armyBookUid.includes('~')) {
     const split = armyBookUid.split('~');
     unflavoredArmyBookUid = split[0];
     gameSystemId = split[1];
@@ -322,10 +309,9 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
   if (!armyBook) {
     response.status(404).json({});
   } else {
+    let pdfByteArray;
 
-    let pdfByteArray = undefined;
-
-    let pdf = await armyBookService.readPdfA4(armyBookUid);
+    const pdf = await armyBookService.readPdfA4(armyBookUid);
 
     if (pdf && pdf.createdAt) {
       if (new Date(pdf.createdAt).toISOString() == new Date(armyBook.modifiedAt).toISOString()) {
@@ -334,7 +320,6 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
     }
 
     if (!pdfByteArray) {
-
       console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching ${armyBookUid} from service provider...`);
 
       const res = await pdfService.generateViaHtml2pdf(armyBookUid);
@@ -347,7 +332,6 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
       } else {
         console.error(`[${armyBook.name}] #${armyBook.uid} :: PDF could not be generated!`);
       }
-
     } else {
       console.info(`[${armyBook.name}] #${armyBook.uid} :: PDF found.`);
     }
@@ -368,17 +352,16 @@ router.get('/:armyBookUid/mine', async (request, response) => {
   const armyBook = await armyBookService.getArmyBookForOwner(armyBookUid, request.me.userId);
 
   if (!armyBook) {
-    response.status(404).json({message: 'Not found or no ownership'});
+    response.status(404).json({ message: 'Not found or no ownership' });
   } else {
-    const units = armyBook.units.map(unit => {
+    const units = armyBook.units.map((unit) => {
       return {
         ...unit,
         splitPageNumber: parseInt(unit.splitPageNumber) || 1,
       };
     });
-    response.status(200).json({...armyBook, units});
+    response.status(200).json({ ...armyBook, units });
   }
-
 });
 
 router.get('/:armyBookUid/ownership', async (request, response) => {
@@ -387,23 +370,22 @@ router.get('/:armyBookUid/ownership', async (request, response) => {
   const armyBook = await armyBookService.getSimpleArmyBook(armyBookUid);
 
   if (!armyBook) {
-    response.status(404).json({message: 'Not found.'});
+    response.status(404).json({ message: 'Not found.' });
   }
 
   if (armyBook.userId !== request.me.userId) {
-    response.status(403).json({message: 'Permission required.'});
+    response.status(403).json({ message: 'Permission required.' });
   } else {
-    response.status(200).json({...armyBook});
+    response.status(200).json({ ...armyBook });
   }
-
 });
 
 router.post('/:armyBookUid/calculate', async (request, response) => {
-  const { isOpa, isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isOpa, isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (isAdmin === false) {
-    response.status(403).json({message: 'Your account does not allow to import army books.'});
+    response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
 
@@ -412,10 +394,10 @@ router.post('/:armyBookUid/calculate', async (request, response) => {
   try {
     const armyBook = await armyBookService.getArmyBookForOwner(armyBookUid, request.me.userId);
 
-    let { units, upgradePackages, specialRules } = armyBook;
+    const { units, upgradePackages, specialRules } = armyBook;
     const customRules = CalcHelper.toCustomRules(specialRules);
 
-    const unitz = units.map(unit => {
+    const unitz = units.map((unit) => {
       if (unit.costModeAutomatic) {
         const originalUnit = CalcHelper.normalizeUnit(unit);
         const unitCost = calc.unitCost(originalUnit, customRules);
@@ -442,16 +424,16 @@ router.post('/:armyBookUid/calculate', async (request, response) => {
     }
     await upgradePackagesService.updateUpgradePackages(armyBookUid, request.me.userId, upgradePackagez);
 
-    response.status(200).json({ units: unitz, upgradePackages: upgradePackagez});
+    response.status(200).json({ units: unitz, upgradePackages: upgradePackagez });
   } catch (e) {
     console.error(e);
-    response.status(400).json({message: 'could not calculate unit costs'});
+    response.status(400).json({ message: 'could not calculate unit costs' });
   }
 });
 
 router.patch('/:armyBookUid', async (request, response) => {
   const { armyBookUid } = request.params;
-  const data = request.body
+  const data = request.body;
 
   const patchableColumns = [
     'version_string',
@@ -468,22 +450,21 @@ router.patch('/:armyBookUid', async (request, response) => {
   const updateSetFields = [];
   const updateSetValues = [];
   patchableColumns.forEach((column) => {
-    if(data[column] !== undefined) {
-      updateSetFields.push(`${column} = $${updateSetFields.length+1}`);
+    if (data[column] !== undefined) {
+      updateSetFields.push(`${column} = $${updateSetFields.length + 1}`);
       updateSetValues.push(data[column]);
     } else {
       console.info(`No entry found for ${column}`);
     }
-  })
+  });
 
   try {
-    await armyBookService.updateArmyBook(armyBookUid, request.me.userId, updateSetFields, updateSetValues)
+    await armyBookService.updateArmyBook(armyBookUid, request.me.userId, updateSetFields, updateSetValues);
     response.status(204).json();
   } catch (e) {
-    console.warn(e)
-    response.status(500).json({message: 'Could not update armybook'});
+    console.warn(e);
+    response.status(500).json({ message: 'Could not update armybook' });
   }
-
 });
 
 router.delete('/:armyBookUid', async (request, response) => {
