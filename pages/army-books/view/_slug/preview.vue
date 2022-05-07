@@ -110,12 +110,36 @@
       </v-container>
     </v-app-bar>
     <v-main class="preview">
+      <div v-if="false">
+        <v-slide-group
+          center-active
+          show-arrows
+        >
+          <v-slide-item
+            v-for="armyBook in factionBooks"
+            :key="armyBook.uid"
+          >
+            <v-card
+              nuxt
+              :to="`/army-books/view/${armyBook.flavouredUid}/preview`"
+              height="200"
+              width="100"
+            >
+              {{ armyBook.name }}
+            </v-card>
+          </v-slide-item>
+        </v-slide-group>
+      </div>
+      <opr-army-book
+        v-if="$vuetify.breakpoint.smAndUp"
+        :army-book="armyBook"
+        :paper-size="paperSize"
+      />
       <iframe
-        v-if="$vuetify.breakpoint.xsOnly"
+        v-else
         :src="`https://docs.google.com/gview?url=https://webapp.onepagerules.com/api/army-books/${armyBook.uid}~${armyBook.gameSystemId}/pdf&embedded=true`"
         style="position:fixed; top: 48px; left:0; bottom:0; right:0; width:100%; height:95%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"
       ></iframe>
-      <opr-army-book v-else :army-book="armyBook" :paper-size="paperSize" />
     </v-main>
   </div>
 </template>
@@ -132,11 +156,17 @@ export default {
   async asyncData({ params, $axios, error }) {
     const { slug } = params;
     const armyBookId = slug;
+    let factionBooks = [];
     try {
       const { data: armyBook } = await $axios.get(`/api/army-books/${armyBookId}`);
+      if (armyBook.factionName) {
+        const { data } = await $axios.get(`/api/army-books/?gameSystemSlug=${armyBook.gameSystemSlug}&factionName=${armyBook.factionName}`);
+        factionBooks = data;
+      }
       return {
         armyBookId,
         armyBook,
+        factionBooks,
       };
     } catch (e) {
       // const { status, data } = e.response;
