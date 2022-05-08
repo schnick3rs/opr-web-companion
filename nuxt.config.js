@@ -3,12 +3,12 @@ module.exports = {
   ** Nuxt rendering mode
   ** See https://nuxtjs.org/api/configuration-mode
   */
-  //mode: 'spa',
+  // mode: 'spa',
   /*
   ** Nuxt target
   ** See https://nuxtjs.org/api/configuration-target
   */
-  //target: 'static',
+  // target: 'static',
   /*
   ** Headers of the page
   ** See https://nuxtjs.org/api/configuration-head
@@ -25,13 +25,13 @@ module.exports = {
       // Facebook Data
       { hid: 'og:title', name: 'og:title', content: 'Home | OPR WebApp' },
       { hid: 'og:description', name: 'og:description', content: 'Browse & create Army Books for the main games an build lists for FTL, DoubleTab, ArmyManCombat or WarStuff.' },
-      //{ hid: 'og:image', name: 'og:image', content: '/img/army-books-grimdark-future-tile.jpg' },
+      // { hid: 'og:image', name: 'og:image', content: '/img/army-books-grimdark-future-tile.jpg' },
       // Twitter Card
       { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
       { hid: 'twitter:title', name: 'twitter:title', content: 'Home | OPR WebApp' },
       { hid: 'twitter:description', name: 'twitter:description', content: 'Browse & create Army Books for the main games an build lists for FTL, DoubleTab, ArmyManCombat or WarStuff.' },
-      //{ hid: 'twitter:image', name: 'twitter:image', content: '/img/army-books-grimdark-future-tile.jpg' },
-      //{ hid: 'twitter:image', name: 'twitter:image:alt', content: 'OPR WebApp' },
+      // { hid: 'twitter:image', name: 'twitter:image', content: '/img/army-books-grimdark-future-tile.jpg' },
+      // { hid: 'twitter:image', name: 'twitter:image:alt', content: 'OPR WebApp' },
     ],
     link: [
       { rel: 'manifest', href: '/manifest.webmanifest' },
@@ -62,7 +62,7 @@ module.exports = {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
-    //{ src: '~/plugins/vuex-persist', ssr: false },
+    // { src: '~/plugins/vuex-persist', ssr: false },
     { src: '~/plugins/vue-draggable' },
     { src: '~/plugins/persistedState.client' },
     { src: '~/plugins/opr-point-calculator' },
@@ -79,7 +79,7 @@ module.exports = {
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
-    ['@nuxtjs/google-analytics', {id: 'UA-178265978-1'}],
+    ['@nuxtjs/google-analytics', { id: 'UA-178265978-1' }],
   ],
   /*
   ** Nuxt.js modules
@@ -129,10 +129,10 @@ module.exports = {
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {
-    transpile: ['opr-army-book-helper'],
+    transpile: ['opr-army-book-helper', 'opr-data-service'],
   },
 
   serverMiddleware: [
     '~/api/express', // handles /api/** calls
   ],
-}
+};

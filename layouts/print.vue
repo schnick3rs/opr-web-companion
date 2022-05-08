@@ -19,9 +19,9 @@ export default {
       ],
       right: true,
       title: 'Warfleets: FTL'
-    }
+    };
   },
-  computed:{
+  computed: {
     isFleetRoute() {
       return this.$route.params.id || null;
     },
@@ -41,11 +41,11 @@ export default {
     prime() {
       return this.$route;
     },
-    theme(){
-      return (this.$vuetify.theme.dark) ? 'dark' : 'light'
+    theme() {
+      return (this.$vuetify.theme.dark) ? 'dark' : 'light';
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
