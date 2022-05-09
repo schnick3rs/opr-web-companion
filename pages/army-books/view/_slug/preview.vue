@@ -50,6 +50,7 @@
         </v-btn>
 
         <v-menu
+          v-if="$vuetify.breakpoint.smAndUp"
           v-model="menu"
           :close-on-content-click="false"
           :nudge-width="200"
@@ -71,7 +72,7 @@
                   v-model="paperSize"
                   row
                 >
-                  <v-radio label="DIN A4" value="din-a4" />
+                  <v-radio label="A4" value="din-a4" />
                   <v-radio label="Letter" value="letter-us" />
                 </v-radio-group>
               </v-list-item>
