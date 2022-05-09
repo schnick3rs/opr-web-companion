@@ -5,14 +5,19 @@ module.exports = {
     es6: true,
     node: true
   },
-  parser: '@babel/eslint-parser',
   parserOptions: {
-    sourceType: "module",
+    parser: '@babel/eslint-parser',
+    sourceType: 'module',
     requireConfigFile: false
   },
   extends: [
     '@nuxtjs',
-    //'airbnb-base'
+  ],
+  plugins: [
+    // 'html',
+    'vuetify',
+    // 'plugin:nuxt/recommended',
+    // 'airbnb-base'
   ],
   // add your custom rules here
   rules: {
@@ -24,9 +29,9 @@ module.exports = {
     'vuetify/no-deprecated-classes': 'error',
     'vuetify/grid-unknown-attributes': 'error',
     'vuetify/no-legacy-grid': 'error',
+    'comma-dangle': ['error', 'only-multiline'],
+    'semi': [2, 'always'],
+    'quote-props': 0,
+    'space-before-function-paren': 0,
   },
-  plugins: [
-    //'html',
-    'vuetify',
-  ],
 };
