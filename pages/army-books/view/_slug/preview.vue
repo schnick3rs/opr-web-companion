@@ -1,5 +1,5 @@
 <template>
-  <div v-if="armyBook" class="preview-wrapper">
+  <div v-if="armyBook" class="preview-wrapper" :class="{ 'preview-wrapper--xs' : $vuetify.breakpoint.xs }">
     <v-app-bar
       app
       dark
@@ -7,7 +7,6 @@
       class="d-print-none"
     >
       <v-container class="pa-0 fill-height" :class="{ 'pl-2 pr-2': $vuetify.breakpoint.mdAndUp }">
-
         <v-btn
           icon
           nuxt
@@ -20,10 +19,9 @@
           <v-avatar tile size="32">
             <v-img src="/img/onepagerules_square.png" />
           </v-avatar>
-
         </nuxt-link>
 
-        <span class="ml-4" v-if="$vuetify.breakpoint.smAndUp">{{ title }}</span>
+        <span v-if="$vuetify.breakpoint.smAndUp" class="ml-4">{{ title }}</span>
 
         <v-spacer />
 
@@ -73,8 +71,8 @@
                   v-model="paperSize"
                   row
                 >
-                  <v-radio label="DIN A4" value="din-a4"></v-radio>
-                  <v-radio label="Letter" value="letter-us"></v-radio>
+                  <v-radio label="DIN A4" value="din-a4" />
+                  <v-radio label="Letter" value="letter-us" />
                 </v-radio-group>
               </v-list-item>
               <v-list-item>
@@ -86,9 +84,9 @@
                 />
               </v-list-item>
             </v-list>
-            <v-divider/>
+            <v-divider />
             <v-card-actions>
-              <v-spacer/>
+              <v-spacer />
 
               <v-btn
                 text
@@ -106,41 +104,22 @@
             </v-card-actions>
           </v-card>
         </v-menu>
-
       </v-container>
     </v-app-bar>
-    <v-main class="preview">
-      <div v-if="false">
-        <v-slide-group
-          center-active
-          show-arrows
-        >
-          <v-slide-item
-            v-for="armyBook in factionBooks"
-            :key="armyBook.uid"
-          >
-            <v-card
-              nuxt
-              :to="`/army-books/view/${armyBook.flavouredUid}/preview`"
-              height="200"
-              width="100"
-            >
-              {{ armyBook.name }}
-            </v-card>
-          </v-slide-item>
-        </v-slide-group>
-      </div>
+    <v-main
+      v-if="$vuetify.breakpoint.smAndUp"
+      class="preview"
+    >
       <opr-army-book
-        v-if="$vuetify.breakpoint.smAndUp"
         :army-book="armyBook"
         :paper-size="paperSize"
       />
-      <iframe
-        v-else
-        :src="`https://docs.google.com/gview?url=https://webapp.onepagerules.com/api/army-books/${armyBook.uid}~${armyBook.gameSystemId}/pdf&embedded=true`"
-        style="position:fixed; top: 48px; left:0; bottom:0; right:0; width:100%; height:95%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"
-      ></iframe>
     </v-main>
+    <iframe
+      v-else
+      :src="`https://webapp.onepagerules.com/api/army-books/${armyBook.uid}~${armyBook.gameSystemId}/pdf`"
+      style=""
+    />
   </div>
 </template>
 
@@ -255,5 +234,19 @@ export default {
     margin: unset;
   }
 
+  &--xs {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  iframe {
+    flex-grow: 1;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
 }
 </style>
