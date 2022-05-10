@@ -118,8 +118,8 @@
     </v-main>
     <iframe
       v-else
-      :src="`https://webapp.onepagerules.com/api/army-books/${armyBook.uid}~${armyBook.gameSystemId}/pdf`"
-      style=""
+      :src="`/army-books/view/${armyBook.uid}~${armyBook.gameSystemId}/print`"
+      class="iframe"
     />
   </div>
 </template>
@@ -243,11 +243,11 @@ export default {
     overflow: hidden;
   }
 
-  iframe {
+  .iframe {
     flex-grow: 1;
     border: none;
     margin: 0;
-    padding: 0;
+    padding: 48px 0 0 0;
   }
 }
 </style>
