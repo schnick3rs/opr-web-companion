@@ -23,7 +23,7 @@
 
         <span v-if="$vuetify.breakpoint.smAndUp" class="ml-4">{{ title }}</span>
 
-        <v-spacer />
+        <v-spacer v-if="$vuetify.breakpoint.smAndUp" />
 
         <v-btn
           icon
@@ -120,6 +120,7 @@
       v-else
       :src="`/army-books/view/${armyBook.uid}~${armyBook.gameSystemId}/print`"
       class="iframe"
+      scrolling="yes"
     />
   </div>
 </template>
@@ -237,7 +238,7 @@ export default {
 
   &--xs {
     display: flex;
-    width: 100%;
+    // width: 100%;
     height: 100%;
     flex-direction: column;
     overflow: hidden;
