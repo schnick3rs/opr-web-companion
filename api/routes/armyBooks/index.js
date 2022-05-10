@@ -311,7 +311,10 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
   } else {
     let pdfByteArray;
 
+    const start = Date.now();
     const pdf = await armyBookService.readPdfA4(armyBookUid);
+    const duration = Date.now() - start;
+    console.info(`PDF binary retrieval took ${duration}ms.`);
 
     if (pdf && pdf.createdAt) {
       if (new Date(pdf.createdAt).toISOString() == new Date(armyBook.modifiedAt).toISOString()) {

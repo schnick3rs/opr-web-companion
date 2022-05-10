@@ -23,7 +23,7 @@
 
         <span v-if="$vuetify.breakpoint.smAndUp" class="ml-4">{{ title }}</span>
 
-        <v-spacer v-if="$vuetify.breakpoint.smAndUp" />
+        <v-spacer/>
 
         <v-btn
           icon
@@ -118,8 +118,9 @@
     </v-main>
     <iframe
       v-else
-      :src="`/army-books/view/${armyBook.uid}~${armyBook.gameSystemId}/print`"
+      :src="`https://docs.google.com/gview?url=https://webapp.onepagerules.com/api/army-books/${armyBook.uid}~${armyBook.gameSystemId}/pdf&embedded=true`"
       class="iframe"
+      sandbox="allow-scripts allow-same-origin"
       scrolling="yes"
     />
   </div>
@@ -238,7 +239,7 @@ export default {
 
   &--xs {
     display: flex;
-    // width: 100%;
+    width: 100%;
     height: 100%;
     flex-direction: column;
     overflow: hidden;
@@ -249,6 +250,7 @@ export default {
     border: none;
     margin: 0;
     padding: 48px 0 0 0;
+    //width: 794px;
   }
 }
 </style>
