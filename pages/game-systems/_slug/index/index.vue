@@ -32,7 +32,7 @@
                   v-for="(item, index) in armyBook.items"
                   :key="index"
                   nuxt
-                  :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
+                  :to="`/army-books/view/${item.uid}~${gameSystem.id}/preview`"
                 >
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
                 </v-list-item>
@@ -48,7 +48,7 @@
             :class="{ inverted: $vuetify.theme.dark }"
             :src="`/img/army-books/400/${armyBook.name.toLowerCase().replace(/\W/gm, '-')}.png`"
             style="cursor: pointer;"
-            @click="$router.push(`/army-books/view/${armyBook.uid}~${gameSystem.id}/print`)"
+            @click="$router.push(`/army-books/view/${armyBook.uid}~${gameSystem.id}/preview`)"
           />
         </div>
         <v-card-text class="text-center font-weight-bold" v-text="armyBook.name" />
