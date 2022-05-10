@@ -322,13 +322,22 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
     if (!pdfByteArray) {
       console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching ${armyBookUid} from service provider...`);
 
-      //const res = await pdfService.generateViaHtml2pdf(armyBookUid);
-      const res = await pdfService.generateViaSejda(armyBookUid);
+      let res;
+      let serviceName = 'unknown';
+      // eslint-disable-next-line prefer-const
+      try {
+        res = await pdfService.generateViaHtml2pdf(armyBookUid);
+        serviceName = 'Html2pdf';
+      } catch (e) {
+        console.warn('Could not fetch PDF via Html2pdf, use fallback Sejda ->', e.message);
+        res = await pdfService.generateViaSejda(armyBookUid);
+        serviceName = 'Sejda';
+      }
 
       if (res) {
         pdfByteArray = res.data;
         console.info(`[${armyBook.name}] #${armyBook.uid} :: Save pdf, ${pdfByteArray.length} bytes ...`);
-        await armyBookService.savePdfA4(armyBookUid, pdfByteArray, new Date(armyBook.modifiedAt.toISOString()), 'Sejda');
+        await armyBookService.savePdfA4(armyBookUid, pdfByteArray, new Date(armyBook.modifiedAt.toISOString()), serviceName);
       } else {
         console.error(`[${armyBook.name}] #${armyBook.uid} :: PDF could not be generated!`);
       }
