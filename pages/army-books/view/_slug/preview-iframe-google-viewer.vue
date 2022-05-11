@@ -23,7 +23,7 @@
 
         <span v-if="$vuetify.breakpoint.smAndUp" class="ml-4">{{ title }}</span>
 
-        <v-spacer/>
+        <v-spacer />
 
         <v-btn
           icon
