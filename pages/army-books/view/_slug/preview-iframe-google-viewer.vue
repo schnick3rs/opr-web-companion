@@ -21,7 +21,12 @@
           </v-avatar>
         </nuxt-link>
 
-        <span v-if="$vuetify.breakpoint.smAndUp" class="ml-4">{{ title }}</span>
+        <span
+          v-if="$vuetify.breakpoint.smAndUp"
+          class="ml-4"
+        >
+          {{ title }}
+        </span>
 
         <v-spacer />
 
