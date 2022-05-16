@@ -1,6 +1,7 @@
 import Router from 'express-promise-router';
 import cors from 'cors';
 import { nanoid } from 'nanoid';
+import Zip from 'adm-zip';
 
 import calc from 'opr-point-calculator-lib';
 import { CalcHelper } from 'opr-army-book-helper';
@@ -36,6 +37,40 @@ router.get('/', cors(), async (request, response) => {
 
   response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
   response.status(200).json(items);
+});
+
+/**
+ * returns a zip containing all official PDF for a given game system
+ */
+router.get('/zip', async (request, response) => {
+  const { gameSystemSlug } = request.query;
+
+  // all original army books for this system
+  const gameSystem = await gameSystemService.getGameSystemBySlug(gameSystemSlug);
+  if (!gameSystem) {
+    response.status(400).json({message: `no gamesystem found for [${gameSystemSlug}]`});
+    return;
+  }
+
+  const items = await armyBookService.getPublicArmyBooksListView(gameSystem.id);
+
+  // eslint-disable-next-line array-callback-return
+  const zip = new Zip();
+  for (const item of items) {
+    const pdfByteArray = await pdfService.getOrCreate(item.flavouredUid, item);
+    const pdfFileName = `${gameSystem.aberration} - ${item.name} ${item.versionString}.pdf`;
+    console.info(`Add file to zip -> ${pdfFileName}`);
+    zip.addFile(pdfFileName, pdfByteArray);
+  }
+
+  response.setHeader('Content-Type', 'application/zip');
+  const pdfFileName = `${gameSystem.aberration}`;
+  response.setHeader('Content-Disposition', `inline; filename="${pdfFileName}.zip"`);
+  response.setHeader('Content-Transfer-Encoding', 'binary');
+  response.setHeader('Accept-Ranges', 'bytes');
+  response.set('Cache-Control', 'public, max-age=60'); // 1 minute
+  const result = await zip.toBuffer();
+  response.send(result);
 });
 
 router.get('/mine', async (request, response) => {
@@ -118,7 +153,7 @@ router.post('/import', async (request, response) => {
     return;
   }
 
-  let {
+  const {
     name,
     hint,
     gameSystemId,
@@ -309,44 +344,7 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
   if (!armyBook) {
     response.status(404).json({});
   } else {
-    let pdfByteArray;
-
-    const start = Date.now();
-    const pdf = await armyBookService.readPdfA4(armyBookUid);
-    const duration = Date.now() - start;
-    console.info(`PDF binary retrieval took ${duration}ms.`);
-
-    if (pdf && pdf.createdAt) {
-      if (new Date(pdf.createdAt).toISOString() == new Date(armyBook.modifiedAt).toISOString()) {
-        pdfByteArray = pdf.byteArray;
-      }
-    }
-
-    if (!pdfByteArray) {
-      console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching ${armyBookUid} from service provider...`);
-
-      let res;
-      let serviceName = 'unknown';
-      // eslint-disable-next-line prefer-const
-      try {
-        res = await pdfService.generateViaHtml2pdf(armyBookUid);
-        serviceName = 'Html2pdf';
-      } catch (e) {
-        console.warn('Could not fetch PDF via Html2pdf, use fallback Sejda ->', e.message);
-        res = await pdfService.generateViaSejda(armyBookUid);
-        serviceName = 'Sejda';
-      }
-
-      if (res) {
-        pdfByteArray = res.data;
-        console.info(`[${armyBook.name}] #${armyBook.uid} :: Save pdf, ${pdfByteArray.length} bytes ...`);
-        await armyBookService.savePdfA4(armyBookUid, pdfByteArray, new Date(armyBook.modifiedAt.toISOString()), serviceName);
-      } else {
-        console.error(`[${armyBook.name}] #${armyBook.uid} :: PDF could not be generated!`);
-      }
-    } else {
-      console.info(`[${armyBook.name}] #${armyBook.uid} :: PDF found.`);
-    }
+    const pdfByteArray = await pdfService.getOrCreate(armyBookUid, armyBook);
 
     response.setHeader('Content-Type', 'application/pdf');
     const pdfFileName = `${armyBook.aberration} - ${armyBook.name} ${armyBook.versionString}`;
