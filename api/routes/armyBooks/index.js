@@ -7,7 +7,7 @@ import calc from 'opr-point-calculator-lib';
 import { CalcHelper } from 'opr-army-book-helper';
 import { DataParsingService } from 'opr-data-service';
 import * as gameSystemService from '../gameSystems/game-system-service';
-import userAccountService from '../auth/user-account-service';
+import * as userAccountService from '../auth/user-account-service';
 import * as armyBookService from './army-book-service';
 import * as skirmificationService from './skirmification-service';
 import * as pdfService from './pdf-service';
@@ -48,7 +48,7 @@ router.get('/zip', async (request, response) => {
   // all original army books for this system
   const gameSystem = await gameSystemService.getGameSystemBySlug(gameSystemSlug);
   if (!gameSystem) {
-    response.status(400).json({message: `no gamesystem found for [${gameSystemSlug}]`});
+    response.status(400).json({ message: `no gamesystem found for [${gameSystemSlug}]` });
     return;
   }
 
@@ -69,6 +69,7 @@ router.get('/zip', async (request, response) => {
   response.setHeader('Content-Transfer-Encoding', 'binary');
   response.setHeader('Accept-Ranges', 'bytes');
   response.set('Cache-Control', 'public, max-age=60'); // 1 minute
+  response.cookie('downloadStarted', 1, { maxAge: 900000 });
   const result = await zip.toBuffer();
   response.send(result);
 });
@@ -145,7 +146,7 @@ router.post('/detachment', async (request, response) => {
 });
 
 router.post('/import', async (request, response) => {
-  const { isOpa, isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to upload
   if (isAdmin === false) {
@@ -158,14 +159,13 @@ router.post('/import', async (request, response) => {
     hint,
     gameSystemId,
     background,
-    versionString,
-    units,
     upgradePackages,
     spells,
     specialRules,
-    official,
     costModeAutomatic,
   } = request.body;
+
+  let { units } = request.body;
 
   // make all units match the requested cost mode
   units = units.map((unit) => {
@@ -194,6 +194,7 @@ router.post('/import', async (request, response) => {
     unit.equipment.sort((a, b) => {
       if (a.name > b.name) { return 1; }
       if (a.name < b.name) { return -1; }
+      return 0;
     });
 
     return unit;
@@ -391,7 +392,7 @@ router.get('/:armyBookUid/ownership', async (request, response) => {
 });
 
 router.post('/:armyBookUid/calculate', async (request, response) => {
-  const { isOpa, isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (isAdmin === false) {
@@ -427,7 +428,7 @@ router.post('/:armyBookUid/calculate', async (request, response) => {
       const usingUnits = unitz.filter(unit => unit.upgrades.includes(pack.uid));
       const recalcedOptions = CalcHelper.recalculateUpgradePackage(armyBookUid, pack, usingUnits, calc, customRules);
       for (const payload of recalcedOptions) {
-        const { armyBookUid, upgradePackageUid, sectionIndex, optionIndex, option } = payload;
+        const { sectionIndex, optionIndex, option } = payload;
         pack.sections[sectionIndex].options[optionIndex] = option;
       }
       upgradePackagez.push(pack);

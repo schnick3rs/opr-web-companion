@@ -27,11 +27,36 @@
         </v-tabs>
       </v-col>
       <v-col style="text-align: end;">
-        <v-btn>
-          <v-icon left>mdi-folder-download</v-icon>
+        <v-btn
+          :href="`/api/army-books/zip?gameSystemSlug=${gameSystem.slug}`"
+          download
+          @click="initDownload"
+        >
+          <v-icon left>
+            mdi-folder-download
+          </v-icon>
           Download all
         </v-btn>
       </v-col>
+      <v-dialog
+        v-model="downloadInProgress"
+        persistent
+        width="300"
+      >
+        <v-card
+          color="primary"
+          dark
+        >
+          <v-card-text>
+            Preparing download ....
+            <v-progress-linear
+              indeterminate
+              color="white"
+              class="mb-0"
+            ></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </v-row>
 
     <nuxt-child />
@@ -68,6 +93,8 @@ export default {
   data() {
     return {
       tab: undefined,
+      downloadInProgress: false,
+      downloadTimeout: undefined,
       headers: [
         { text: 'Name', align: 'start', value: 'name' },
         { text: 'Published', align: 'left', value: 'isLive' },
@@ -95,6 +122,47 @@ export default {
         { hid: 'twitter:image', name: 'twitter:image', content: image },
       ],
     };
+  },
+  methods: {
+    initDownload() {
+      this.downloadInProgress = true;
+      // Expiration could be anything... As long as we reset the value
+      this.setCookie('downloadStarted', 0, 100);
+      // Initiate the loop to check the cookie.
+      setTimeout(() => { this.checkDownloadCookie(); }, 1000);
+    },
+    setCookie(name, value, expiracy) {
+      const exdate = new Date();
+      exdate.setTime(exdate.getTime() + expiracy * 1000);
+      const cValue = escape(value) + ((expiracy == null) ? '' : '; expires=' + exdate.toUTCString());
+      document.cookie = name + '=' + cValue + '; path=/';
+    },
+    getCookie(name) {
+      let i;
+      let x;
+      let y;
+      const ARRcookies = document.cookie.split(';');
+      for (i = 0; i < ARRcookies.length; i++) {
+        x = ARRcookies[i].substr(0, ARRcookies[i].indexOf('='));
+        y = ARRcookies[i].substr(ARRcookies[i].indexOf('=') + 1);
+        x = x.replace(/^\s+|\s+$/g, '');
+        // eslint-disable-next-line eqeqeq
+        if (x == name) {
+          return y ? decodeURI(unescape(y.replace(/\+/g, ' '))) : y; // ;//unescape(decodeURI(y));
+        }
+      }
+    },
+    checkDownloadCookie() {
+      // eslint-disable-next-line eqeqeq
+      if (this.getCookie('downloadStarted') == 1) {
+        // Expiration could be anything... As long as we reset the value
+        this.setCookie('downloadStarted', 'false', 100);
+        this.downloadInProgress = false;
+      } else {
+        // Re-run this function in 1 second.
+        this.downloadTimeout = setTimeout(() => { this.checkDownloadCookie(); }, 1000);
+      }
+    }
   },
 };
 </script>

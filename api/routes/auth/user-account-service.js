@@ -1,4 +1,10 @@
 import dotenv from 'dotenv';
+
+import bcrypt from 'bcryptjs';
+import { nanoid } from 'nanoid';
+import pbkdf2Hmac from 'pbkdf2-hmac';
+
+import { pool } from '../../db';
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
@@ -6,46 +12,40 @@ if (process.env.NODE_ENV !== 'production') {
 const EMAIL_SALT = process.env.AUTH_EMAIL_SALT;
 const PASSWORD_SALT_ROUNDS = 12;
 
-import bcrypt from 'bcryptjs';
-import { nanoid } from 'nanoid';
-import pbkdf2Hmac from 'pbkdf2-hmac';
-
-import { pool } from '../../db';
-
-async function getUserByEmail(email) {
-  //const { rows } = await pool.query('SELECT * FROM opr_companion.user_accounts WHERE email = $1', [email]);
+export async function getUserByEmail(email) {
+  // const { rows } = await pool.query('SELECT * FROM opr_companion.user_accounts WHERE email = $1', [email]);
   const hashedEmail = await hashEmail(email);
   return getUserByHashedEmail(hashedEmail);
 }
 
-async function getUserByHashedEmail(hashedEmail) {
+export async function getUserByHashedEmail(hashedEmail) {
   const { rows } = await pool.query('SELECT * FROM opr_companion.user_accounts WHERE email_hashed = $1', [hashedEmail]);
   return rows[0];
 }
 
-async function getAllUsersWithoutHash(email) {
+export async function getAllUsersWithoutHash(email) {
   const { rows } = await pool.query('SELECT * FROM opr_companion.user_accounts WHERE email_hashed IS NULL');
   return rows;
 }
 
-async function getUserByUuid(uuid) {
+export async function getUserByUuid(uuid) {
   const { rows } = await pool.query(
-      'SELECT id, username, enabled, uuid, is_opa "isOpa", is_super_admin "isAdmin", created_at "createdAt"  ' +
-      'FROM opr_companion.user_accounts ' +
-      'WHERE uuid = $1', [uuid]);
+    'SELECT id, username, enabled, uuid, is_opa "isOpa", is_super_admin "isAdmin", created_at "createdAt"  ' +
+    'FROM opr_companion.user_accounts ' +
+    'WHERE uuid = $1', [uuid]);
   return rows[0];
 }
 
-async function updateUserEmailHash(user) {
+export async function updateUserEmailHash(user) {
   const hashedEmail = await hashEmail(user.email);
-  console.info(`hash ${user.id}#${user.email} -> ${hashedEmail}`);
+  // console.info(`hash ${user.id}#${user.email} -> ${hashedEmail}`);
   await pool.query(
     'UPDATE opr_companion.user_accounts SET email_hashed = $1 WHERE id = $2 AND email = $3',
     [hashedEmail, user.id, user.email]
   );
 }
 
-async function createNewPasswordResetRequest(user) {
+export async function createNewPasswordResetRequest(user) {
   const token = nanoid(64);
   await pool.query(
     'UPDATE opr_companion.user_accounts ' +
@@ -56,7 +56,7 @@ async function createNewPasswordResetRequest(user) {
   return token;
 }
 
-async function updateUserResetPassword(email, token, password) {
+export async function updateUserResetPassword(email, token, password) {
   const emailHash = await hashEmail(email);
   const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
   await pool.query(
@@ -65,10 +65,9 @@ async function updateUserResetPassword(email, token, password) {
     'WHERE password_reset_token = $2 AND email_hashed = $3',
     [passwordHash, token, emailHash]
   );
-
 }
 
-async function createUser(username, email, password) {
+export async function createUser(username, email, password) {
   const emailHash = await hashEmail(email);
   const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
   const uuid = nanoid(11);
@@ -79,42 +78,28 @@ async function createUser(username, email, password) {
   return rows[0].uuid;
 }
 
-function buf2hex(buffer) { // buffer is an ArrayBuffer
+export function buf2hex(buffer) { // buffer is an ArrayBuffer
   return [...new Uint8Array(buffer)]
     .map(x => x.toString(16).padStart(2, '0'))
     .join('');
 }
 
-async function hashEmail(email) {
+export async function hashEmail(email) {
   const hashedEmail = await pbkdf2Hmac(email, EMAIL_SALT, 1000, 128, 'SHA-512');
   // console.info(`Hashed email ${email} -> ${hashedEmail}`);
   return buf2hex(hashedEmail);
 }
 
-function validateEmail(email) {
+export function validateEmail(email) {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 }
 
-function validatePassword(password) {
+export function validatePassword(password) {
   return password && password.length > 0;
 }
 
-function validatePasswordConstrains(password) {
+export function validatePasswordConstrains(password) {
   const re = /^.{8,}$/;
   return re.test(String(password).toLowerCase());
 }
-
-module.exports = {
-  createUser,
-  getUserByEmail,
-  getUserByUuid,
-  getAllUsersWithoutHash,
-  updateUserEmailHash,
-  validateEmail,
-  validatePassword,
-  validatePasswordConstrains,
-  hashEmail,
-  createNewPasswordResetRequest,
-  updateUserResetPassword,
-};

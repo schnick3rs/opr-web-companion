@@ -1,5 +1,5 @@
-import { pool } from '../../db';
 import { nanoid } from 'nanoid';
+import { pool } from '../../db';
 import * as unitService from './units/unit-service';
 import * as spellService from './spells/spell-service';
 import * as upgradePackagesService from './upgradePackages/upgrade-packages-service';
@@ -12,7 +12,7 @@ export async function createArmyBook(userId, enabledGameSystems, name, hint, bac
     const insert = await pool.query(
       'INSERT INTO opr_companion.army_books (uid, user_id, enabled_game_systems, name, hint, background) ' +
       'VALUES ($1, $2, $3, $4, $5, $6) RETURNING uid',
-      [ nanoid(16), userId, enabledGameSystems, name, hint, background ],
+      [nanoid(16), userId, enabledGameSystems, name, hint, background],
     );
     const { uid } = insert.rows[0];
     const { rows } = await pool.query(
@@ -80,7 +80,6 @@ export async function getAll() {
 }
 
 export async function getArmyBookForOwner(armyBookId, userId) {
-
   const { rows } = await pool.query(
     'SELECT ' +
     'army_books.uid, ' +
@@ -107,27 +106,26 @@ export async function getArmyBookForOwner(armyBookId, userId) {
     'INNER JOIN opr_companion.user_accounts ON army_books.user_id = user_accounts.id ' +
     'WHERE uid = $1 AND user_id = $2 ' +
     'ORDER BY army_books.name ASC',
-    [ armyBookId, userId ]
+    [armyBookId, userId]
   );
 
   if (rows.length !== 1) {
     console.error('More than one army book matches the query.');
     return null;
   } else {
-    let armyBook = rows[0];
+    const armyBook = rows[0];
     // enrich unit missing splitPageNumber
-    const units = armyBook.units.map(unit => {
+    const units = armyBook.units.map((unit) => {
       return {
         ...unit,
         splitPageNumber: parseInt(unit.splitPageNumber) || 1,
-      }
-    })
-    return {...armyBook, units};
+      };
+    });
+    return { ...armyBook, units };
   }
 }
 
 export async function getPublicArmyBooksListView(gameSystemId = 0, factionName = null) {
-
   const { rows } = await pool.query(
     'SELECT ' +
     'army_books.uid, ' +
@@ -157,15 +155,14 @@ export async function getPublicArmyBooksListView(gameSystemId = 0, factionName =
     'ORDER BY army_books.name ASC',
     [[gameSystemId], gameSystemId === 0, factionName, factionName === null]
   );
-  return rows.map(armyBook => {
+  return rows.map((armyBook) => {
     armyBook.flavouredUid = gameSystemId ? `${armyBook.uid}~${gameSystemId}` : undefined;
-    armyBook.armyForgeUrl = `https://army-forge.onepagerules.com/listConfiguration?armyId=${armyBook.uid}${armyBook.factionName ? '&faction='+armyBook.factionName : ''}`
+    armyBook.armyForgeUrl = `https://army-forge.onepagerules.com/listConfiguration?armyId=${armyBook.uid}${armyBook.factionName ? '&faction=' + armyBook.factionName : ''}`;
     return armyBook;
   });
 }
 
 export async function getPublicArmyBooks(gameSystemId = 0) {
-
   const { rows } = await pool.query(
     'SELECT ' +
     'army_books.uid, ' +
@@ -194,7 +191,7 @@ export async function getPublicArmyBooks(gameSystemId = 0) {
     'ORDER BY army_books.name ASC',
     [[gameSystemId], gameSystemId === 0]
   );
-  return rows.map(armyBook => {
+  return rows.map((armyBook) => {
     armyBook.flavouredUid = gameSystemId ? `${armyBook.uid}~${gameSystemId}` : undefined;
     return armyBook;
   });
@@ -226,7 +223,7 @@ export async function getArmyBookPublicOrOwner(armyBookUid, userId) {
     'FROM opr_companion.army_books ' +
     'INNER JOIN opr_companion.user_accounts ON army_books.user_id = user_accounts.id ' +
     'WHERE uid = $1 AND ( public = true OR user_id = $2 )',
-    [ armyBookUid, userId ]
+    [armyBookUid, userId]
   );
 
   if (rows.length === 0) {
@@ -239,10 +236,10 @@ export async function getArmyBookPublicOrOwner(armyBookUid, userId) {
     return null;
   }
 
-  let armyBook = rows[0];
+  const armyBook = rows[0];
 
   // enrich unit missing splitPageNumber
-  armyBook.units = armyBook.units.map(unit => {
+  armyBook.units = armyBook.units.map((unit) => {
     return {
       ...unit,
       splitPageNumber: parseInt(unit.splitPageNumber) || 1,
@@ -298,7 +295,7 @@ export async function getSimpleArmyBook(armyBookId) {
     'FROM opr_companion.army_books ' +
     'INNER JOIN opr_companion.user_accounts ON army_books.user_id = user_accounts.id ' +
     'WHERE uid = $1',
-    [ armyBookId ]
+    [armyBookId]
   );
   return rows[0];
 }
@@ -344,7 +341,7 @@ export async function getSpecialRules(armyBookUid, userId) {
 }
 
 export async function setSpecialRules(armyBookUid, userId, specialRules) {
-  await specialRulesService.updateSpecialRules(armyBookUid, userId, specialRules)
+  await specialRulesService.updateSpecialRules(armyBookUid, userId, specialRules);
 }
 
 export async function deleteArmyBook(armyBookId, userId) {
@@ -355,11 +352,11 @@ export async function deleteArmyBook(armyBookId, userId) {
 }
 
 export async function updateArmyBook(armyBookUid, userId, fields, values) {
-  console.info(fields, values)
+  console.info(fields, values);
   await pool.query(
     'UPDATE opr_companion.army_books SET ' +
     fields.join(',') +
-    ' WHERE uid = $'+(1+fields.length)+' AND user_id = $'+(2+fields.length)+' ',
+    ' WHERE uid = $' + (1 + fields.length) + ' AND user_id = $' + (2 + fields.length) + ' ',
     [...values, armyBookUid, userId],
   );
 }
@@ -369,7 +366,7 @@ export async function savePdfA4(armyBookUid, data, timestamp, service = 'unknown
   await pool.query(
     'INSERT INTO opr_companion.army_books_pdfs (army_book_uid, pdf_a4, pdf_a4_created_at, service) ' +
     'VALUES ($1, $2::bytea, $3, $4) ' +
-    'ON CONFLICT (army_book_uid) DO '+
+    'ON CONFLICT (army_book_uid) DO ' +
     'UPDATE SET pdf_a4 = $2::bytea, pdf_a4_created_at = $3, service = $4',
     [armyBookUid, data, timestamp, service],
   );
@@ -384,7 +381,7 @@ export async function readPdfA4(armyBookUid) {
     'WHERE army_books_pdfs.army_book_uid = $1 ',
     [armyBookUid],
   );
-  return rows[0]
+  return rows[0];
 }
 
 export async function readPdfLetter(armyBookUid) {
