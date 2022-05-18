@@ -26,7 +26,7 @@
           </v-tab>
         </v-tabs>
       </v-col>
-      <v-col style="text-align: end;">
+      <v-col style="text-align: end;" v-show="false">
         <v-btn
           :href="`/api/army-books/zip?gameSystemSlug=${gameSystem.slug}`"
           download
