@@ -26,40 +26,27 @@
           </v-tab>
         </v-tabs>
       </v-col>
-      <v-col style="text-align: end;" v-show="false">
+      <v-spacer></v-spacer>
+      <v-col style="text-align: end;" v-if="false">
+        <v-btn icon @click="tilesView = !tilesView">
+          <v-icon v-if="tilesView">mdi-view-list</v-icon>
+          <v-icon v-else>mdi-view-grid</v-icon>
+        </v-btn>
+      </v-col>
+      <v-col style="text-align: end;" v-if="isAdmin">
         <v-btn
           :href="`/api/army-books/zip?gameSystemSlug=${gameSystem.slug}`"
           download
+          :loading="downloadInProgress"
           @click="initDownload"
         >
-          <v-icon left>
-            mdi-folder-download
-          </v-icon>
+          <v-icon left>mdi-download</v-icon>
           Download all
         </v-btn>
       </v-col>
-      <v-dialog
-        v-model="downloadInProgress"
-        persistent
-        width="300"
-      >
-        <v-card
-          color="primary"
-          dark
-        >
-          <v-card-text>
-            Preparing download ....
-            <v-progress-linear
-              indeterminate
-              color="white"
-              class="mb-0"
-            ></v-progress-linear>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
     </v-row>
 
-    <nuxt-child />
+    <nuxt-child :layout="tilesView ? 'tiles' : 'list'" />
   </div>
 </template>
 
@@ -93,6 +80,7 @@ export default {
   data() {
     return {
       tab: undefined,
+      tilesView: true,
       downloadInProgress: false,
       downloadTimeout: undefined,
       headers: [
@@ -122,6 +110,11 @@ export default {
         { hid: 'twitter:image', name: 'twitter:image', content: image },
       ],
     };
+  },
+  computed: {
+    isAdmin() {
+      return this.$store.state.auth?.user?.isAdmin;
+    },
   },
   methods: {
     initDownload() {

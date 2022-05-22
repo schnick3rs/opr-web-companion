@@ -125,7 +125,19 @@ export async function getArmyBookForOwner(armyBookId, userId) {
   }
 }
 
-export async function getPublicArmyBooksListView(gameSystemId = 0, factionName = null) {
+/**
+ * Fetches armybooks but with reduced content, e.g. no units, spells, rules or upgrades
+ *
+ * @param gameSystemId if set > 0 will add a flavoured uid containing the ~X for the game system
+ * @param isOfficial
+ * @param factionName
+ * @returns {Promise<*>}
+ */
+export async function findPublishedByAsListView(
+  gameSystemId = 0,
+  isOfficial = null,
+  factionName = null
+) {
   const { rows } = await pool.query(
     'SELECT ' +
     'army_books.uid, ' +
@@ -151,13 +163,15 @@ export async function getPublicArmyBooksListView(gameSystemId = 0, factionName =
     'INNER JOIN opr_companion.user_accounts ON army_books.user_id = user_accounts.id ' +
     'WHERE army_books.public = true ' +
     'AND (army_books.enabled_game_systems @> $1 OR $2) ' +
-    'AND (army_books.faction_name = $3 OR $4) ' +
+    'AND (army_books.official = $3 OR $4) ' +
+    'AND (army_books.faction_name = $5 OR $6) ' +
     'ORDER BY army_books.name ASC',
-    [[gameSystemId], gameSystemId === 0, factionName, factionName === null]
+    [[gameSystemId], gameSystemId === 0, isOfficial, isOfficial === null, factionName, factionName === null]
   );
   return rows.map((armyBook) => {
     armyBook.flavouredUid = gameSystemId ? `${armyBook.uid}~${gameSystemId}` : undefined;
-    armyBook.armyForgeUrl = `https://army-forge.onepagerules.com/listConfiguration?armyId=${armyBook.uid}${armyBook.factionName ? '&faction=' + armyBook.factionName : ''}`;
+    const factionParam = armyBook.factionName ? '&faction=' + armyBook.factionName : '';
+    armyBook.armyForgeUrl = `https://army-forge.onepagerules.com/listConfiguration?armyId=${armyBook.uid}${factionParam}`;
     return armyBook;
   });
 }

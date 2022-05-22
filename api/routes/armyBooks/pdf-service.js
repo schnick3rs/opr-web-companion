@@ -51,7 +51,7 @@ export async function generateViaHtml2pdf(armyBookUid) {
   };
   const res = await axios.get('https://api.html2pdf.app/v1/generate',
     {
-      params: params,
+      params,
       responseType: 'arraybuffer',
     },
   );

@@ -29,11 +29,15 @@ router.use('/:armyBookUid/special-rules', specialRules);
 router.use('/:armyBookUid/spells', spells);
 
 router.get('/', cors(), async (request, response) => {
-  const { gameSystemSlug, factionName } = request.query;
+  const { gameSystemSlug, factionName, filters } = request.query;
 
   // all original army books for this system
   const gameSystem = await gameSystemService.getGameSystemBySlug(gameSystemSlug);
-  const items = await armyBookService.getPublicArmyBooksListView(gameSystem?.id || 0, factionName);
+  let onlyOfficials = null;
+  if (filters) {
+    onlyOfficials = filters.includes('official');
+  }
+  const items = await armyBookService.findPublishedByAsListView(gameSystem?.id || 0, onlyOfficials, factionName);
 
   response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
   response.status(200).json(items);
@@ -52,7 +56,8 @@ router.get('/zip', async (request, response) => {
     return;
   }
 
-  const items = await armyBookService.getPublicArmyBooksListView(gameSystem.id);
+  // We currently only fetch official books
+  const items = await armyBookService.findPublishedByAsListView(gameSystem.id, true);
 
   // eslint-disable-next-line array-callback-return
   const zip = new Zip();
@@ -60,11 +65,16 @@ router.get('/zip', async (request, response) => {
     const pdfByteArray = await pdfService.getOrCreate(item.flavouredUid, item);
     const pdfFileName = `${gameSystem.aberration} - ${item.name} ${item.versionString}.pdf`;
     console.info(`Add file to zip -> ${pdfFileName}`);
-    zip.addFile(pdfFileName, pdfByteArray);
+    if (pdfByteArray && pdfByteArray.length > 0) {
+      zip.addFile(pdfFileName, pdfByteArray);
+    } else {
+      console.warn(`PDF for ${item.name}#${item.uid} had length 0, thus its not added.`);
+    }
   }
+  console.info('All files added to the zip, finalizing and preparing to send.');
 
   response.setHeader('Content-Type', 'application/zip');
-  const pdfFileName = `${gameSystem.aberration}`;
+  const pdfFileName = `${gameSystem.aberration} Army Books`;
   response.setHeader('Content-Disposition', `inline; filename="${pdfFileName}.zip"`);
   response.setHeader('Content-Transfer-Encoding', 'binary');
   response.setHeader('Accept-Ranges', 'bytes');
