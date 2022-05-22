@@ -9,8 +9,8 @@
       <v-col :cols="8" />
     </v-row>
 
-    <v-row justify="space-between">
-      <v-col>
+    <v-row justify="space-between" align="center">
+      <v-col v-show="false">
         <v-tabs
           v-model="tab"
         >
