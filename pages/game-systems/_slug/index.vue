@@ -26,15 +26,11 @@
           </v-tab>
         </v-tabs>
       </v-col>
-      <v-spacer></v-spacer>
-      <v-col style="text-align: end;" v-if="false">
-        <v-btn icon @click="tilesView = !tilesView">
-          <v-icon v-if="tilesView">mdi-view-list</v-icon>
-          <v-icon v-else>mdi-view-grid</v-icon>
-        </v-btn>
-      </v-col>
-      <v-col style="text-align: end;" v-if="isAdmin">
+      <v-col style="text-align: end;">
         <v-btn
+          small
+          outlined
+          color="primary"
           :href="`/api/army-books/zip?gameSystemSlug=${gameSystem.slug}`"
           download
           :loading="downloadInProgress"
