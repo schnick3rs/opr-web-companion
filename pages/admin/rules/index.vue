@@ -13,6 +13,7 @@
         </v-tabs>
       </v-col>
 
+
     </v-row>
 
     <nuxt-child></nuxt-child>
