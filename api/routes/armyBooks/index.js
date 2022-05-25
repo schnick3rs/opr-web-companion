@@ -1,12 +1,13 @@
 import Router from 'express-promise-router';
 import cors from 'cors';
 import { nanoid } from 'nanoid';
+import Zip from 'adm-zip';
 
 import calc from 'opr-point-calculator-lib';
 import { CalcHelper } from 'opr-army-book-helper';
 import { DataParsingService } from 'opr-data-service';
 import * as gameSystemService from '../gameSystems/game-system-service';
-import userAccountService from '../auth/user-account-service';
+import * as userAccountService from '../auth/user-account-service';
 import * as armyBookService from './army-book-service';
 import * as skirmificationService from './skirmification-service';
 import * as pdfService from './pdf-service';
@@ -28,14 +29,59 @@ router.use('/:armyBookUid/special-rules', specialRules);
 router.use('/:armyBookUid/spells', spells);
 
 router.get('/', cors(), async (request, response) => {
-  const { gameSystemSlug, factionName } = request.query;
+  const { gameSystemSlug, factionName, filters } = request.query;
 
   // all original army books for this system
   const gameSystem = await gameSystemService.getGameSystemBySlug(gameSystemSlug);
-  const items = await armyBookService.getPublicArmyBooksListView(gameSystem?.id || 0, factionName);
+  let onlyOfficials = null;
+  if (filters) {
+    onlyOfficials = filters.includes('official');
+  }
+  const items = await armyBookService.findPublishedByAsListView(gameSystem?.id || 0, onlyOfficials, factionName);
 
   response.set('Cache-Control', 'public, max-age=600'); // 5 minutes
   response.status(200).json(items);
+});
+
+/**
+ * returns a zip containing all official PDF for a given game system
+ */
+router.get('/zip', async (request, response) => {
+  const { gameSystemSlug } = request.query;
+
+  // all original army books for this system
+  const gameSystem = await gameSystemService.getGameSystemBySlug(gameSystemSlug);
+  if (!gameSystem) {
+    response.status(400).json({ message: `no gamesystem found for [${gameSystemSlug}]` });
+    return;
+  }
+
+  // We currently only fetch official books
+  const items = await armyBookService.findPublishedByAsListView(gameSystem.id, true);
+
+  // eslint-disable-next-line array-callback-return
+  const zip = new Zip();
+  for (const item of items) {
+    const pdfByteArray = await pdfService.getOrCreate(item.flavouredUid, item);
+    const pdfFileName = `${gameSystem.aberration} - ${item.name} ${item.versionString}.pdf`;
+    console.info(`Add file to zip -> ${pdfFileName}`);
+    if (pdfByteArray && pdfByteArray.length > 0) {
+      zip.addFile(pdfFileName, pdfByteArray);
+    } else {
+      console.warn(`PDF for ${item.name}#${item.uid} had length 0, thus its not added.`);
+    }
+  }
+  console.info('All files added to the zip, finalizing and preparing to send.');
+
+  response.setHeader('Content-Type', 'application/zip');
+  const pdfFileName = `${gameSystem.aberration} Army Books`;
+  response.setHeader('Content-Disposition', `inline; filename="${pdfFileName}.zip"`);
+  response.setHeader('Content-Transfer-Encoding', 'binary');
+  response.setHeader('Accept-Ranges', 'bytes');
+  response.set('Cache-Control', 'public, max-age=60'); // 1 minute
+  response.cookie('downloadStarted', 1, { maxAge: 900000 });
+  const result = await zip.toBuffer();
+  response.send(result);
 });
 
 router.get('/mine', async (request, response) => {
@@ -110,7 +156,7 @@ router.post('/detachment', async (request, response) => {
 });
 
 router.post('/import', async (request, response) => {
-  const { isOpa, isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to upload
   if (isAdmin === false) {
@@ -118,19 +164,18 @@ router.post('/import', async (request, response) => {
     return;
   }
 
-  let {
+  const {
     name,
     hint,
     gameSystemId,
     background,
-    versionString,
-    units,
     upgradePackages,
     spells,
     specialRules,
-    official,
     costModeAutomatic,
   } = request.body;
+
+  let { units } = request.body;
 
   // make all units match the requested cost mode
   units = units.map((unit) => {
@@ -159,6 +204,7 @@ router.post('/import', async (request, response) => {
     unit.equipment.sort((a, b) => {
       if (a.name > b.name) { return 1; }
       if (a.name < b.name) { return -1; }
+      return 0;
     });
 
     return unit;
@@ -309,32 +355,7 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
   if (!armyBook) {
     response.status(404).json({});
   } else {
-    let pdfByteArray;
-
-    const pdf = await armyBookService.readPdfA4(armyBookUid);
-
-    if (pdf && pdf.createdAt) {
-      if (new Date(pdf.createdAt).toISOString() == new Date(armyBook.modifiedAt).toISOString()) {
-        pdfByteArray = pdf.byteArray;
-      }
-    }
-
-    if (!pdfByteArray) {
-      console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching ${armyBookUid} from service provider...`);
-
-      const res = await pdfService.generateViaHtml2pdf(armyBookUid);
-      // const res = await pdfService.generateViaSejda(armyBookUid);
-
-      if (res) {
-        pdfByteArray = res.data;
-        console.info(`[${armyBook.name}] #${armyBook.uid} :: Save pdf, ${pdfByteArray.length} bytes ...`);
-        await armyBookService.savePdfA4(armyBookUid, pdfByteArray, new Date(armyBook.modifiedAt.toISOString()), 'Html2pdf');
-      } else {
-        console.error(`[${armyBook.name}] #${armyBook.uid} :: PDF could not be generated!`);
-      }
-    } else {
-      console.info(`[${armyBook.name}] #${armyBook.uid} :: PDF found.`);
-    }
+    const pdfByteArray = await pdfService.getOrCreate(armyBookUid, armyBook);
 
     response.setHeader('Content-Type', 'application/pdf');
     const pdfFileName = `${armyBook.aberration} - ${armyBook.name} ${armyBook.versionString}`;
@@ -381,7 +402,7 @@ router.get('/:armyBookUid/ownership', async (request, response) => {
 });
 
 router.post('/:armyBookUid/calculate', async (request, response) => {
-  const { isOpa, isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (isAdmin === false) {
@@ -417,7 +438,7 @@ router.post('/:armyBookUid/calculate', async (request, response) => {
       const usingUnits = unitz.filter(unit => unit.upgrades.includes(pack.uid));
       const recalcedOptions = CalcHelper.recalculateUpgradePackage(armyBookUid, pack, usingUnits, calc, customRules);
       for (const payload of recalcedOptions) {
-        const { armyBookUid, upgradePackageUid, sectionIndex, optionIndex, option } = payload;
+        const { sectionIndex, optionIndex, option } = payload;
         pack.sections[sectionIndex].options[optionIndex] = option;
       }
       upgradePackagez.push(pack);

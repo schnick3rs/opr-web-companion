@@ -5,9 +5,9 @@ module.exports = {
     es6: true,
     node: true
   },
-  parser: '@babel/eslint-parser',
   parserOptions: {
-    sourceType: "module",
+    parser: '@babel/eslint-parser',
+    // sourceType: "module",
     requireConfigFile: false
   },
   extends: [
@@ -27,6 +27,7 @@ module.exports = {
     'vuetify/no-legacy-grid': 'error',
   },
   plugins: [
+    //'html',
     'vuetify',
   ],
 };

@@ -1,41 +1,58 @@
 <template>
   <div>
-
-    <opr-breadcrumbs-row :items="breadcrumbItems"></opr-breadcrumbs-row>
+    <opr-breadcrumbs-row :items="breadcrumbItems" />
 
     <v-row v-show="false">
       <v-col :cols="1">
-        <v-img :src="`/img/game-systems/${gameSystem.slug}-cover.jpg`" contain></v-img>
+        <v-img :src="`/img/game-systems/${gameSystem.slug}-cover.jpg`" contain />
       </v-col>
-      <v-col :cols="8"></v-col>
+      <v-col :cols="8" />
     </v-row>
 
-    <v-row>
-      <v-col cols="12">
-
+    <v-row justify="space-between">
+      <v-col>
         <v-tabs
           v-model="tab"
         >
-          <v-tab v-for="item in tabs" :key="item.key" :disabled="item.disabled" exact nuxt :to="item.to">{{item.name}}</v-tab>
+          <v-tab
+            v-for="item in tabs"
+            :key="item.key"
+            :disabled="item.disabled"
+            exact
+            nuxt
+            :to="item.to"
+          >
+            {{ item.name }}
+          </v-tab>
         </v-tabs>
       </v-col>
-
+      <v-col style="text-align: end;">
+        <v-btn
+          small
+          outlined
+          color="primary"
+          :href="`/api/army-books/zip?gameSystemSlug=${gameSystem.slug}`"
+          download
+          :loading="downloadInProgress"
+          @click="initDownload"
+        >
+          <v-icon left>mdi-download</v-icon>
+          Download all
+        </v-btn>
+      </v-col>
     </v-row>
 
-    <nuxt-child></nuxt-child>
-
+    <nuxt-child :layout="tilesView ? 'tiles' : 'list'" />
   </div>
 </template>
 
 <script>
-import OprBreadcrumbsRow from "@/components/shared/OprBreadcrumbsRow";
-import OprArmyBookList from "@/components/shared/OprArmyBookList";
+import OprBreadcrumbsRow from '@/components/shared/OprBreadcrumbsRow';
 
 export default {
-  name: "index",
+  name: 'GameSystemIndex',
   components: {
     OprBreadcrumbsRow,
-    OprArmyBookList,
   },
   async asyncData({ $axios, params }) {
     const { slug } = params;
@@ -45,48 +62,96 @@ export default {
       slug,
       gameSystem,
       breadcrumbItems: [
-        {text: '', to: '/', exact: true},
-        //{text: 'Game Systems', to: '/game-systems', exact: true},
-        {text: gameSystem.fullname, to: `/game-systems/${gameSystem.slug}`, exact: false},
+        { text: '', to: '/', exact: true },
+        // {text: 'Game Systems', to: '/game-systems', exact: true},
+        { text: gameSystem.fullname, to: `/game-systems/${gameSystem.slug}`, exact: false },
       ],
       tabs: [
         { key: 'opr', name: 'Army Books', to: `/game-systems/${gameSystem.slug}` },
-        //{ key: 'opr', name: 'Rules', disabled: true, },
-        //{ key: 'homebrew', name: 'Fan Army Books', disabled: false, to: `/army-books/${gameSystem.slug}/homebrew` },
-      ],
-    }
-  },
-  head() {
-    const title = `Browse ${this.gameSystem.fullname} Army Books`;
-    const description = `Browser the v2.50 BETA army books for ${this.gameSystem.fullname}. Check the PDF view or build a list with the Army Forge.`;
-    const image = `/img/game-systems/${this.gameSystem.slug}_twitter-banner-size.jpeg`;
-    return {
-      title: title,
-      meta: [
-        {hid: 'description', name: 'description', content: description},
-        {hid: 'og:title', name: 'og:title', content: title},
-        {hid: 'og:description', name: 'og:description', content: description},
-        {hid: 'og:image', name: 'og:image', content: image},
-        {hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image'},
-        {hid: 'twitter:title', name: 'twitter:title', content: title},
-        {hid: 'twitter:description', name: 'twitter:description', content: description},
-        {hid: 'twitter:image', name: 'twitter:image', content: image},
+        // { key: 'opr', name: 'Rules', disabled: true, },
+        // { key: 'homebrew', name: 'Fan Army Books', disabled: false, to: `/army-books/${gameSystem.slug}/homebrew` },
       ],
     };
   },
   data() {
     return {
       tab: undefined,
+      tilesView: true,
+      downloadInProgress: false,
+      downloadTimeout: undefined,
       headers: [
-        {text: 'Name', align: 'start', value: 'name'},
-        {text: 'Published', align: 'left', value: 'isLive'},
-        {text: 'Author', align: 'start', value: 'username'},
-        {text: 'Last change', align: 'start', value: 'modifiedAt'},
-        {text: '#Units', align: 'center', value: 'unitCount'},
-        {text: 'Actions', align: 'center', value: 'actions'},
+        { text: 'Name', align: 'start', value: 'name' },
+        { text: 'Published', align: 'left', value: 'isLive' },
+        { text: 'Author', align: 'start', value: 'username' },
+        { text: 'Last change', align: 'start', value: 'modifiedAt' },
+        { text: '#Units', align: 'center', value: 'unitCount' },
+        { text: 'Actions', align: 'center', value: 'actions' },
       ]
     };
   },
-}
+  head() {
+    const title = `Browse ${this.gameSystem.fullname} Army Books`;
+    const description = `Browser the v2.50 BETA army books for ${this.gameSystem.fullname}. Check the PDF view or build a list with the Army Forge.`;
+    const image = `/img/game-systems/${this.gameSystem.slug}_twitter-banner-size.jpeg`;
+    return {
+      title,
+      meta: [
+        { hid: 'description', name: 'description', content: description },
+        { hid: 'og:title', name: 'og:title', content: title },
+        { hid: 'og:description', name: 'og:description', content: description },
+        { hid: 'og:image', name: 'og:image', content: image },
+        { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
+        { hid: 'twitter:title', name: 'twitter:title', content: title },
+        { hid: 'twitter:description', name: 'twitter:description', content: description },
+        { hid: 'twitter:image', name: 'twitter:image', content: image },
+      ],
+    };
+  },
+  computed: {
+    isAdmin() {
+      return this.$store.state.auth?.user?.isAdmin;
+    },
+  },
+  methods: {
+    initDownload() {
+      this.downloadInProgress = true;
+      // Expiration could be anything... As long as we reset the value
+      this.setCookie('downloadStarted', 0, 100);
+      // Initiate the loop to check the cookie.
+      setTimeout(() => { this.checkDownloadCookie(); }, 1000);
+    },
+    setCookie(name, value, expiracy) {
+      const exdate = new Date();
+      exdate.setTime(exdate.getTime() + expiracy * 1000);
+      const cValue = escape(value) + ((expiracy == null) ? '' : '; expires=' + exdate.toUTCString());
+      document.cookie = name + '=' + cValue + '; path=/';
+    },
+    getCookie(name) {
+      let i;
+      let x;
+      let y;
+      const ARRcookies = document.cookie.split(';');
+      for (i = 0; i < ARRcookies.length; i++) {
+        x = ARRcookies[i].substr(0, ARRcookies[i].indexOf('='));
+        y = ARRcookies[i].substr(ARRcookies[i].indexOf('=') + 1);
+        x = x.replace(/^\s+|\s+$/g, '');
+        // eslint-disable-next-line eqeqeq
+        if (x == name) {
+          return y ? decodeURI(unescape(y.replace(/\+/g, ' '))) : y; // ;//unescape(decodeURI(y));
+        }
+      }
+    },
+    checkDownloadCookie() {
+      // eslint-disable-next-line eqeqeq
+      if (this.getCookie('downloadStarted') == 1) {
+        // Expiration could be anything... As long as we reset the value
+        this.setCookie('downloadStarted', 'false', 100);
+        this.downloadInProgress = false;
+      } else {
+        // Re-run this function in 1 second.
+        this.downloadTimeout = setTimeout(() => { this.checkDownloadCookie(); }, 1000);
+      }
+    }
+  },
+};
 </script>
-

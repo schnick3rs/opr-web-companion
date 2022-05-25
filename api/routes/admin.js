@@ -45,7 +45,7 @@ router.get('/migrate/equipment-label-to-name', async (request, response) => {
 });
 
 router.get('/migrate/upgrades-add-relation-ids', async (request, response) => {
-  const { isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (isAdmin === false) {

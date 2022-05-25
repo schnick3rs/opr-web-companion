@@ -1,4 +1,47 @@
 import axios from 'axios';
+import * as armyBookService from './army-book-service';
+
+export async function getOrCreate(armyBookUid, armyBook) {
+  let pdfByteArray;
+
+  const start = Date.now();
+  const pdf = await armyBookService.readPdfA4(armyBookUid);
+  const duration = Date.now() - start;
+  console.info(`PDF binary retrieval took ${duration}ms.`);
+
+  if (pdf && pdf.createdAt) {
+    if (new Date(pdf.createdAt).toISOString() == new Date(armyBook.modifiedAt).toISOString()) {
+      pdfByteArray = pdf.byteArray;
+    }
+  }
+
+  if (!pdfByteArray) {
+    console.info(`[${armyBook.name}]#${armyBook.uid} :: No PDF found since ${armyBook.modifiedAt}. Fetching ${armyBookUid} from service provider...`);
+
+    let res;
+    let serviceName = 'unknown';
+    // eslint-disable-next-line prefer-const
+    try {
+      res = await generateViaHtml2pdf(armyBookUid);
+      serviceName = 'Html2pdf';
+    } catch (e) {
+      console.warn('Could not fetch PDF via Html2pdf, use fallback Sejda ->', e.message);
+      res = await generateViaSejda(armyBookUid);
+      serviceName = 'Sejda';
+    }
+
+    if (res) {
+      pdfByteArray = res.data;
+      console.info(`[${armyBook.name}] #${armyBook.uid} :: Save pdf, ${pdfByteArray.length} bytes ...`);
+      await armyBookService.savePdfA4(armyBookUid, pdfByteArray, new Date(armyBook.modifiedAt.toISOString()), serviceName);
+    } else {
+      console.error(`[${armyBook.name}] #${armyBook.uid} :: PDF could not be generated!`);
+    }
+  } else {
+    console.info(`[${armyBook.name}] #${armyBook.uid} :: PDF found.`);
+  }
+  return pdfByteArray;
+}
 
 export async function generateViaHtml2pdf(armyBookUid) {
   const params = {
@@ -8,7 +51,7 @@ export async function generateViaHtml2pdf(armyBookUid) {
   };
   const res = await axios.get('https://api.html2pdf.app/v1/generate',
     {
-      params: params,
+      params,
       responseType: 'arraybuffer',
     },
   );
