@@ -7,7 +7,7 @@ module.exports = {
   },
   parserOptions: {
     parser: '@babel/eslint-parser',
-    sourceType: 'module',
+    // sourceType: 'module',
     requireConfigFile: false
   },
   extends: [
@@ -22,10 +22,11 @@ module.exports = {
   // add your custom rules here
   rules: {
     'nuxt/no-cjs-in-config': 'off',
-    'import/extensions': ['error', 'always', {
+    'import/extensions': ['error', 'never', {
       js: 'never',
       vue: 'never',
     }],
+    'vue/valid-v-slot': 0,
     'vuetify/no-deprecated-classes': 'error',
     'vuetify/grid-unknown-attributes': 'error',
     'vuetify/no-legacy-grid': 'error',
