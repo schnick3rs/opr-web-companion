@@ -58,12 +58,11 @@ router.get('/:slug', async (request, response) => {
   if (rows.length !== 1) {
     response.status(404).json();
   } else {
-    let armyBook = rows[0];
+    const armyBook = rows[0];
 
     response.set('Cache-Control', 'public, max-age=3600');
     response.status(200).json(armyBook);
   }
-
 });
 
 router.get('/:slug/special-rules', async (request, response) => {

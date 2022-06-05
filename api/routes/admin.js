@@ -1,5 +1,5 @@
 import Router from 'express-promise-router';
-import userAccountService from './auth/user-account-service';
+import * as userAccountService from './auth/user-account-service';
 import * as armyBookService from './armyBooks/army-book-service';
 import {nanoid} from "nanoid";
 

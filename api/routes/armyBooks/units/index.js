@@ -4,7 +4,7 @@ import calc from 'opr-point-calculator-lib';
 import {ArmyBookHelper, CalcHelper} from 'opr-army-book-helper';
 import * as unitService from './unit-service';
 import * as armyBookService from '../army-book-service';
-import userAccountService from '../../auth/user-account-service';
+import * as userAccountService from '../../auth/user-account-service';
 
 const router = new Router({mergeParams: true});
 
@@ -322,11 +322,11 @@ router.patch('/:unitId/calculate', async (request, response) => {
 });
 
 router.patch('/:unitId/resync', async (request, response) => {
-  const { isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (isAdmin === false) {
-    response.status(403).json({message: 'Your account does not allow to import army books.'});
+    response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
 
@@ -339,6 +339,10 @@ router.patch('/:unitId/resync', async (request, response) => {
   }
 
   const parent = await unitService.getUnit(currentUnit.sync.parentArmyBookId, request.me.userId, currentUnit.sync.unitId);
+  if (!parent) {
+    response.status(404).json({message: 'Parent unit not found.'});
+    return;
+  }
 
   // new Set([...parent.upgrades, ...currentUnit.upgrades].filter(i => typeof i === 'string'))
   let updatedUnit = {
