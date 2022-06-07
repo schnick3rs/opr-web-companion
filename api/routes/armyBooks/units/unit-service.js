@@ -1,5 +1,5 @@
-import { pool } from '../../../db';
 import { nanoid } from 'nanoid';
+import { pool } from '../../../db';
 
 export const generateUnitId = () => {
   return nanoid(9);
@@ -7,62 +7,61 @@ export const generateUnitId = () => {
 
 const unitHasHero = (unit) => {
   return unit.specialRules.some(sr => sr.key === 'hero');
-}
+};
 
 const unitHasTough = (unit) => {
   return unit.specialRules.some(sr => sr.key === 'tough');
-}
+};
 
 export const sortUnitsSkirmish = (units) => {
   const unitz = [...units];
   unitz.sort((a, b) => {
-
     // sort by IS HERO
-    if (unitHasHero(a) && !unitHasHero(b)) return -1;
-    if (!unitHasHero(a) && unitHasHero(b)) return 1;
+    if (unitHasHero(a) && !unitHasHero(b)) { return -1; }
+    if (!unitHasHero(a) && unitHasHero(b)) { return 1; }
 
     if (unitHasHero(a) === false) {
-      if (a.cost < b.cost) return -1;
-      if (a.cost > b.cost) return 1;
+      if (a.cost < b.cost) { return -1; }
+      if (a.cost > b.cost) { return 1; }
 
-      if (a.name > b.name) return 1;
-      if (a.name < b.name) return -1;
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
     }
   });
   return unitz;
-}
+};
 
 export const sortUnits = (units) => {
   const unitz = [...units];
   unitz.sort((a, b) => {
-
     // sort by IS HERO
-    if (unitHasHero(a) && !unitHasHero(b)) return -1;
-    if (!unitHasHero(a) && unitHasHero(b)) return 1;
+    if (unitHasHero(a) && !unitHasHero(b)) { return -1; }
+    if (!unitHasHero(a) && unitHasHero(b)) { return 1; }
 
     if (unitHasHero(a)) {
-      if (a.cost > b.cost) return -1;
-      if (a.cost < b.cost) return 1;
+      if (a.cost > b.cost) { return -1; }
+      if (a.cost < b.cost) { return 1; }
 
-      if (a.name > b.name) return 1;
-      if (a.name < b.name) return -1;
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
     } else {
       // sort squads from single non heros
-      if (a.size > 1 && b.size <= 1) return -1;
-      if (a.size <= 1 && b.size > 1) return 1;
+      if (a.size > 1 && b.size <= 1) { return -1; }
+      if (a.size <= 1 && b.size > 1) { return 1; }
 
-      if (unitHasTough(a) && !unitHasTough(b)) return 1;
-      if (!unitHasTough(a) && unitHasTough(b)) return -1;
+      if (unitHasTough(a) && !unitHasTough(b)) { return 1; }
+      if (!unitHasTough(a) && unitHasTough(b)) { return -1; }
 
-      if (a.cost > b.cost) return -1;
-      if (a.cost < b.cost) return 1;
+      if (a.cost > b.cost) { return -1; }
+      if (a.cost < b.cost) { return 1; }
 
-      if (a.name > b.name) return 1;
-      if (a.name < b.name) return -1;
+      if (a.name > b.name) { return 1; }
+      if (a.name < b.name) { return -1; }
     }
+    return 0;
   });
   return unitz;
-}
+};
 
 export const addUnit = async (armyBookUid, userId, unit) => {
   await pool.query(
@@ -70,27 +69,27 @@ export const addUnit = async (armyBookUid, userId, unit) => {
     [`[${JSON.stringify(unit)}]`, armyBookUid, userId],
   );
   return unit;
-}
+};
 
 export const getUnits = async (armyBookUid, userId) => {
   const { rows } = await pool.query(
     'SELECT units ' +
     'FROM opr_companion.army_books ' +
     'WHERE uid = $1 AND user_id = $2',
-    [ armyBookUid, userId ],
+    [armyBookUid, userId],
   );
   return rows ? rows[0].units : null;
-}
+};
 
 export const getUnit = async (armyBookUid, userId, unitId) => {
   const { rows } = await pool.query(
     'SELECT units ' +
     'FROM opr_companion.army_books ' +
     'WHERE uid = $1 AND user_id = $2',
-    [ armyBookUid, userId ],
+    [armyBookUid, userId],
   );
   return rows[0].units.find(unit => unit.id === unitId);
-}
+};
 
 export const updateUnit = async(armyBookUid, userId, unitId, unit) => {
   await pool.query(
@@ -105,7 +104,7 @@ export const updateUnit = async(armyBookUid, userId, unitId, unit) => {
     'WHERE uid = $3 AND user_id = $4',
     [unitId, `${JSON.stringify(unit)}`, armyBookUid, userId],
   );
-}
+};
 
 export const updateUnits = async(armyBookUid, userId, units) => {
   await pool.query(
@@ -113,7 +112,7 @@ export const updateUnits = async(armyBookUid, userId, units) => {
     'WHERE uid = $2 AND user_id = $3',
     [`${JSON.stringify(units)}`, armyBookUid, userId],
   );
-}
+};
 
 export const deleteUnit = async(armyBookUid, userId, unitId) => {
   await pool.query(
@@ -124,6 +123,6 @@ export const deleteUnit = async(armyBookUid, userId, unitId) => {
     'WHERE ab.uid = tempy.uid AND value->>\'id\' = $1 ' +
     ')::text[] ' +
     'WHERE uid = $2 AND user_id = $3',
-    [ unitId, armyBookUid, userId ],
+    [unitId, armyBookUid, userId],
   );
-}
+};
