@@ -9,42 +9,64 @@
         dark
         dense
       >
-        <template v-slot:img="{ props }">
+        <template #img="{ props }">
           <v-img
             v-bind="props"
             gradient="to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)"
-          ></v-img>
+          />
         </template>
 
-        <v-container class="pa-0 fill-height" :class="{ 'pl-2 pr-2': this.$vuetify.breakpoint.mdAndUp }">
-
+        <v-container class="pa-0 fill-height" :class="{ 'pl-2 pr-2': $vuetify.breakpoint.mdAndUp }">
           <nuxt-link to="/">
             <v-avatar tile size="32">
-              <v-img src="/img/onepagerules_square.png"></v-img>
+              <v-img src="/img/onepagerules_square.png" />
             </v-avatar>
           </nuxt-link>
 
-          <v-toolbar-title class="ml-4" v-if="$vuetify.breakpoint.smAndUp">WebApp</v-toolbar-title>
+          <v-toolbar-title v-if="$vuetify.breakpoint.smAndUp" class="ml-4">
+            WebApp
+          </v-toolbar-title>
 
           <v-spacer />
 
+          <v-btn
+            icon
+            nuxt
+            to="/admin"
+            v-if="$auth.user"
+          >
+            <v-icon color="white">
+              mdi-view-dashboard
+            </v-icon>
+          </v-btn>
+
           <v-btn icon href="https://army-forge.onepagerules.com/">
-            <v-icon color="white">$forge</v-icon>
+            <v-icon color="white">
+              $forge
+            </v-icon>
           </v-btn>
 
           <v-btn icon @click="toggleDarkTheme">
-            <v-icon v-if="theme === 'dark'">mdi-white-balance-sunny</v-icon>
-            <v-icon v-else>mdi-weather-night</v-icon>
+            <v-icon v-if="theme === 'dark'">
+              mdi-white-balance-sunny
+            </v-icon>
+            <v-icon v-else>
+              mdi-weather-night
+            </v-icon>
           </v-btn>
 
           <template v-if="$auth.loggedIn">
             <v-menu
-              bottom offset-y left
+              bottom
+              offset-y
+              left
               :open-on-hover="$vuetify.breakpoint.mdAndUp"
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <div v-bind="attrs" v-on="on">
-                  <v-avatar size="24"><v-icon>mdi-account</v-icon></v-avatar>
+                  <v-avatar size="24">
+                    <v-icon>mdi-account</v-icon>
+                  </v-avatar>
                   {{ $auth.user.username }}
                 </div>
               </template>
@@ -64,20 +86,29 @@
             <v-btn color="blue" small nuxt to="/auth/sign-in" :disabled="maintenance">
               sign in
             </v-btn>
-            <v-btn v-if="false" color="blue" small nuxt to="/auth/create-account" :disabled="maintenance">
+            <v-btn
+              v-if="false"
+              color="blue"
+              small
+              nuxt
+              to="/auth/create-account"
+              :disabled="maintenance"
+            >
               register
             </v-btn>
           </div>
 
           <v-btn
             v-if="false"
-            icon small
+            icon
+            small
             @click.stop="drawer = !drawer"
           >
-            <v-icon left>mdi-menu</v-icon>
+            <v-icon left>
+              mdi-menu
+            </v-icon>
           </v-btn>
         </v-container>
-
       </v-app-bar>
 
       <v-navigation-drawer
@@ -87,21 +118,18 @@
         app
         right
       >
-        <v-list dense nav>
-        </v-list>
+        <v-list dense nav />
       </v-navigation-drawer>
 
       <v-main>
         <v-container>
-
-          <v-alert type="warning" prominent outlined v-if="maintenance">
+          <v-alert v-if="maintenance" type="warning" prominent outlined>
             <p>
               <strong>Maintenance</strong> <em>(April 2)</em>: Login and army book edit might experience some hiccups as the feature is merged into the main application. This process might take 1-2 days (April 4) to be completed. <strong>Once this is merged, this url will be gone and you can find all <a href="https://webapp.onepagerules.com/">here</a>.</strong>
             </p>
           </v-alert>
 
           <nuxt />
-
         </v-container>
       </v-main>
 
@@ -113,9 +141,10 @@
 </template>
 
 <script>
-import OprFooter from "@/components/OprFooter";
+import OprFooter from '@/components/OprFooter';
+
 export default {
-  components: {OprFooter},
+  components: { OprFooter },
   data () {
     return {
       maintenance: false,
@@ -130,9 +159,9 @@ export default {
       ],
       right: true,
       title: 'OnePageRules List Builder',
-    }
+    };
   },
-  computed:{
+  computed: {
     prime() {
       return this.$route;
     },
@@ -155,12 +184,12 @@ export default {
     },
     toggleDarkTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      let theme = this.$vuetify.theme.dark ? 'dark' : 'light';
+      const theme = this.$vuetify.theme.dark ? 'dark' : 'light';
       this.$store.commit('settings/setTheme', theme);
       this.$ga.event('Settings', 'Change Theme', theme, 1);
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

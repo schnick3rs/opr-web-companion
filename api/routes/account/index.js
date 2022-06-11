@@ -1,5 +1,5 @@
-import Router from "express-promise-router";
-import * as patreonService from "./patreonService.js";
+import Router from 'express-promise-router';
+import * as patreonService from './patreonService';
 
 const router = new Router();
 
@@ -12,16 +12,17 @@ function getActiveUntil() {
   }
 }
 
-router.get("/patreon-refresh", async (request, response) => {
+router.get('/patreon-refresh', async (request, response) => {
   const refreshToken = await patreonService.getUserPatreonRefreshToken(
     request.me.userId
   );
 
   if (!refreshToken) {
-    response.status(401).json({ message: "User has no refresh token" });
+    response.status(401).json({ message: 'User has no refresh token' });
     return;
   }
 
+  // eslint-disable-next-line camelcase
   const { access_token, refresh_token } =
     await patreonService.getPatreonOauthTokensFromRefresh(refreshToken);
 
@@ -34,7 +35,7 @@ router.get("/patreon-refresh", async (request, response) => {
     access_token
   );
 
-  console.log("User is Patreon =", isActive);
+  console.log('User is Patreon =', isActive);
 
   const activeUntil = isActive ? getActiveUntil() : null;
   console.info('Users patreon is considered active until ', activeUntil);
@@ -44,14 +45,14 @@ router.get("/patreon-refresh", async (request, response) => {
   response.status(200).json({ isActive, activeUntil });
 });
 
-router.get("/patreon", async (request, response) => {
+router.get('/patreon', async (request, response) => {
   const { code } = request.query;
 
-  console.info("Patreon connection for user", request.me);
-  console.info("Patreon connection...", code);
+  console.info('Patreon connection for user', request.me);
+  console.info('Patreon connection...', code);
 
   if (!code) {
-    const message = `Connection to Patreon failed.`;
+    const message = 'Connection to Patreon failed.';
     response.status(400).json({ message });
     return;
   }
@@ -61,6 +62,7 @@ router.get("/patreon", async (request, response) => {
       code
     );
 
+    // eslint-disable-next-line camelcase
     const { access_token, refresh_token } = patreonTokenRes;
 
     // TODO: Error handling?
@@ -78,10 +80,10 @@ router.get("/patreon", async (request, response) => {
 
     await patreonService.setUserPatreonActive(request.me.userId, activeUntil);
 
-    response.status(200).redirect("/account");
+    response.status(200).redirect('/account');
   } catch (e) {
     console.error(e);
-    response.status(500).json({ message: "Error calling Patreon API" });
+    response.status(500).json({ message: 'Error calling Patreon API' });
   }
 });
 

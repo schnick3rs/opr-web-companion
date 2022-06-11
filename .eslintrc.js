@@ -26,6 +26,7 @@ module.exports = {
       js: 'never',
       vue: 'never',
     }],
+    'vue/multi-word-component-names': 0,
     'vue/valid-v-slot': 0,
     'vuetify/no-deprecated-classes': 'error',
     'vuetify/grid-unknown-attributes': 'error',

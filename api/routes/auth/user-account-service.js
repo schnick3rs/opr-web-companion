@@ -28,24 +28,51 @@ export async function getAllUsersWithoutHash(email) {
   return rows;
 }
 
+export async function getAllUsers() {
+  const { rows: users } = await pool.query(
+    'SELECT ' +
+      'id, ' +
+      'username, ' +
+      'enabled, ' +
+      'uuid, ' +
+      'is_opa "isOpa", ' +
+      'is_super_admin "isAdmin", ' +
+      'created_at "createdAt", ' +
+      'patreon_active_until "patreonActiveUntil" ' +
+    'FROM opr_companion.user_accounts');
+  return users.map(user => enrichScope(user));
+}
+
 export async function getUserByUuid(uuid) {
   const { rows } = await pool.query(
-      'SELECT id, username, enabled, uuid, is_opa "isOpa", is_super_admin "isAdmin", created_at "createdAt", patreon_active_until "patreonActiveUntil" ' +
-      'FROM opr_companion.user_accounts ' +
-      'WHERE uuid = $1', [uuid]);
-  let user = {
-    ...rows[0],
+    'SELECT ' +
+      'id, ' +
+      'username, ' +
+      'enabled, ' +
+      'uuid, ' +
+      'is_opa "isOpa", ' +
+      'is_super_admin "isAdmin", ' +
+      'created_at "createdAt", ' +
+      'patreon_active_until "patreonActiveUntil" ' +
+    'FROM opr_companion.user_accounts ' +
+    'WHERE uuid = $1', [uuid]);
+  return enrichScope(rows[0]);
+}
+
+export function enrichScope(base) {
+  const user = {
+    ...base,
     roles: [],
     scope: [],
-    patreon: new Date(rows[0].patreonActiveUntil) > new Date(),
+    patreon: new Date(base.patreonActiveUntil) > new Date(),
   };
-  if (user.isOpa) user.roles.push('opa');
-  if (user.isOpa || user.isAdmin) user.roles.push('staff');
-  if (user.patreon) user.roles.push('patreon');
+  if (user.isOpa) { user.roles.push('opa'); }
+  if (user.isOpa || user.isAdmin) { user.roles.push('staff'); }
+  if (user.patreon) { user.roles.push('patreon'); }
 
-  if (user.isOpa) user.scope.push('creators');
-  if (user.isOpa || user.isAdmin) user.scope.push('special-rules');
-  if (user.isOpa || user.isAdmin || user.patreon) user.scope.push('army-books');
+  if (user.isOpa) { user.scope.push('creators'); }
+  if (user.isOpa || user.isAdmin) { user.scope.push('special-rules'); }
+  if (user.isOpa || user.isAdmin || user.patreon) { user.scope.push('army-books'); }
 
   return user;
 }

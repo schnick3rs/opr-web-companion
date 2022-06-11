@@ -1,7 +1,6 @@
 <template>
   <div>
-
-    <opr-breadcrumbs-row :items="breadcrumbItems"></opr-breadcrumbs-row>
+    <opr-breadcrumbs-row :items="breadcrumbItems" />
 
     <v-row>
       <v-col cols="12">
@@ -14,27 +13,24 @@
             nuxt
             :to="item.to"
           >
-            {{item.name}}
+            {{ item.name }}
           </v-tab>
         </v-tabs>
       </v-col>
-
-
     </v-row>
 
-    <nuxt-child></nuxt-child>
-
+    <nuxt-child />
   </div>
 </template>
 
 <script>
-import OprBreadcrumbsRow from "@/components/shared/OprBreadcrumbsRow";
+import OprBreadcrumbsRow from '@/components/shared/OprBreadcrumbsRow';
 export default {
-  name: 'rules',
-  components: {OprBreadcrumbsRow},
-  middleware: 'isSpecialRules',
+  name: 'AdminRulesIndex',
+  components: { OprBreadcrumbsRow },
   layout: 'admin',
-  async asyncData() {
+  middleware: 'isSpecialRules',
+  asyncData() {
     return {
     };
   },
@@ -47,8 +43,8 @@ export default {
       ],
       tab: undefined,
       tabs: [
-        { key: 'common', name: 'Common Rules', to: `/admin/rules` },
-        { key: 'army', name: 'Army Rules', to: `/admin/rules/army` },
+        { key: 'common', name: 'Common Rules', to: '/admin/rules' },
+        { key: 'army', name: 'Army Rules', to: '/admin/rules/army' },
       ],
     };
   },
@@ -57,7 +53,7 @@ export default {
       title: 'Manage Rules',
     };
   },
-}
+};
 </script>
 
 <style scoped>

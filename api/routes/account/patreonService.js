@@ -1,6 +1,6 @@
-import axios from "axios";
-import querystring from "querystring";
-import { pool } from "../../db";
+import querystring from 'querystring';
+import axios from 'axios';
+import { pool } from '../../db';
 
 const config = {
   patreonClientId: process.env.PATREON_CLIENT_ID,
@@ -10,9 +10,9 @@ const config = {
 
 export async function getPatreonOauthTokensFromCode(code) {
   const oauthData = {
-    code: code,
-    grant_type: "authorization_code",
-    redirect_uri: "http://localhost:3000/api/account/patreon",
+    code,
+    grant_type: 'authorization_code',
+    redirect_uri: 'http://localhost:3000/api/account/patreon',
   };
 
   return await getPatreonOauthTokens(oauthData);
@@ -21,7 +21,7 @@ export async function getPatreonOauthTokensFromCode(code) {
 export async function getPatreonOauthTokensFromRefresh(refreshToken) {
   const oauthData = {
     refresh_token: refreshToken,
-    grant_type: "refresh_token",
+    grant_type: 'refresh_token',
   };
 
   return await getPatreonOauthTokens(oauthData);
@@ -30,9 +30,9 @@ export async function getPatreonOauthTokensFromRefresh(refreshToken) {
 async function getPatreonOauthTokens(oauthData) {
   try {
     const res = await axios({
-      method: "POST",
-      url: "https://www.patreon.com/api/oauth2/token",
-      headers: { "content-type": "application/x-www-form-urlencoded" },
+      method: 'POST',
+      url: 'https://www.patreon.com/api/oauth2/token',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
       data: querystring.stringify({
         ...oauthData,
         client_id: config.patreonClientId,
@@ -42,26 +42,27 @@ async function getPatreonOauthTokens(oauthData) {
 
     return res.data;
   } catch (e) {
-    console.error("Oauth token call fail", e);
+    console.error('Oauth token call fail', e);
   }
 
   return null;
 }
 
+// eslint-disable-next-line no-unused-vars
 async function fetchIdentity() {}
 
 export async function isActiveOnePageRulesMember(token) {
   async function getMemberships() {
     try {
       const query = querystring.stringify({
-        include: "memberships,memberships.currently_entitled_tiers",
-        "fields[member]": "patron_status",
+        include: 'memberships,memberships.currently_entitled_tiers',
+        'fields[member]': 'patron_status',
       });
       const membershipsResponse = await axios({
-        url: "https://www.patreon.com/api/oauth2/v2/identity?" + query,
-        method: "GET",
+        url: 'https://www.patreon.com/api/oauth2/v2/identity?' + query,
+        method: 'GET',
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: 'Bearer ' + token,
         },
       });
       return membershipsResponse;
@@ -71,7 +72,7 @@ export async function isActiveOnePageRulesMember(token) {
         console.error(JSON.stringify(data));
       }
 
-      console.error("Failed to get patreon identity", JSON.stringify(e));
+      console.error('Failed to get patreon identity', JSON.stringify(e));
     }
     return null;
   }
@@ -79,21 +80,20 @@ export async function isActiveOnePageRulesMember(token) {
   const { data } = await getMemberships();
 
   try {
-
     if (data.included) {
       const oprCampaign = data.included
-        .filter((item) => item.type === 'member')
-        .find((member) => member.id === config.patreonCreatorId);
+        .filter(item => item.type === 'member')
+        .find(member => member.id === config.patreonCreatorId);
 
       // user is not an OPR member
       if (!oprCampaign) {
         return false;
       }
 
-      const patronStatus = oprCampaign.attributes["patron_status"];
+      const patronStatus = oprCampaign.attributes.patron_status;
       const entitledTiers = oprCampaign.relationships.currently_entitled_tiers.data;
 
-      const isActivePatron = patronStatus === "active_patron";
+      const isActivePatron = patronStatus === 'active_patron';
       const hasActiveTier = entitledTiers.length >= 1;
 
       return isActivePatron && hasActiveTier;
@@ -107,16 +107,16 @@ export async function isActiveOnePageRulesMember(token) {
 export async function getUserPatreonRefreshToken(userId) {
   // Save refresh token against the user?
   const res = await pool.query(
-    "SELECT patreon_refresh_token FROM opr_companion.user_accounts WHERE id = $1",
+    'SELECT patreon_refresh_token FROM opr_companion.user_accounts WHERE id = $1',
     [userId]
   );
-  return res.rows[0]["patreon_refresh_token"];
+  return res.rows[0].patreon_refresh_token;
 }
 
 export async function setUserPatreonRefreshToken(userId, refreshToken) {
   // Save refresh token against the user?
-  const res = await pool.query(
-    "UPDATE opr_companion.user_accounts SET patreon_refresh_token = $2 WHERE id = $1",
+  await pool.query(
+    'UPDATE opr_companion.user_accounts SET patreon_refresh_token = $2 WHERE id = $1',
     [userId, refreshToken]
   );
 }
@@ -124,16 +124,16 @@ export async function setUserPatreonRefreshToken(userId, refreshToken) {
 export async function getUserPatreonActive(userId) {
   // Save refresh token against the user?
   const res = await pool.query(
-    "SELECT patreon_active_until FROM opr_companion.user_accounts WHERE id = $1",
+    'SELECT patreon_active_until FROM opr_companion.user_accounts WHERE id = $1',
     [userId]
   );
-  return res.rows[0]["patreon_refresh_token"];
+  return res.rows[0].patreon_refresh_token;
 }
 
 export async function setUserPatreonActive(userId, activeUntil) {
   // Save refresh token against the user?
-  const res = await pool.query(
-    "UPDATE opr_companion.user_accounts SET patreon_active_until = $2 WHERE id = $1",
+  await pool.query(
+    'UPDATE opr_companion.user_accounts SET patreon_active_until = $2 WHERE id = $1',
     [userId, activeUntil]
   );
 }
