@@ -3,11 +3,12 @@
     <v-col cols="12" :md="6">
       <v-list dense class="optimal-scroll">
         <v-list-item
-          v-for="rule in uniqueRuleNames" :key="rule"
+          v-for="rule in uniqueRuleNames"
+          :key="rule"
           @click="selectRule(rule)"
         >
           <v-list-item-content>
-            <v-list-item-title>{{rule}}</v-list-item-title>
+            <v-list-item-title>{{ rule }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -17,48 +18,53 @@
       <v-card>
         <v-card-title>
           {{ selectedRuleName }}
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             :disabled="!unsavedChanges"
             :loading="saving"
-            small color="success"
+            small
+            color="success"
             @click="save"
-          >Save</v-btn>
+          >
+            Save
+          </v-btn>
         </v-card-title>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-text v-if="selectedRuleVariant">
-
           <v-textarea
-            outlined dense
-            label="Description"
             v-model="editor.description"
+            outlined
+            dense
+            label="Description"
             :disabled="saving"
             counter
             :error="errorMessage"
             :error-messages="errorMessage"
-          >
-          </v-textarea>
+          />
 
           <v-text-field
             label="cost"
-            outlined dense
+            outlined
+            dense
             :value="selectedRuleVariant.cost"
-          ></v-text-field>
+          />
 
           <v-row no-gutters>
             <v-col cols="4">
               <v-select
-                dense outlined
+                dense
+                outlined
                 :items="costFunctionNames"
-                item-text="name" item-value="name"
-              ></v-select>
+                item-text="name"
+                item-value="name"
+              />
             </v-col>
             <v-col>
-              <v-text-field dense outlined></v-text-field>
+              <v-text-field dense outlined />
             </v-col>
           </v-row>
 
-          <v-checkbox label="with Rating" v-model="editor.hasRating"></v-checkbox>
+          <v-checkbox v-model="editor.hasRating" label="with Rating" />
 
           <v-chip-group
             v-model="selectedGameSystem"
@@ -70,39 +76,38 @@
               :key="system.id"
               :value="system.id"
               :disabled="!selectedRuleVariants.some(rule => rule.gameSystemId === system.id)"
-              label small
+              label
+              small
               @click="selectGameSystem(system.id)"
             >
-              {{system.aberration}}
+              {{ system.aberration }}
             </v-chip>
           </v-chip-group>
-
         </v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <v-card-text>
-          <div v-if="selectedRuleVariant" v-html="previewRuleSnippet"></div>
+          <div v-if="selectedRuleVariant" v-html="previewRuleSnippet" />
         </v-card-text>
-
       </v-card>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import {marked} from 'marked';
+import { marked } from 'marked';
 
 export default {
-  name: "index",
+  name: 'RulesIndex',
   layout: 'admin',
   async asyncData({ $axios }) {
-    const { data: gameSystems } = await $axios.get(`/api/game-systems/`);
-    const { data: rulesGf } = await $axios.get(`/api/game-systems/grimdark-future/special-rules`);
-    const { data: rulesGff } = await $axios.get(`/api/game-systems/grimdark-future-firefight/special-rules`);
-    const { data: rulesAof } = await $axios.get(`/api/game-systems/age-of-fantasy/special-rules`);
-    const { data: rulesAofs } = await $axios.get(`/api/game-systems/age-of-fantasy-skirmish/special-rules`);
-    const { data: rulesAofr } = await $axios.get(`/api/game-systems/age-of-fantasy-regiments/special-rules`);
+    const { data: gameSystems } = await $axios.get('/api/game-systems/');
+    const { data: rulesGf } = await $axios.get('/api/game-systems/grimdark-future/special-rules');
+    const { data: rulesGff } = await $axios.get('/api/game-systems/grimdark-future-firefight/special-rules');
+    const { data: rulesAof } = await $axios.get('/api/game-systems/age-of-fantasy/special-rules');
+    const { data: rulesAofs } = await $axios.get('/api/game-systems/age-of-fantasy-skirmish/special-rules');
+    const { data: rulesAofr } = await $axios.get('/api/game-systems/age-of-fantasy-regiments/special-rules');
     return {
       gameSystems,
       rules: [
@@ -157,11 +162,12 @@ export default {
       return this.editor.description !== this.selectedRuleVariantDescriptionInit;
     },
     uniqueRuleNames() {
+      // eslint-disable-next-line no-unused-vars
       const rules = [];
-      return [ ...new Set(this.rules.map(rule => rule.name).sort()) ];
+      return [...new Set(this.rules.map(rule => rule.name).sort())];
     },
     previewRuleSnippet() {
-      const {name, description, hasRating} = this.selectedRuleVariant;
+      const { name, description, hasRating } = this.selectedRuleVariant;
       const rate = hasRating ? '(X)' : '';
       return marked.parse(`**${name}${rate}:** ${description}`);
     },
@@ -185,19 +191,19 @@ export default {
       const { description } = this.editor;
       this.saving = true;
       this.$axios.patch(`/api/special-rules/${ruleId}/description`, { value: description })
-      .then(() => {
-        console.info('patch done');
-      })
-      .catch((e) => {
-        console.warn('patch failed', e.message);
-        this.errorMessage = e.message;
-      })
-      .finally(() => {
-        this.saving = false;
-      });
+        .then(() => {
+          console.info('patch done');
+        })
+        .catch((e) => {
+          console.warn('patch failed', e.message);
+          this.errorMessage = e.message;
+        })
+        .finally(() => {
+          this.saving = false;
+        });
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">

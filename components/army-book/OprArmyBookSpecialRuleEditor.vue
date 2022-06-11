@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <v-card v-if="loading">
       <v-card-title>
         <v-progress-circular
@@ -8,7 +7,7 @@
           style="margin: 0 auto;"
           indeterminate
           color="orange ligthen-2"
-        ></v-progress-circular>
+        />
       </v-card-title>
     </v-card>
 
@@ -17,61 +16,63 @@
       :elevation="elevation"
     >
       <v-card-text>
-
         <v-row>
-
           <v-col cols="12">
             <v-text-field
-              outlined dense
-              label="Name"
               v-model="specialRule.name"
-              persistent-hint hint="The raw name without (x)"
+              outlined
+              dense
+              label="Name"
+              persistent-hint
+              hint="The raw name without (x)"
               @input="updateField('name', specialRule.name)"
-            >
-            </v-text-field>
+            />
           </v-col>
 
           <v-col cols="12">
             <v-textarea
-              outlined dense
-              label="Description"
               v-model="specialRule.description"
-              persistent-hint messages="Show hints"
+              outlined
+              dense
+              label="Description"
+              persistent-hint
+              messages="Show hints"
               @input="updateField('description', specialRule.description)"
             >
-              <template v-slot:message>
-                Use <a href="https://marked.js.org/demo/" target="_blank">markdown</a><v-icon x-small>mdi-launch</v-icon>, e.g.: **bold** __italic__
+              <template #message>
+                Use <a href="https://marked.js.org/demo/" target="_blank">markdown</a><v-icon x-small>
+                  mdi-launch
+                </v-icon>, e.g.: **bold** __italic__
               </template>
             </v-textarea>
           </v-col>
 
           <v-col cols="4">
             <v-switch
-              outlined dense
-              label="Has Rating"
               v-model="specialRule.hasRating"
+              outlined
+              dense
+              label="Has Rating"
               disabled
-            >
-            </v-switch>
+            />
           </v-col>
 
-          <v-col cols="8" >
+          <v-col cols="8">
             <v-text-field
-              outlined dense
+              v-model="specialRule.defaultRating"
+              outlined
+              dense
               label="Default Rating"
               type="Number"
-              persistent-hint hint="usually 1 or 3 as the starting / default rating"
-              v-model="specialRule.defaultRating"
+              persistent-hint
+              hint="usually 1 or 3 as the starting / default rating"
               :disabled="!specialRule.hasRating"
-            >
-            </v-text-field>
+            />
           </v-col>
-
         </v-row>
-
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-card-text>
         You can set a flat cost per model for this rule.
@@ -83,23 +84,26 @@
           <v-col :cols="12">
             <v-text-field
               v-model="cost"
-              outlined dense
-              persistent-hint hint="Write single integer OR space separated function shortcode."
+              outlined
+              dense
+              persistent-hint
+              hint="Write single integer OR space separated function shortcode."
               clearable
-              @click:clear="updateField('cost', null)"
               append-icon="mdi-content-save"
-              @click:append="updateCostField"
               :append-outer-icon="costIsNoNumber ? `mdi-code-tags` : `mdi-numeric`"
-            ></v-text-field>
+              @click:clear="updateField('cost', null)"
+              @click:append="updateCostField"
+            />
           </v-col>
         </v-row>
       </v-card-text>
 
       <template v-if="isAdmin">
-        <v-divider></v-divider>
-        <v-card-text style="overflow: auto"><pre>{{specialRule}}</pre></v-card-text>
+        <v-divider />
+        <v-card-text style="overflow: auto">
+          <pre>{{ specialRule }}</pre>
+        </v-card-text>
       </template>
-
     </v-card>
   </div>
 </template>
@@ -149,7 +153,7 @@ export default {
   methods: {
     saveDebounced() {
       clearTimeout(this._timerId);
-      this._timerId = setTimeout(() => {this.save()}, 500);
+      this._timerId = setTimeout(() => { this.save(); }, 500);
     },
     save() {
       const armyBookUid = this.armyBookId;
@@ -162,12 +166,12 @@ export default {
       this.$store.commit('armyBooks/setSpecialRuleField', { id, specialRuleId, field, value });
       this.saveDebounced();
     },
-    updateCostField(){
-      let cost = isNaN(this.cost) ? this.cost : parseInt(this.cost);
+    updateCostField() {
+      const cost = isNaN(this.cost) ? this.cost : parseInt(this.cost);
       this.updateField('cost', cost);
     },
   },
-}
+};
 </script>
 
 <style scoped>

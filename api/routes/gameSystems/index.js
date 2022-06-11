@@ -1,13 +1,12 @@
 import Router from 'express-promise-router';
-const { pool } = require('../../db');
 import * as gameSystemService from './game-system-service';
+const { pool } = require('../../db');
 
 const router = new Router();
 
 router.get('/', async (request, response) => {
-
-    const { rows } = await pool.query(
-      'SELECT ' +
+  const { rows } = await pool.query(
+    'SELECT ' +
       'game_systems.id, ' +
       'game_systems.slug, ' +
       'game_systems.fullname, ' +
@@ -30,11 +29,11 @@ router.get('/', async (request, response) => {
         'GROUP BY game_system_id ' +
       ') AS ab ON ab.game_system_id = game_systems.id ' +
       'ORDER BY sort_order ASC '
-    );
+  );
 
-    response.set('Cache-Control', 'public, max-age=3600'); // 1h
-    response.status(200).json(rows);
-  }
+  response.set('Cache-Control', 'public, max-age=3600'); // 1h
+  response.status(200).json(rows);
+}
 );
 
 router.get('/:slug', async (request, response) => {
@@ -58,12 +57,11 @@ router.get('/:slug', async (request, response) => {
   if (rows.length !== 1) {
     response.status(404).json();
   } else {
-    let armyBook = rows[0];
+    const armyBook = rows[0];
 
     response.set('Cache-Control', 'public, max-age=3600');
     response.status(200).json(armyBook);
   }
-
 });
 
 router.get('/:slug/special-rules', async (request, response) => {

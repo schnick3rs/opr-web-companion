@@ -1,12 +1,12 @@
 import Router from 'express-promise-router';
-import {applyPatch} from 'rfc6902';
+import { applyPatch } from 'rfc6902';
 import calc from 'opr-point-calculator-lib';
-import {ArmyBookHelper, CalcHelper} from 'opr-army-book-helper';
-import * as unitService from './unit-service';
+import { ArmyBookHelper, CalcHelper } from 'opr-army-book-helper';
 import * as armyBookService from '../army-book-service';
-import userAccountService from '../../auth/user-account-service';
+import * as userAccountService from '../../auth/user-account-service';
+import * as unitService from './unit-service';
 
-const router = new Router({mergeParams: true});
+const router = new Router({ mergeParams: true });
 
 router.get('/', async (request, response) => {
   const { armyBookUid } = request.params;
@@ -20,22 +20,22 @@ router.get('/', async (request, response) => {
     }
   } catch (e) {
     console.error(e);
-    response.status(400).json({message: 'Could not fetch units'});
+    response.status(400).json({ message: 'Could not fetch units' });
   }
 });
 
 router.patch('/', async (request, response) => {
-    const { armyBookUid } = request.params;
-    const units = request.body;
+  const { armyBookUid } = request.params;
+  const units = request.body;
 
-    try {
-      await unitService.updateUnits(armyBookUid, request.me.userId, units);
-      response.status(200).json(units);
-    } catch (e) {
-      console.error(e);
-      response.status(400).json({e});
-    }
-  });
+  try {
+    await unitService.updateUnits(armyBookUid, request.me.userId, units);
+    response.status(200).json(units);
+  } catch (e) {
+    console.error(e);
+    response.status(400).json({ e });
+  }
+});
 
 router.post('/sort', async (request, response) => {
   const { armyBookUid } = request.params;
@@ -47,16 +47,16 @@ router.post('/sort', async (request, response) => {
     response.status(200).json(sorted);
   } catch (e) {
     console.error(e);
-    response.status(400).json({message: 'Could not sort units.'});
+    response.status(400).json({ message: 'Could not sort units.' });
   }
 });
 
 router.post('/calculate', async (request, response) => {
-  const { isOpa, isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (isAdmin === false) {
-    response.status(403).json({message: 'Your account does not allow to import army books.'});
+    response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
 
@@ -64,9 +64,9 @@ router.post('/calculate', async (request, response) => {
 
   try {
     const armyBook = await armyBookService.getArmyBookForOwner(armyBookUid, request.me.userId);
-    let { units, specialRules } = armyBook;
+    const { units, specialRules } = armyBook;
 
-    const unitz = units.map(unit => {
+    const unitz = units.map((unit) => {
       if (unit.costModeAutomatic) {
         const originalUnit = CalcHelper.normalizeUnit(unit);
         const customRules = CalcHelper.toCustomRules(specialRules);
@@ -84,7 +84,7 @@ router.post('/calculate', async (request, response) => {
     response.status(200).json(unitz);
   } catch (e) {
     console.error(e);
-    response.status(400).json({message: 'could not calculate unit costs'});
+    response.status(400).json({ message: 'could not calculate unit costs' });
   }
 });
 
@@ -94,7 +94,7 @@ router.post('/', async (request, response) => {
     response.status(200).json(unit);
   } catch (e) {
     console.error(e);
-    response.status(400).json({message: 'Could not create unit.'});
+    response.status(400).json({ message: 'Could not create unit.' });
   }
 });
 
@@ -103,12 +103,12 @@ router.post('/clone', async (request, response) => {
   const toClone = request.body;
 
   // fetch units from army books
-  let units = [];
+  const units = [];
   for (let i = 0; i < toClone.length; i++) {
     const clone = toClone[i];
     const { parentArmyBookId, unitId } = clone;
-    let parentUnit = await unitService.getUnit(parentArmyBookId, request.me.userId, unitId);
-    let newUnit = {
+    const parentUnit = await unitService.getUnit(parentArmyBookId, request.me.userId, unitId);
+    const newUnit = {
       ...parentUnit,
       id: unitService.generateUnitId(),
       clone: {
@@ -128,15 +128,15 @@ router.post('/clone', async (request, response) => {
   }
 
   // add upgrade packages
-  let newUpgradePackages = [];
+  const newUpgradePackages = [];
   for (let i = 0; i < units.length; i++) {
     const unit = units[i];
     const parentUpgradePackages = await armyBookService.getUpgradePackages(unit.clone.parentArmyBookId, request.me.userId);
     const targetUpgradePackages = await armyBookService.getUpgradePackages(armyBookUid, request.me.userId);
-    const unitUpgradePackages = unit.upgrades.map(uid => {
+    const unitUpgradePackages = unit.upgrades.map((uid) => {
       return parentUpgradePackages.find(u => u.uid === uid);
     });
-    const newPackages = unitUpgradePackages.filter(parentUnitPck => {
+    const newPackages = unitUpgradePackages.filter((parentUnitPck) => {
       return !targetUpgradePackages.some(targetPck => targetPck.uid === parentUnitPck.uid);
     });
     for (let j = 0; j < newPackages.length; j++) {
@@ -152,7 +152,7 @@ router.post('/clone', async (request, response) => {
    * 2. fetch target special rules
    * 3. check which rules this unit uses and
    */
-  let newSpecialRules = [];
+  const newSpecialRules = [];
   for (let i = 0; i < units.length; i++) {
     const unit = units[i];
     const unitSpecialRules = unit.specialRules;
@@ -160,13 +160,13 @@ router.post('/clone', async (request, response) => {
     const targetSpecialRules = await armyBookService.getSpecialRules(armyBookUid, request.me.userId);
     const newRules = parentSpecialRules.filter((parentRule) => {
       // only rules that the unit uses
-      return unitSpecialRules.some((unitRule) => unitRule.key === parentRule.key);
+      return unitSpecialRules.some(unitRule => unitRule.key === parentRule.key);
     }).filter((unitRule) => {
-      return !targetSpecialRules.some((targetRule) => targetRule.key === unitRule.key);
+      return !targetSpecialRules.some(targetRule => targetRule.key === unitRule.key);
     });
 
     for (let j = 0; j < newRules.length; j++) {
-      let newRule = newRules[j];
+      const newRule = newRules[j];
       await armyBookService.addSpecialRule(armyBookUid, request.me.userId, newRule);
       newSpecialRules.push(newRule);
     }
@@ -188,21 +188,19 @@ router.post('/clone', async (request, response) => {
     const freshTargetSpecialRules = await armyBookService.getSpecialRules(armyBookUid, request.me.userId);
     parentSpecialRules.filter((parentRule) => {
       // only rules that the unit uses
-      return unitSpecialRules.some((unitRule) => unitRule.key === parentRule.key);
+      return unitSpecialRules.some(unitRule => unitRule.key === parentRule.key);
     }).filter((unitRule) => {
-      return !freshTargetSpecialRules.some((targetRule) => targetRule.key === unitRule.key);
+      return !freshTargetSpecialRules.some(targetRule => targetRule.key === unitRule.key);
     });
 
     for (let j = 0; j < newPackageRules.length; j++) {
-      let newRule = newPackageRules[j];
+      const newRule = newPackageRules[j];
       await armyBookService.addSpecialRule(armyBookUid, request.me.userId, newRule);
       newSpecialRules.push(newRule);
     }
-
   }
 
-
-  response.status(200).json({units, upgradePackages: newUpgradePackages, specialRules: newSpecialRules});
+  response.status(200).json({ units, upgradePackages: newUpgradePackages, specialRules: newSpecialRules });
 
   // response.status(400).json({message: 'Could not clone units.'});
 });
@@ -215,7 +213,7 @@ router.get('/:unitId', async (request, response) => {
     response.status(200).json(unit);
   } catch (e) {
     console.error(e);
-    response.status(400).json({message: 'Could not read unit.'});
+    response.status(400).json({ message: 'Could not read unit.' });
   }
 });
 
@@ -228,9 +226,8 @@ router.patch('/:unitId', async (request, response) => {
     response.status(200).json(unit);
   } catch (e) {
     console.error(e);
-    response.status(400).json({message: 'Could not update unit.'});
+    response.status(400).json({ message: 'Could not update unit.' });
   }
-
 });
 
 router.delete('/:unitId', async (request, response) => {
@@ -241,16 +238,16 @@ router.delete('/:unitId', async (request, response) => {
     response.status(204).json();
   } catch (e) {
     console.error(e);
-    response.status(400).json({message: 'Could not delete unit.'});
+    response.status(400).json({ message: 'Could not delete unit.' });
   }
 });
 
 router.get('/:unitId/calculate', async (request, response) => {
-  const { isOpa, isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (isAdmin === false) {
-    response.status(403).json({message: 'Your account does not allow to import army books.'});
+    response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
 
@@ -271,11 +268,11 @@ router.get('/:unitId/calculate', async (request, response) => {
 });
 
 router.patch('/:unitId/calculate', async (request, response) => {
-  const { isOpa, isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (isAdmin === false) {
-    response.status(403).json({message: 'Your account does not allow to import army books.'});
+    response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
 
@@ -284,6 +281,7 @@ router.patch('/:unitId/calculate', async (request, response) => {
   const unit = await unitService.getUnit(armyBookUid, request.me.userId, unitId);
 
   if (unit) {
+    // eslint-disable-next-line no-unused-vars
     const normalizedUnit = CalcHelper.normalizeUnit(unit);
     /*
     let report = await calc.post('unit', { json: { unit: normalizedUnit }}).json();
@@ -322,11 +320,11 @@ router.patch('/:unitId/calculate', async (request, response) => {
 });
 
 router.patch('/:unitId/resync', async (request, response) => {
-  const { isAdmin }  = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (isAdmin === false) {
-    response.status(403).json({message: 'Your account does not allow to import army books.'});
+    response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
 
@@ -334,14 +332,18 @@ router.patch('/:unitId/resync', async (request, response) => {
 
   const currentUnit = await unitService.getUnit(armyBookUid, request.me.userId, unitId);
   if (!currentUnit.sync) {
-    response.status(404).json({message: 'Unit has no sync config.'});
+    response.status(404).json({ message: 'Unit has no sync config.' });
     return;
   }
 
   const parent = await unitService.getUnit(currentUnit.sync.parentArmyBookId, request.me.userId, currentUnit.sync.unitId);
+  if (!parent) {
+    response.status(404).json({ message: 'Parent unit not found.' });
+    return;
+  }
 
   // new Set([...parent.upgrades, ...currentUnit.upgrades].filter(i => typeof i === 'string'))
-  let updatedUnit = {
+  const updatedUnit = {
     ...currentUnit,
     size: parent.size,
     quality: parent.quality,
@@ -352,10 +354,10 @@ router.patch('/:unitId/resync', async (request, response) => {
   };
 
   if (currentUnit?.sync?.patch) {
-    let { patch } = currentUnit.sync;
+    const { patch } = currentUnit.sync;
     patch.forEach((pat) => {
       if (pat.op === 'remove') {
-        const i = updatedUnit.specialRules.findIndex((sr) => sr.name === pat.value.name);
+        const i = updatedUnit.specialRules.findIndex(sr => sr.name === pat.value.name);
         const patchRemove = { op: 'remove', path: `/specialRules/${i}`, value: i };
         applyPatch(updatedUnit, [patchRemove]);
       } else {
@@ -369,7 +371,7 @@ router.patch('/:unitId/resync', async (request, response) => {
 
   await unitService.updateUnit(armyBookUid, request.me.userId, updatedUnit.id, updatedUnit);
 
-  response.status(200).json({...updatedUnit});
+  response.status(200).json({ ...updatedUnit });
 });
 
 export default router;
