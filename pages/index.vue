@@ -73,18 +73,7 @@ export default {
   name: 'Home',
   async asyncData({ $axios }) {
     const { data } = await $axios.get('/api/game-systems/');
-    const gameSystems = data
-      .filter(gs => gs.armyBookBuilderEnabled)
-      .map((gs) => {
-        gs.disabled = !(gs.officialArmyBookCount > 0);
-        if (gs.slug === 'grimdark-future-firefight') {
-          gs.disabled = false;
-        }
-        if (gs.slug === 'age-of-fantasy-skirmish') {
-          // gs.disabled = false;
-        }
-        return gs;
-      });
+    const gameSystems = data.filter(gs => gs.armyBookBuilderEnabled);
     return {
       gameSystems,
     };
