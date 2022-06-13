@@ -1,7 +1,5 @@
 <template>
-
   <v-container>
-
     <v-dialog
       v-model="recalcInProgress"
       persistent
@@ -17,21 +15,25 @@
             indeterminate
             color="white"
             class="mb-0"
-          ></v-progress-linear>
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
 
-    <opr-breadcrumbs-row :items="breadcrumbItems"></opr-breadcrumbs-row>
+    <opr-breadcrumbs-row :items="breadcrumbItems" />
 
     <v-row justify-sm="center">
       <v-col>
         <v-btn
-          block outlined large
+          block
+          outlined
+          large
           color="success"
           @click="openNewArmyBookDialog"
         >
-          <v-icon left>mdi-plus-circle</v-icon>
+          <v-icon left>
+            mdi-plus-circle
+          </v-icon>
           New Army Book
         </v-btn>
         <v-dialog
@@ -47,17 +49,18 @@
           >
             <v-container>
               <v-row>
-
                 <!-- build for which game system -->
                 <v-col cols="12">
                   <v-select
                     v-model="newArmyBookForm.gameSystemId"
                     :items="gameSystemOptions"
                     label="Game System"
-                    dense outlined
+                    dense
+                    outlined
                     required
-                    persistent-hint hint="Which game system is this build for?"
-                  ></v-select>
+                    persistent-hint
+                    hint="Which game system is this build for?"
+                  />
                 </v-col>
 
                 <!-- army book name -->
@@ -65,12 +68,14 @@
                   <v-text-field
                     v-model="newArmyBookForm.name"
                     label="Name"
-                    dense outlined
+                    dense
+                    outlined
                     required
-                    persistent-hint hint="A shot name describing the army book"
+                    persistent-hint
+                    hint="A shot name describing the army book"
                     append-icon="mdi-dice-6"
                     @click:append="rerollRandomArmyName"
-                  ></v-text-field>
+                  />
                 </v-col>
 
                 <!-- army book one-line-hint -->
@@ -78,9 +83,11 @@
                   <v-text-field
                     v-model="newArmyBookForm.hint"
                     label="Hint (recommended)"
-                    dense outlined
-                    persistent-hint hint="One sentence describing the army"
-                  ></v-text-field>
+                    dense
+                    outlined
+                    persistent-hint
+                    hint="One sentence describing the army"
+                  />
                 </v-col>
 
                 <!-- army book background -->
@@ -88,49 +95,61 @@
                   <v-textarea
                     v-model="newArmyBookForm.background"
                     label="Background (optional)"
-                    dense outlined
-                    persistent-hint hint="Write markdown **bold** __italic__ "
-                  ></v-textarea>
+                    dense
+                    outlined
+                    persistent-hint
+                    hint="Write markdown **bold** __italic__ "
+                  />
                 </v-col>
-
               </v-row>
             </v-container>
-
           </opr-dialog>
         </v-dialog>
       </v-col>
 
       <v-col>
         <v-btn
-          block outlined large
+          block
+          outlined
+          large
           color="primary"
           nuxt
           to="/my-creations/builder"
         >
-          <v-icon left>mdi-file-multiple</v-icon>
+          <v-icon left>
+            mdi-file-multiple
+          </v-icon>
           New Detachment
         </v-btn>
       </v-col>
 
       <v-col>
         <v-btn
-          block outlined large
+          block
+          outlined
+          large
           color="primary"
-          @click="recalculateArmyBooks"
           disabled
+          @click="recalculateArmyBooks"
         >
-          <v-icon left>mdi-file-multiple</v-icon>
+          <v-icon left>
+            mdi-file-multiple
+          </v-icon>
           Calculon!
         </v-btn>
       </v-col>
 
-      <v-col v-if="isAdmin">
+      <v-col v-if="$auth.hasScope('admin')">
         <v-btn
-          block outlined large
+          block
+          outlined
+          large
           color="success"
           @click="openImportFromArmyForgeDialog"
         >
-          <v-icon left>mdi-cloud-upload</v-icon>
+          <v-icon left>
+            mdi-cloud-upload
+          </v-icon>
           Import Army Forge JSON
         </v-btn>
         <v-dialog
@@ -148,32 +167,34 @@
               <v-row v-if="!importArmyForm.importJson">
                 <v-col>
                   <v-textarea
+                    v-model="importArmyForm.importJsonString"
                     dense
                     outlined
-                    v-model="importArmyForm.importJsonString"
                     @paste="parseArmyForgeString"
                   />
                 </v-col>
               </v-row>
 
               <v-row v-if="importArmyForm.importJson">
-
                 <v-col cols="12">
                   <v-select
                     v-model="importArmyForm.gameSystemId"
                     :items="gameSystemOptions"
                     label="Game System"
-                    dense outlined
+                    dense
+                    outlined
                     required
-                    persistent-hint hint="Which game system is this build for?"
-                  ></v-select>
+                    persistent-hint
+                    hint="Which game system is this build for?"
+                  />
                 </v-col>
 
                 <v-col cols="8">
                   <v-text-field
                     v-model="importArmyForm.name"
                     label="Name"
-                    dense outlined
+                    dense
+                    outlined
                   />
                 </v-col>
 
@@ -181,58 +202,60 @@
                   <v-text-field
                     v-model="importArmyForm.versionString"
                     label="Version String"
-                    dense outlined
+                    dense
+                    outlined
                   />
                 </v-col>
 
                 <v-col cols="4" offset="4">
-                  <v-img :src="importArmyForm.coverImagePath"></v-img>
+                  <v-img :src="importArmyForm.coverImagePath" />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
                     v-model="importArmyForm.coverImagePath"
-                    dense outlined
-                  ></v-text-field>
+                    dense
+                    outlined
+                  />
                 </v-col>
 
                 <v-col cols="12">
                   <v-switch
-                    inset dense
                     v-model="importArmyForm.official"
+                    inset
+                    dense
                     :label="`${importArmyForm.official ? 'official OPR' : 'fanmade'}`"
                     persistent-hint
                     hint="Enable if this is an offiical OPR Army Book"
-                  ></v-switch>
+                  />
                 </v-col>
 
                 <v-col cols="12">
                   <v-switch
-                    inset dense
                     v-model="importArmyForm.costModeAutomatic"
+                    inset
+                    dense
                     :label="`${importArmyForm.costModeAutomatic ? 'automatic' : 'manually'}`"
                     persistent-hint
                     hint="Set to automatic to adjust costs via point calculator."
-                  ></v-switch>
+                  />
                 </v-col>
 
                 <v-col cols="12">
-                  <span>{{importArmyForm.units.length}} units</span>
+                  <span>{{ importArmyForm.units.length }} units</span>
                 </v-col>
 
                 <v-col cols="12">
-                  <span>{{importArmyForm.spells.length}} spells</span>
+                  <span>{{ importArmyForm.spells.length }} spells</span>
                 </v-col>
 
                 <v-col cols="12">
-                  <span>{{importArmyForm.specialRules.length}} special rules</span>
+                  <span>{{ importArmyForm.specialRules.length }} special rules</span>
                 </v-col>
 
                 <v-col cols="12">
-                  <span>{{importArmyForm.upgradePackages.length}} upgrades</span>
+                  <span>{{ importArmyForm.upgradePackages.length }} upgrades</span>
                 </v-col>
-
               </v-row>
-
             </v-container>
           </opr-dialog>
         </v-dialog>
@@ -244,22 +267,24 @@
       multiple
     >
       <v-row justify-sm="center">
-       <v-col
-        cols="2"
-        v-for="(gameSystem, index) in gameSystems" :key="gameSystem.key"
-      >
-        <v-item v-slot="{ active, toggle }">
-          <v-card
-            @click="toggle"
-          >
-            <v-img
-              :class="{ 'greyscale': !active}"
-              :src="`/img/game-systems/${gameSystem.slug}-cover.jpg`"
-              height="75px" position="top"
-            ></v-img>
-          </v-card>
-        </v-item>
-      </v-col>
+        <v-col
+          v-for="(gameSystem) in gameSystems"
+          :key="gameSystem.key"
+          cols="2"
+        >
+          <v-item v-slot="{ active, toggle }">
+            <v-card
+              @click="toggle"
+            >
+              <v-img
+                :class="{ 'greyscale': !active}"
+                :src="`/img/game-systems/${gameSystem.slug}-cover.jpg`"
+                height="75px"
+                position="top"
+              />
+            </v-card>
+          </v-item>
+        </v-col>
       </v-row>
     </v-item-group>
 
@@ -270,10 +295,11 @@
           prepend-inner-icon="mdi-magnify"
           label="Search"
           single-line
-          outlined dense
+          outlined
+          dense
           hide-details
           clearable
-        ></v-text-field>
+        />
       </v-col>
       <v-col :cols="12">
         <v-data-table
@@ -285,35 +311,46 @@
           dense
           :items-per-page="15"
         >
-          <template v-slot:item.name="{ item }">
+          <template #item.name="{ item }">
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>{{ item.name }}</v-list-item-title>
-                <v-list-item-subtitle v-show="false">{{ item.hint }}</v-list-item-subtitle>
+                <v-list-item-subtitle v-show="false">
+                  {{ item.hint }}
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </template>
 
-          <template v-slot:item.isLive="{ item }">
-            <v-chip small label color="primary" v-if="item.isLive">Live</v-chip>
-            <v-chip small label color="warning" v-else>Draft</v-chip>
+          <template #item.isLive="{ item }">
+            <v-chip v-if="item.isLive" small label color="primary">
+              Live
+            </v-chip>
+            <v-chip v-else small label color="warning">
+              Draft
+            </v-chip>
           </template>
 
-          <template v-slot:item.public="{ item }">
-            <v-chip small label color="primary" v-if="item.public">Public</v-chip>
-            <v-chip small label color="warning" v-else>Private</v-chip>
+          <template #item.public="{ item }">
+            <v-chip v-if="item.public" small label color="primary">
+              Public
+            </v-chip>
+            <v-chip v-else small label color="warning">
+              Private
+            </v-chip>
           </template>
 
-          <template v-slot:item.unitCount="{ item }">
+          <template #item.unitCount="{ item }">
             {{ item.unitCount }} <v-icon>mdi-account-multiple</v-icon>
           </template>
 
-          <template v-slot:item.system="{ item }">
+          <template #item.system="{ item }">
             <v-btn
               v-for="gameSystem in gameSystems"
-              :key="gameSystem.id"
               v-show="item.enabledGameSystems.includes(gameSystem.id)"
-              nuxt :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
+              :key="gameSystem.id"
+              nuxt
+              :to="`/army-books/view/${item.uid}~${gameSystem.id}/print`"
               target="_blank"
               icon
               :title="gameSystem.shortname"
@@ -327,36 +364,41 @@
                   alt="Avatar"
                   :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
                   :class="{ 'greyscale': !item.enabledGameSystems.includes(gameSystem.id)}"
-                />
+                >
               </v-avatar>
             </v-btn>
           </template>
 
-          <template v-slot:item.actions="{ item }">
+          <template #item.actions="{ item }">
             <v-btn
-              nuxt :to="`/my-creations/builder/${item.uid}`"
-              icon small
+              nuxt
+              :to="`/my-creations/builder/${item.uid}`"
+              icon
+              small
               color="success"
             >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
             <v-btn
-              icon small
+              icon
+              small
               color="primary"
-              @click="recalculateArmyBook(item.uid)"
               title="recalculate army book"
+              @click="recalculateArmyBook(item.uid)"
             >
-              <v-icon :class="{ 'mdi-spin': false }">mdi-autorenew</v-icon>
+              <v-icon :class="{ 'mdi-spin': false }">
+                mdi-autorenew
+              </v-icon>
             </v-btn>
             <v-btn
-              @click="openDeleteArmyBookDialog(item.uid, item.name)"
-              icon small
+              icon
+              small
               color="error"
+              @click="openDeleteArmyBookDialog(item.uid, item.name)"
             >
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>
-
         </v-data-table>
       </v-col>
 
@@ -368,53 +410,56 @@
           <v-card-title style="background-color: #262e37; color: #fff;">
             <span>Confirm deletion</span>
             <v-spacer />
-            <v-icon dark @click="showDeleteArmyBookDialog = false">mdi-close</v-icon>
+            <v-icon dark @click="showDeleteArmyBookDialog = false">
+              mdi-close
+            </v-icon>
           </v-card-title>
           <v-card-text>
             <div class="pt-2 pb-2">
-              <p>Are you sure you want to delete <strong>{{deleteArmyBookForm.name}}</strong>?</p>
+              <p>Are you sure you want to delete <strong>{{ deleteArmyBookForm.name }}</strong>?</p>
               <v-text-field
                 v-model="deleteArmyBookForm.input"
                 dense
                 outlined
-                persistent-hint hint="Type the Army Books name to confirm"
-              ></v-text-field>
+                persistent-hint
+                hint="Type the Army Books name to confirm"
+              />
             </div>
           </v-card-text>
-          <v-divider></v-divider>
+          <v-divider />
           <v-card-actions>
             <v-btn
               block
               color="primary"
-              @click="deleteArmyBook()"
               :disabled="deleteArmyBookForm.name !== deleteArmyBookForm.input"
-            >Delete permanently</v-btn>
+              @click="deleteArmyBook()"
+            >
+              Delete permanently
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-row>
-
   </v-container>
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
-import OprDialog from "@/components/shared/OprDialog";
-import OprBreadcrumbsRow from "@/components/shared/OprBreadcrumbsRow";
-import OprArmyBookTable from "../../components/shared/OprArmyBookTable";
+import { mapGetters } from 'vuex';
+import { uniqueNamesGenerator, adjectives } from 'unique-names-generator';
+import OprDialog from '@/components/shared/OprDialog';
+import OprBreadcrumbsRow from '@/components/shared/OprBreadcrumbsRow';
 
 export default {
-  name: 'my-army-book-creations',
-  components: { OprArmyBookTable, OprBreadcrumbsRow, OprDialog },
+  name: 'MyArmyBookCreations',
+  components: { OprBreadcrumbsRow, OprDialog },
   middleware: 'isArmyBooks',
   async asyncData({ $axios }) {
     const { data: gameSystems } = await $axios.get('/api/game-systems/');
-    //const { data: armyBooks } = await $axios.get(`/api/army-books/mine`);
+    // const { data: armyBooks } = await $axios.get(`/api/army-books/mine`);
     return {
       gameSystems: gameSystems.filter(gs => gs.armyBookBuilderEnabled),
-      //armyBooks,
-    }
+      // armyBooks,
+    };
   },
   data() {
     return {
@@ -423,13 +468,13 @@ export default {
         { text: 'My Creations', to: '/my-creations', exact: true },
       ],
       headers: [
-        {text: 'Name', align: 'start', value: 'name'},
-        {text: 'Version', align: 'start', value: 'versionString'},
-        //{text: 'Published', align: 'start', value: 'isLive'},
-        {text: 'Visibility', align: 'start', value: 'public'},
-        {text: '#Units', align: 'center', value: 'unitCount'},
-        {text: 'Games', align: 'start', value: 'system'},
-        {text: 'Actions', align: 'center', value: 'actions'},
+        { text: 'Name', align: 'start', value: 'name' },
+        { text: 'Version', align: 'start', value: 'versionString' },
+        // {text: 'Published', align: 'start', value: 'isLive'},
+        { text: 'Visibility', align: 'start', value: 'public' },
+        { text: '#Units', align: 'center', value: 'unitCount' },
+        { text: 'Games', align: 'start', value: 'system' },
+        { text: 'Actions', align: 'center', value: 'actions' },
       ],
       armyBookSets: [],
       search: '',
@@ -469,26 +514,22 @@ export default {
   head() {
     return {
       title: 'My Creations - Army Books',
-    }
+    };
   },
   computed: {
     ...mapGetters({
-      //armyBookSets: 'armyBooks/armyBookSets',
+      // armyBookSets: 'armyBooks/armyBookSets',
     }),
-    isAdmin() {
-      return this.$store.state.auth.user.isAdmin;
-    },
     filteredArmyBooks() {
       if (this.armyBookSets) {
-
         let filteredBooks = [];
 
         if (this.selectedGameSystems.length > 0) {
-          this.selectedGameSystems.forEach(i => {
+          this.selectedGameSystems.forEach((i) => {
             const gameSystem = this.gameSystems[i];
             const matchedBooks = this.armyBookSets.filter(ab => ab.enabledGameSystems.includes(gameSystem.id));
             filteredBooks.push(...matchedBooks);
-          })
+          });
         } else {
           filteredBooks = this.armyBookSets;
         }
@@ -507,7 +548,7 @@ export default {
       if (this.gameSystems) {
         return this.gameSystems
           .filter(gameSystem => gameSystem.armyBookBuilderEnabled)
-          .map(gameSystem => {
+          .map((gameSystem) => {
             return {
               text: gameSystem.fullname,
               value: gameSystem.id,
@@ -520,9 +561,9 @@ export default {
   watch: {
     user: {
       handler(newValue) {
-        //this.$store.dispatch('armyBooks/loadAll');
+        // this.$store.dispatch('armyBooks/loadAll');
         this.$store.commit('armyBooks/LOADING', { status: true, message: 'Loading your army books...' });
-        this.$axios.get(`/api/army-books/mine`).then(({ data }) => {
+        this.$axios.get('/api/army-books/mine').then(({ data }) => {
           this.armyBookSets = data;
         }).finally(() => {
           this.$store.commit('armyBooks/LOADING', { status: false });
@@ -533,11 +574,11 @@ export default {
   },
   methods: {
     generateRandomArmyName() {
-      const prefix = ['Space','Guardian','Battle','Robot','Mecha','Alien','Havoc','Undead','Elven','Dark'];
+      const prefix = ['Space', 'Guardian', 'Battle', 'Robot', 'Mecha', 'Alien', 'Havoc', 'Undead', 'Elven', 'Dark'];
       const eel = ['Eel'];
-      const suffix = ['Boyz','Bros','Army','Fleet','Hive','Flock','Swarm','Legion','Horde','Flock','Guild','Cult','Clans','Sisters','Force','Raiders','Guard','Daemons'];
+      const suffix = ['Boyz', 'Bros', 'Army', 'Fleet', 'Hive', 'Flock', 'Swarm', 'Legion', 'Horde', 'Flock', 'Guild', 'Cult', 'Clans', 'Sisters', 'Force', 'Raiders', 'Guard', 'Daemons'];
       const config = {
-        dictionaries: [ prefix, prefix, eel, suffix ],
+        dictionaries: [prefix, prefix, eel, suffix],
         separator: ' ',
         style: 'capital',
         length: 4,
@@ -545,13 +586,13 @@ export default {
       return uniqueNamesGenerator(config);
     },
     generateRandomArmyHint() {
-      const adjective = uniqueNamesGenerator({ dictionaries: [ adjectives ], length: 1 });
+      const adjective = uniqueNamesGenerator({ dictionaries: [adjectives], length: 1 });
       return `Those ${adjective} eels from space don't mess around.`;
     },
-    rerollRandomArmyName(){
+    rerollRandomArmyName() {
       this.newArmyBookForm.name = this.generateRandomArmyName();
     },
-    openNewArmyBookDialog(){
+    openNewArmyBookDialog() {
       this.newArmyBookForm.name = this.generateRandomArmyName();
       this.newArmyBookForm.hint = this.generateRandomArmyHint();
       this.newArmyBookForm.background = '';
@@ -563,7 +604,7 @@ export default {
     },
     createNewArmyBook() {
       const { name, hint, background, gameSystemId } = this.newArmyBookForm;
-      this.$store.dispatch('armyBooks/create',{ name, hint, gameSystemId, background });
+      this.$store.dispatch('armyBooks/create', { name, hint, gameSystemId, background });
       this.$ga.event('Army Book', 'create', `${name}`, 10);
       this.closeNewArmyBookDialog();
     },
@@ -590,7 +631,7 @@ export default {
         }
         this.importArmyForm.costModeAutomatic = true;
       } catch (e) {
-        console.warn(`Could not parse import string.`);
+        console.warn('Could not parse import string.');
       }
     },
     createNewArmyFromImport() {
@@ -631,7 +672,7 @@ export default {
     },
     openDeleteArmyBookDialog(uid, name) {
       this.deleteArmyBookForm.uid = uid;
-      this.deleteArmyBookForm.name = name
+      this.deleteArmyBookForm.name = name;
       this.deleteArmyBookForm.input = '';
       this.showDeleteArmyBookDialog = true;
     },
@@ -649,7 +690,7 @@ export default {
       for (const armyBook of this.armyBookSets) {
         this.recalcInProgressMessage = `Recalculate '${armyBook.name} ...`;
         try {
-          const response = await this.$axios.post(`/api/army-books/${armyBook.uid}/calculate`);
+          await this.$axios.post(`/api/army-books/${armyBook.uid}/calculate`);
         } catch (e) {
           console.error(`Could not recalc ${armyBook.name} -> ${e.message}`, e);
         }
@@ -658,8 +699,8 @@ export default {
     },
     recalculateArmyBook(armyBookUid) {
       if (this.$oprPointCalculator) {
-        //const payload = { armyBookUid };
-        //this.$store.dispatch('armyBooks/recalculateArmyBook', payload);
+        // const payload = { armyBookUid };
+        // this.$store.dispatch('armyBooks/recalculateArmyBook', payload);
         this.recalcInProgress = true;
         this.$axios.post(`/api/army-books/${armyBookUid}/calculate`)
           .then((result) => {
@@ -677,10 +718,10 @@ export default {
       }
     },
   },
-}
+};
 </script>
 
-<style scoped scss>
+<style scoped lang="scss">
 .greyscale {
   filter: grayscale(100%);
 }

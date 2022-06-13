@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <v-card v-if="loading">
       <v-card-title>
         <v-progress-circular
@@ -8,7 +7,7 @@
           style="margin: 0 auto;"
           indeterminate
           color="orange ligthen-2"
-        ></v-progress-circular>
+        />
       </v-card-title>
     </v-card>
 
@@ -16,52 +15,49 @@
       v-else
       :elevation="elevation"
     >
-
       <v-card-text>
-
         <v-row>
-
           <v-col cols="8">
             <v-text-field
-              outlined dense
-              label="Name"
               v-model="spell.name"
-              persistent-hint hint="The raw name without (x)"
+              outlined
+              dense
+              label="Name"
+              persistent-hint
+              hint="The raw name without (x)"
               @input="updateField('name', spell.name)"
-            ></v-text-field>
+            />
           </v-col>
 
           <v-col cols="4">
             <v-select
-              outlined dense
-              label="Treshold"
               v-model="spell.threshold"
+              outlined
+              dense
+              label="Treshold"
               :items="thresholdOptions"
               @input="updateField('threshold', spell.threshold)"
-            >
-            </v-select>
+            />
           </v-col>
 
           <v-col cols="12">
             <v-textarea
-              outlined dense
-              label="Description"
               v-model="spell.effect"
-              persistent-hint hint="Markdown **bold** __italic__"
+              outlined
+              dense
+              label="Description"
+              persistent-hint
+              hint="Markdown **bold** __italic__"
               @input="updateField('effect', spell.effect)"
-            >
-            </v-textarea>
+            />
           </v-col>
-
         </v-row>
-
       </v-card-text>
 
-      <template v-if="isAdmin">
-        <v-divider></v-divider>
-        <v-card-text><pre>{{spell}}</pre></v-card-text>
+      <template v-if="$auth.hasScope('admin')">
+        <v-divider />
+        <v-card-text><pre>{{ spell }}</pre></v-card-text>
       </template>
-
     </v-card>
   </div>
 </template>
@@ -97,14 +93,11 @@ export default {
     spell() {
       return this.$store.getters['armyBooks/spell'](this.armyBookId, this.spellId);
     },
-    isAdmin() {
-      return this.$store.state.auth?.user?.isAdmin;
-    },
   },
   methods: {
     saveDebounced() {
       clearTimeout(this._timerId);
-      this._timerId = setTimeout(() => {this.save()}, 500);
+      this._timerId = setTimeout(() => { this.save(); }, 500);
     },
     save() {
       const armyBookUid = this.armyBookId;
@@ -118,7 +111,7 @@ export default {
       this.saveDebounced();
     },
   },
-}
+};
 </script>
 
 <style scoped>

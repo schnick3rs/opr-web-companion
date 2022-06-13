@@ -28,6 +28,7 @@ module.exports = {
     }],
     'vue/multi-word-component-names': 0,
     'vue/valid-v-slot': 0,
+    'vue/valid-v-for': 1,
     'vuetify/no-deprecated-classes': 'error',
     'vuetify/grid-unknown-attributes': 'error',
     'vuetify/no-legacy-grid': 'error',

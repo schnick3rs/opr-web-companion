@@ -98,7 +98,7 @@
         </v-row>
       </v-card-text>
 
-      <template v-if="isAdmin">
+      <template v-if="$auth.hasScope('admin')">
         <v-divider />
         <v-card-text style="overflow: auto">
           <pre>{{ specialRule }}</pre>
@@ -132,9 +132,6 @@ export default {
     },
     specialRule() {
       return this.$store.getters['armyBooks/specialRule'](this.armyBookId, this.specialRuleId);
-    },
-    isAdmin() {
-      return this.$store.state.auth?.user?.isAdmin;
     },
     costIsNoNumber() {
       return isNaN(this.cost);

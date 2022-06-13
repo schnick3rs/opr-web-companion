@@ -93,9 +93,9 @@ export default {
     return {
       headers: [
         { text: 'Username', align: 'start', value: 'username' },
+        { text: 'Enabled', align: 'center', value: 'enabled' },
         { text: 'Created at', align: 'end', value: 'createdAt' },
         { text: 'Roles', align: 'start', value: 'roles' },
-        { text: 'Scope', align: 'start', value: 'scope' },
         { text: 'Patreon', align: 'center', value: 'patreon' },
       ],
     };

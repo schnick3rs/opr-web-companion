@@ -1,19 +1,26 @@
 <template>
   <div>
-
-    <v-btn
-      nuxt
-      to="/admin/rules"
-    >
-      Rules
-    </v-btn>
-
-    <v-btn
-      nuxt
-      to="/admin/users"
-    >
-      Users
-    </v-btn>
+    <v-row>
+      <v-col cols="2">
+        <v-btn
+          nuxt
+          to="/admin/rules"
+          block
+        >
+          Rules
+        </v-btn>
+        <v-btn
+          nuxt
+          to="/admin/users"
+          block
+        >
+          Users
+        </v-btn>
+      </v-col>
+      <v-col>
+        <nuxt-child />
+      </v-col>
+    </v-row>
   </div>
 </template>
 

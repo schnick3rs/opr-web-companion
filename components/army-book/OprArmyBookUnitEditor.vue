@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <v-card v-if="loading">
       <v-card-title>
         <v-progress-circular
@@ -8,7 +7,7 @@
           style="margin: 0 auto;"
           indeterminate
           color="orange ligthen-2"
-        ></v-progress-circular>
+        />
       </v-card-title>
     </v-card>
 
@@ -20,32 +19,33 @@
         <v-text-field
           ref="entry"
           v-model="unit.name"
-          @input="updateName(unit.name)"
           label="Unit Name"
-          outlined dense
+          outlined
+          dense
           aria-required="true"
           hide-details
           :rules="[rules.required]"
-        ></v-text-field>
-        <v-spacer></v-spacer>
+          @input="updateName(unit.name)"
+        />
+        <v-spacer />
         <template v-if="hasSync">
           <v-tooltip left>
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <v-icon
                 v-bind="attrs"
+                class="mr-1"
                 v-on="on"
                 @mouseover="loadSyncInformation"
                 @click="updateSync"
-                class="mr-1"
               >
                 mdi-dna
               </v-icon>
             </template>
-            <div v-if="this.syncInfo">
-              <div><strong>Army Book:</strong> {{this.syncInfo.name}}</div>
-              <div><strong>Unit:</strong> {{this.syncInfo.unit.name}}</div>
+            <div v-if="syncInfo">
+              <div><strong>Army Book:</strong> {{ syncInfo.name }}</div>
+              <div><strong>Unit:</strong> {{ syncInfo.unit.name }}</div>
             </div>
-            <v-progress-circular v-else indeterminate color="warning"></v-progress-circular>
+            <v-progress-circular v-else indeterminate color="warning" />
           </v-tooltip>
         </template>
         <v-btn
@@ -54,59 +54,66 @@
           small
           outlined
         >
-          <v-icon class="mdi-spin" left v-if="saving">mdi-loading</v-icon>
+          <v-icon v-if="saving" class="mdi-spin" left>
+            mdi-loading
+          </v-icon>
           <template>Save</template>
         </v-btn>
       </v-card-title>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-card-text>
-
         <v-row>
           <v-col cols="6" :sm="3">
             <v-select
-              outlined dense
-              label="Quality"
               v-model="unit.quality"
+              outlined
+              dense
+              label="Quality"
               :items="qualityOptions"
-              @input="updateQuality(unit.quality)"
               :readonly="!!unit.sync"
               :append-icon="unit.sync ? 'mdi-lock' : ''"
-            ></v-select>
+              @input="updateQuality(unit.quality)"
+            />
           </v-col>
           <v-col cols="6" :sm="3">
             <v-select
-              outlined dense
-              label="Defense"
               v-model="unit.defense"
+              outlined
+              dense
+              label="Defense"
               :items="qualityOptions"
-              @input="updateDefense(unit.defense)"
               :readonly="!!unit.sync"
               :append-icon="unit.sync ? 'mdi-lock' : ''"
-            ></v-select>
+              @input="updateDefense(unit.defense)"
+            />
           </v-col>
           <v-col cols="6" :sm="3">
             <v-text-field
               v-model="unit.size"
               :readonly="!!unit.sync"
-              outlined dense
+              outlined
+              dense
               label="Size"
               type="Number"
               :rules="[rules.required, rules.positive]"
-              @input="updateSize(unit.size)"
               :append-icon="unit.sync ? 'mdi-lock' : ''"
-            ></v-text-field>
+              @input="updateSize(unit.size)"
+            />
           </v-col>
           <v-col cols="6" :sm="3">
             <v-text-field
-              outlined dense
-              label="Cost (pts)" type="Number" v-model="unit.cost" @input="updateCost()"
+              v-model="unit.cost"
+              outlined
+              dense
+              label="Cost (pts)"
+              type="Number"
               :persistent-hint="costModeAutomatic"
               :hint="`${calculatedUnitCostRounded} (${calculatedUnitCost ? calculatedUnitCost : ''})`"
               :disabled="costModeAutomatic"
-            >
-            </v-text-field>
+              @input="updateCost()"
+            />
             <!--
             automatic: on change, adjust pointcost accordingly append-outer-icon="mdi-lock"
             manually: don't adjust automatically
@@ -120,54 +127,69 @@
 
         <v-row>
           <v-col cols="12">
-            <v-simple-table dense :key="unit.id">
-              <template v-slot:default>
+            <v-simple-table :key="unit.id" dense>
+              <template #default>
                 <thead>
                   <tr>
-                    <th class="text-left">No.</th>
-                    <th class="text-left">Weapon</th>
-                    <th class="text-center">Range</th>
-                    <th class="text-center">Att</th>
-                    <th class="text-left">Special</th>
-                    <th v-if="showPointCalcOptions" class="text-right">Pts</th>
-                    <th class="text-right" v-show="!unit.sync">Act.</th>
+                    <th class="text-left">
+                      No.
+                    </th>
+                    <th class="text-left">
+                      Weapon
+                    </th>
+                    <th class="text-center">
+                      Range
+                    </th>
+                    <th class="text-center">
+                      Att
+                    </th>
+                    <th class="text-left">
+                      Special
+                    </th>
+                    <th v-if="showPointCalcOptions" class="text-right">
+                      Pts
+                    </th>
+                    <th v-show="!unit.sync" class="text-right">
+                      Act.
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <opr-army-book-unit-weapon-row
-                    v-for="(item, index) in unit.equipment" :key="index"
+                    v-for="(item, index) in unit.equipment"
+                    :key="index"
                     :weapon="item"
                     :army-book-game-system-slug="armyBookGameSystemSlug"
                     :calculatable-unit="calculatableUnit"
-                    @update="unitWeaponUpdate(index, $event)"
-                    @remove="unitRemoveWeapon(index)"
                     :show-cost="showPointCalcOptions"
                     :read-only="!!unit.sync"
+                    @update="unitWeaponUpdate(index, $event)"
+                    @remove="unitRemoveWeapon(index)"
                   />
                   <tr v-if="!unit.sync">
                     <td colspan="7">
                       <div
-                        class="text-left"
                         v-if="weaponEditor.overlay"
+                        class="text-left"
                       >
                         <span class="grey--text" @click="weaponEditor.overlay = !weaponEditor.overlay">
                           write weapon stats
                         </span>
                         <span>or</span>
-                        <span @click="openAddWeaponDialog()" style="color: cornflowerblue; cursor: pointer" >use weapon builder</span>
+                        <span style="color: cornflowerblue; cursor: pointer" @click="openAddWeaponDialog()">use weapon builder</span>
                       </div>
                       <v-text-field
                         v-else
+                        v-model="weaponEditor.importString"
                         clearable
                         autofocus
                         placeholder="Write weapon text and hit enter..."
-                        v-model="weaponEditor.importString"
                         append-outer-icon="mdi-plus-circle-outline"
                         :rules="[rules.required, rules.weapon]"
                         @click:append-outer="parseWeaponInput()"
                         @keypress.enter="parseWeaponInput()"
                         @keydown.esc="weaponEditor.overlay = true"
-                      ></v-text-field>
+                      />
                     </td>
                   </tr>
                 </tbody>
@@ -176,61 +198,57 @@
           </v-col>
         </v-row>
 
-
         <v-row>
           <v-col><strong>Special Rules</strong></v-col>
         </v-row>
 
         <v-row>
-
-          <v-col cols="12" v-if="unit.specialRules.length > 0">
+          <v-col v-if="unit.specialRules.length > 0" cols="12">
             <v-chip-group column>
               <v-chip
+                v-for="(rule, index) in unit.specialRules"
+                :key="index"
                 label
                 close
                 :outlined="unit.sync && !rule.additional"
-                v-for="(rule, index) in unit.specialRules"
-                :key="index"
                 @click:close="unitRemoveSpecialRule(index)"
               >
-                {{rule.name}}<span v-if="rule.rating">({{rule.rating}})</span>
-                <span>&nbsp;[{{computeRuleCost(rule.name)}}pts]</span>
+                {{ rule.name }}<span v-if="rule.rating">({{ rule.rating }})</span>
+                <span>&nbsp;[{{ computeRuleCost(rule.name) }}pts]</span>
               </v-chip>
             </v-chip-group>
           </v-col>
 
           <v-col cols="12">
             <div
-              class="text-left"
               v-if="specialRuleEditor.overlay"
+              class="text-left"
             >
-                <span
-                  class="grey--text"
-                  @click="specialRuleEditor.overlay = !specialRuleEditor.overlay"
-                >
-                  write special rule ...
-                </span>
+              <span
+                class="grey--text"
+                @click="specialRuleEditor.overlay = !specialRuleEditor.overlay"
+              >
+                write special rule ...
+              </span>
               <span v-show="false">or</span>
-              <span v-show="false" style="color: cornflowerblue; cursor: pointer" >use rules builder</span>
+              <span v-show="false" style="color: cornflowerblue; cursor: pointer">use rules builder</span>
             </div>
             <v-text-field
               v-else
+              v-model="specialRuleEditor.importString"
               autofocus
               placeholder="Write rule and hit enter..."
               dense
-              v-model="specialRuleEditor.importString"
               append-outer-icon="mdi-plus-circle-outline"
               @click:append-outer="parseSpecialRuleInput()"
               @keypress.enter="parseSpecialRuleInput()"
               @keydown.esc="specialRuleEditor.overlay = true"
-            >
-            </v-text-field>
+            />
           </v-col>
         </v-row>
-
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-card-text>
         <v-row>
@@ -245,49 +263,51 @@
               outlined
               label="Upgrades"
               @change="updateUnit(unit.upgrades)"
-            ></v-select>
+            />
           </v-col>
         </v-row>
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-card-text>
         <v-row>
           <v-col cols="12">
             <v-text-field
               v-model="unit.splitPageNumber"
-              @input="updateSplitPageNumber(unit.splitPageNumber)"
-              dense outlined
+              dense
+              outlined
               type="Number"
               label="Split Page Number"
-              persistent-hint hint="Used to distribute large armies over multiple pages"
-            ></v-text-field>
+              persistent-hint
+              hint="Used to distribute large armies over multiple pages"
+              @input="updateSplitPageNumber(unit.splitPageNumber)"
+            />
             <em>All units with the same number are put on one page, default is '1'</em>
           </v-col>
         </v-row>
       </v-card-text>
 
-
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-card-actions>
-
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-switch
-          inset dense
           v-model="costModeAutomatic"
+          inset
+          dense
           label="Cost Mode"
           persistent-hint
           :hint="costModeAutomatic ? 'Calculate automatic' : 'Edit manually'"
-        ></v-switch>
+        />
       </v-card-actions>
 
-      <template v-if="isAdmin">
-        <v-divider></v-divider>
-        <v-card-text style="overflow: auto"><pre>{{unit}}</pre></v-card-text>
+      <template v-if="$auth.hasScope('admin')">
+        <v-divider />
+        <v-card-text style="overflow: auto">
+          <pre>{{ unit }}</pre>
+        </v-card-text>
       </template>
-
     </v-card>
 
     <v-dialog
@@ -304,8 +324,7 @@
         <opr-army-book-weapon-editor
           v-model="weaponEditor"
           :special-rules-items="weaponSpecialRulesOptions"
-        >
-        </opr-army-book-weapon-editor>
+        />
       </opr-dialog>
     </v-dialog>
 
@@ -317,32 +336,33 @@
     >
       <opr-dialog
         title="Select Special Rule"
+        apply-label="Add Special Rules"
         @apply="showAddSpecialRulesDialog = false"
         @close="showAddSpecialRulesDialog = false"
-        apply-label="Add Special Rules"
       >
         <v-card-text>
           <v-select
-            outlined dense multiple
             v-model="unitEditor.specialRules"
+            outlined
+            dense
+            multiple
             :items="combinedSpecialRules"
             item-text="label"
             item-value="key"
-          ></v-select>
+          />
         </v-card-text>
       </opr-dialog>
     </v-dialog>
-
   </div>
 </template>
 
 <script>
-import OprArmyBookWeaponEditor from '~/components/army-book/OprArmyBookWeaponEditor';
-import OprDialog from "~/components/shared/OprDialog";
-import OprUtils from "~/mixins/OprUtils";
 import { ArmyBook, CalcHelper } from 'opr-army-book-helper';
+import OprArmyBookUnitWeaponRow from './OprArmyBookUnitWeaponRow';
+import OprArmyBookWeaponEditor from '~/components/army-book/OprArmyBookWeaponEditor';
+import OprDialog from '~/components/shared/OprDialog';
+import OprUtils from '~/mixins/OprUtils';
 import { toCustomRule } from '~/assets/js/CustomArmyRulesService';
-import OprArmyBookUnitWeaponRow from "./OprArmyBookUnitWeaponRow";
 
 export default {
   name: 'OprArmyBookUnitEditor',
@@ -351,7 +371,7 @@ export default {
     OprDialog,
     OprArmyBookWeaponEditor,
   },
-  mixins: [ OprUtils ],
+  mixins: [OprUtils],
   props: {
     armyBookId: String,
     unitId: String,
@@ -415,7 +435,7 @@ export default {
       return this.$store.getters['armyBooks/upgradePackages'](this.armyBookId);
     },
     armyBookUpgradePackageOptions() {
-      return this.armyBookUpgradePackages.map(upgradePackage => {
+      return this.armyBookUpgradePackages.map((upgradePackage) => {
         const { hint } = upgradePackage;
         return {
           text: `${hint}`,
@@ -429,21 +449,15 @@ export default {
     hasSync() {
       return this.unit?.sync || false;
     },
-    isAdmin() {
-      return this.$store.state.auth?.user?.isAdmin;
-    },
-    hasPointCalcRights() {
-      return this.isAdmin;
-    },
     showPointCalcOptions() {
-      return this.$config.oprPointCalculatorEnabled && this.hasPointCalcRights;
+      return this.$config.oprPointCalculatorEnabled;
     },
     calculatableUnit() {
       return CalcHelper.normalizeUnit(this.unit);
     },
     customRules() {
-      let customRules = {};
-      this.armyBookSpecialRules.forEach(rule => {
+      const customRules = {};
+      this.armyBookSpecialRules.forEach((rule) => {
         const ruleCost = toCustomRule(rule);
         if (ruleCost) {
           customRules[rule.name] = ruleCost;
@@ -458,7 +472,7 @@ export default {
       return undefined;
     },
     calculatedUnitCostRounded() {
-      return this.calculatedUnitCost ? Math.round(this.calculatedUnitCost/5) * 5 : 0;
+      return this.calculatedUnitCost ? Math.round(this.calculatedUnitCost / 5) * 5 : 0;
     },
     armyBookSpecialRules() {
       return this.$store.getters['armyBooks/specialRules'](this.armyBookId);
@@ -469,18 +483,18 @@ export default {
     combinedSpecialRules() {
       let rules = [];
       if (this.commonSpecialRules) {
-        rules = [ ...this.commonSpecialRules ];
+        rules = [...this.commonSpecialRules];
       }
       if (this.armyBookSpecialRules) {
-        rules = [ ...rules, ...this.armyBookSpecialRules ];
+        rules = [...rules, ...this.armyBookSpecialRules];
       }
       return rules;
     },
     unitSpecialRules() {
-      return this.combinedSpecialRules.filter((rule) => rule.forUnit || rule?.tags?.includes('unit') || false);
+      return this.combinedSpecialRules.filter(rule => rule.forUnit || rule?.tags?.includes('unit') || false);
     },
     weaponSpecialRulesOptions() {
-      return this.combinedSpecialRules.filter((rule) => rule.forWeapon || rule?.tags?.includes('weapon') || false);
+      return this.combinedSpecialRules.filter(rule => rule.forWeapon || rule?.tags?.includes('weapon') || false);
     },
     costModeAutomatic: {
       get() {
@@ -492,7 +506,7 @@ export default {
           this.$store.commit('armyBooks/unitSetCost', { id: this.armyBookId, unitId: this.unitId, cost: this.calculatedUnitCostRounded });
         }
         this.$store.commit('armyBooks/unitSetCostMode', { id: this.armyBookId, unitId: this.unitId, costMode, costModeAutomatic });
-        this.$store.dispatch('armyBooks/updateUnit',{ armyBookUid: this.armyBookId, unitId: this.unitId });
+        this.$store.dispatch('armyBooks/updateUnit', { armyBookUid: this.armyBookId, unitId: this.unitId });
       },
     }
   },
@@ -508,6 +522,7 @@ export default {
     unitId: {
       handler(newValue) {
         if (newValue) {
+          // eslint-disable-next-line no-unused-expressions
           this.$refs.entry ? this.$refs.entry.focus() : '';
         }
       },
@@ -527,22 +542,22 @@ export default {
   },
   methods: {
     async loadArmyBookAndAssets() {
-      const { data } = await this.$axios.get(`/api/content/special-rules`);
+      const { data } = await this.$axios.get('/api/content/special-rules');
       this.commonSpecialRules = data;
     },
     loadSyncInformation() {
-      if (this.unit.sync && (!this.syncInfo || this.syncInfo?.unit?.id !== this.unit.sync.unitId )) {
+      if (this.unit.sync && (!this.syncInfo || this.syncInfo?.unit?.id !== this.unit.sync.unitId)) {
         this.syncInfo = undefined;
         this.$axios.get(`/api/army-books/${this.unit.sync.parentArmyBookId}`).then((response) => {
           const { name, units } = response.data;
-          const unit = units.find((unit) => unit.id === this.unit.sync.unitId);
+          const unit = units.find(unit => unit.id === this.unit.sync.unitId);
           this.syncInfo = { name, unit };
         });
       }
     },
     updateSync() {
       if (this.unit.sync) {
-        console.info(`TODO fetching data and update unit.`);
+        console.info('TODO fetching data and update unit.');
         const armyBookId = this.armyBookId;
         const unitId = this.unitId;
         this.$store.dispatch('armyBooks/unitResync', { armyBookId, unitId });
@@ -567,7 +582,7 @@ export default {
       this.specialRuleEditor.importString
         .split(',')
         .map(i => i.trim())
-        .forEach(ruleString => {
+        .forEach((ruleString) => {
           if (ArmyBook.Rule.Is(ruleString)) {
             const id = this.armyBookId;
             const unitId = this.unitId;
@@ -597,19 +612,19 @@ export default {
       this.saveUnitDebounced();
     },
     unitWeaponUpdate(equipmentIndex, payload) {
-      let unitId = this.unitId;
+      const unitId = this.unitId;
       const { field, value } = payload;
-      this.$store.commit('armyBooks/unitUpdateEquipment',{ id: this.armyBookId, unitId, equipmentIndex, field, value });
+      this.$store.commit('armyBooks/unitUpdateEquipment', { id: this.armyBookId, unitId, equipmentIndex, field, value });
       this.saveUnitDebounced();
     },
     unitRemoveWeapon(equipmentIndex) {
-      let unitId = this.unitId;
-      this.$store.commit('armyBooks/unitRemoveEquipment',{ id: this.armyBookId, unitId, equipmentIndex });
+      const unitId = this.unitId;
+      this.$store.commit('armyBooks/unitRemoveEquipment', { id: this.armyBookId, unitId, equipmentIndex });
       this.saveUnitDebounced();
     },
     unitRemoveSpecialRule(specialRulesIndex) {
-      let unitId = this.unitId;
-      this.$store.commit('armyBooks/unitRemoveSpecialRule',{ id: this.armyBookId, unitId, specialRulesIndex });
+      const unitId = this.unitId;
+      this.$store.commit('armyBooks/unitRemoveSpecialRule', { id: this.armyBookId, unitId, specialRulesIndex });
       this.saveUnitDebounced();
     },
     parseWeaponInput() {
@@ -630,7 +645,7 @@ export default {
           label: weapon.name,
           range: weapon.range > 0 ? weapon.range : undefined,
           attacks: weapon.attacks,
-          specialRules: weapon.specialRules.map((r) => r.label),
+          specialRules: weapon.specialRules.map(r => r.label),
         };
         this.$store.commit('armyBooks/unitAddEquipment', { id, unitId, equipment });
         this.weaponEditor.importString = '';
@@ -645,7 +660,7 @@ export default {
         label: name,
         range: range > 0 ? range : undefined,
         attacks,
-        specialRules: specialRules.map((r) => `${r.name}${r.rating ? '('+r.rating+')' : ''}`),
+        specialRules: specialRules.map(r => `${r.name}${r.rating ? '(' + r.rating + ')' : ''}`),
       };
       this.$store.commit('armyBooks/unitAddEquipment', { id, unitId, equipment });
       this.showAddWeaponSpecialRulesDialog = false;
@@ -654,15 +669,15 @@ export default {
     saveUnitDebounced(delay = 2000) {
       clearTimeout(this._timerId);
       this.unsavedChanges = true;
-      this._timerId = setTimeout(() => {this.saveUnit()}, delay);
+      this._timerId = setTimeout(() => { this.saveUnit(); }, delay);
     },
     saveUnit() {
       this.saving = true;
       this.$store.dispatch('armyBooks/updateUnit', { armyBookUid: this.armyBookId, unitId: this.unitId })
-       .then(() => {
-         this.saving = false;
-         this.unsavedChanges = false;
-      });
+        .then(() => {
+          this.saving = false;
+          this.unsavedChanges = false;
+        });
     },
     updateSplitPageNumber(splitPageNumber) {
       this.$store.commit(
@@ -698,16 +713,20 @@ export default {
     computeRuleCost(ruleName) {
       if (this.calculatableUnit && this.$oprPointCalculator) {
         switch (ruleName) {
-
           case 'Fearless':
-            const fearfullUnit = {...this.calculatableUnit};
+            // eslint-disable-next-line no-case-declarations
+            const fearfullUnit = { ...this.calculatableUnit };
+            // eslint-disable-next-line no-case-declarations
             const fearfullCost = this.$oprPointCalculator.unitBaseCost(fearfullUnit) * this.unit.size;
-            const fearlessUnit = {...this.calculatableUnit, rules: [...this.calculatableUnit.rules.filter(i => i !== 'Fearless')]};
+            // eslint-disable-next-line no-case-declarations
+            const fearlessUnit = { ...this.calculatableUnit, rules: [...this.calculatableUnit.rules.filter(i => i !== 'Fearless')] };
+            // eslint-disable-next-line no-case-declarations
             const fearlessCost = this.$oprPointCalculator.unitBaseCost(fearlessUnit) * this.unit.size;
             return fearfullCost - fearlessCost;
 
           case 'Tough':
-            const toughUnit = {...this.calculatableUnit, tough: parseInt(this.calculatableUnit.tough)-1};
+            // eslint-disable-next-line no-case-declarations
+            const toughUnit = { ...this.calculatableUnit, tough: parseInt(this.calculatableUnit.tough) - 1 };
             return this.$oprPointCalculator.unitBaseCost(toughUnit) * this.unit.size;
 
           default:
@@ -717,7 +736,7 @@ export default {
       return '?';
     },
   },
-}
+};
 </script>
 
 <style scoped>

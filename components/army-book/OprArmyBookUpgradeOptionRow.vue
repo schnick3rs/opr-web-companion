@@ -2,42 +2,50 @@
   <tr>
     <td v-if="showLabelEditor">
       <v-text-field
+        v-model="editor.label"
         autofocus
         dense
-        v-model="editor.label"
         hide-details
         @blur="saveLabelEditor(editor.label)"
         @keypress.enter="saveLabelEditor(editor.label)"
         @keypress.esc="cancelLabelEditor"
-      ></v-text-field>
+      />
     </td>
-    <td v-else class="text-left caption pl-1 pr-1" style="width: 70%;">
+    <td v-else class="text-left text-caption pl-1 pr-1" style="width: 70%;">
       <v-hover v-slot="{ hover }">
         <div>
           <span @dblclick="openOptionEditor">{{ option.label }}</span>
-          <v-icon small v-show="hover" color="primary" title="edit label" @click="openOptionEditor">mdi-pencil</v-icon>
+          <v-icon v-show="hover" small color="primary" title="edit label" @click="openOptionEditor">
+            mdi-pencil
+          </v-icon>
           <v-icon
             v-show="hover"
             :disabled="optionIndex === 0"
-            @click="moveUpgradeOption(optionIndex, optionIndex-1)"
             color="primary"
-          >mdi-arrow-up-drop-circle-outline</v-icon>
+            @click="moveUpgradeOption(optionIndex, optionIndex-1)"
+          >
+            mdi-arrow-up-drop-circle-outline
+          </v-icon>
           <v-icon
             v-show="hover"
             :disabled="optionIndex >= optionCount-1"
-            @click="moveUpgradeOption(optionIndex, optionIndex+1)"
             color="primary"
-          >mdi-arrow-down-drop-circle-outline</v-icon>
-          <v-tooltip right v-show="hover">
-            <template v-slot:activator="{ on, attrs }">
+            @click="moveUpgradeOption(optionIndex, optionIndex+1)"
+          >
+            mdi-arrow-down-drop-circle-outline
+          </v-icon>
+          <v-tooltip v-show="hover" right>
+            <template #activator="{ on, attrs }">
               <v-icon
                 v-show="hover"
                 color="info"
                 v-bind="attrs"
                 v-on="on"
-              >mdi-code-not-equal-variant</v-icon>
+              >
+                mdi-code-not-equal-variant
+              </v-icon>
             </template>
-            <pre>{{option}}</pre>
+            <pre>{{ option }}</pre>
           </v-tooltip>
         </div>
       </v-hover>
@@ -45,29 +53,44 @@
 
     <td v-if="showCostEditor" style="width: 20%">
       <v-text-field
+        v-model.number="editor.cost"
         autofocus
         dense
-        v-model.number="editor.cost"
         type="number"
         hide-details
         @blur="saveCostEditor(editor.cost)"
         @keypress.enter="saveCostEditor(editor.cost)"
         @keypress.esc="cancelCostEditor"
-      ></v-text-field>
+      />
     </td>
     <td
       v-else
-      class="text-right caption pl-1 pr-1"
+      class="text-right text-caption pl-1 pr-1"
       style="width: 20%"
     >
       <v-hover v-slot="{ hover }">
         <div>
-          <v-icon small icon v-show="hover" color="primary" title="edit label" @click="openCostEditor">mdi-pencil</v-icon>
+          <v-icon
+            v-show="hover"
+            small
+            icon
+            color="primary"
+            title="edit label"
+            @click="openCostEditor"
+          >
+            mdi-pencil
+          </v-icon>
           <span>{{ option.cost | costString }}</span>
           <div v-if="false">
-            <v-icon v-if="option.mode === 'auto-update'" color="success" @click="setOptionMode('locked')">mdi-autorenew</v-icon>
-            <v-icon v-else-if="option.mode === 'locked'" color="primary" @click="setOptionMode('auto-update')">mdi-lock</v-icon>
-            <v-icon v-else color="primary" @click="setOptionMode('auto-update')">mdi-lock</v-icon>
+            <v-icon v-if="option.mode === 'auto-update'" color="success" @click="setOptionMode('locked')">
+              mdi-autorenew
+            </v-icon>
+            <v-icon v-else-if="option.mode === 'locked'" color="primary" @click="setOptionMode('auto-update')">
+              mdi-lock
+            </v-icon>
+            <v-icon v-else color="primary" @click="setOptionMode('auto-update')">
+              mdi-lock
+            </v-icon>
           </div>
         </div>
       </v-hover>
@@ -82,9 +105,9 @@
       <opr-dialog
         title="Update upgrade option"
         apply-label="save"
+        :disabled-apply="editor.option.gains && editor.option.gains.length === 0"
         @close="showUpgradeOptionDialog = false"
         @apply="updateUpgradeOption"
-        :disabled-apply="editor.option.gains && editor.option.gains.length === 0"
       >
         <opr-army-book-upgrade-option-editor
           v-model="editor.option"
@@ -94,38 +117,61 @@
     </v-dialog>
 
     <td v-if="$config.oprPointCalculatorEnabled">
-      <v-icon v-if="option.proposedCost === undefined" color="info">mdi-help-circle-outline</v-icon>
-      <v-tooltip bottom v-else>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon v-bind="attrs" v-on="on" color="info">mdi-information-outline</v-icon>
+      <v-icon v-if="option.proposedCost === undefined" color="info">
+        mdi-help-circle-outline
+      </v-icon>
+      <v-tooltip v-else bottom>
+        <template #activator="{ on, attrs }">
+          <v-icon v-bind="attrs" color="info" v-on="on">
+            mdi-information-outline
+          </v-icon>
         </template>
         <div>
-          <p>Info how the costs are computed using PointCalc v{{option.proposedVersion}}</p>
-          <div v-if="option.proposedCostHint" v-for="(costy, index) in option.proposedCostHint" :key="index">
-            {{costy.unitName}} => {{costy.newCostPrecise}} ({{costy.newCostRounded}})
-            <v-icon dark v-if="!costy.isValid">mdi-debug-step-over</v-icon>
-          </div>
+          <p>Info how the costs are computed using PointCalc v{{ option.proposedVersion }}</p>
+          <template v-if="option.proposedCostHint">
+            <div
+              v-for="(costy, index) in option.proposedCostHint"
+              :key="index"
+            >
+              {{ costy.unitName }} => {{ costy.newCostPrecise }} ({{ costy.newCostRounded }})
+              <v-icon v-if="!costy.isValid" dark>
+                mdi-debug-step-over
+              </v-icon>
+            </div>
+          </template>
         </div>
       </v-tooltip>
     </td>
 
-    <td class="text-right caption pl-1 pr-1" style="width: 10%">
+    <td class="text-right text-caption pl-1 pr-1" style="width: 10%">
       <v-hover v-slot="{ hover }">
-        <v-icon v-if="hover" color="error" @click="removeUpgradeOption(sectionIndex, optionIndex)">mdi-delete-empty</v-icon>
-        <v-icon v-else >mdi-delete</v-icon>
+        <v-icon v-if="hover" color="error" @click="removeUpgradeOption(sectionIndex, optionIndex)">
+          mdi-delete-empty
+        </v-icon>
+        <v-icon v-else>
+          mdi-delete
+        </v-icon>
       </v-hover>
     </td>
   </tr>
 </template>
 
 <script>
-const OprDialog = () => import(/* webpackChunkName: "OprDialog" */ "~/components/shared/OprDialog");
 import { ArmyBook } from 'opr-army-book-helper';
-import OprArmyBookUpgradeOptionEditor from "./OprArmyBookUpgradeOptionEditor";
+import OprArmyBookUpgradeOptionEditor from './OprArmyBookUpgradeOptionEditor';
+const OprDialog = () => import(/* webpackChunkName: "OprDialog" */ '~/components/shared/OprDialog');
 
 export default {
   name: 'OprArmyBookUpgradeOptionRow',
   components: { OprDialog, OprArmyBookUpgradeOptionEditor },
+  filters: {
+    costString: (cost) => {
+      if (cost === 0) { return 'free'; }
+      if (cost > 0) { return `+${cost}pts`; }
+      if (cost < 0) { return `${cost}pts`; }
+      return '?';
+    },
+  },
   props: {
     armyBookId: String,
     upgradePackageId: String,
@@ -160,9 +206,6 @@ export default {
     option() {
       return this.section.options[this.optionIndex];
     },
-    hasPointCalcRights() {
-      return this.$store.state.auth?.user?.isAdmin;
-    },
     units() {
       return this.$store.getters['armyBooks/units'](this.armyBookId);
     },
@@ -174,10 +217,10 @@ export default {
     },
     proposedCost() {
       if (this.newCost && this.newCost.length > 0) {
-        const props = this.newCost.map(nc => {
+        const props = this.newCost.map((nc) => {
           if (nc.newCostRounded >= 5) {
             return nc.newCostRounded;
-          } else if(nc.newCostPrecise > 0) {
+          } else if (nc.newCostPrecise > 0) {
             return 5;
           } else {
             return 0;
@@ -217,10 +260,10 @@ export default {
       const upgradePackageUid = this.upgradePackageId;
       const sectionIndex = this.sectionIndex;
       const optionIndex = this.optionIndex;
-      let option = {
+      const option = {
         ...this.option,
         cost: cost !== undefined ? parseInt(cost) : this.option.cost,
-      }
+      };
 
       const commitLoad = { armyBookUid, upgradePackageUid, sectionIndex, optionIndex, option };
       this.$store.commit('armyBooks/alterUpgradePackageOption', commitLoad);
@@ -280,20 +323,20 @@ export default {
       this.$store.dispatch('armyBooks/updateUpgradePackage', dispatchLoad);
     },
     calculateUnitCost(unit) {
-      const equipment = unit.equipment.map(e => {
+      const equipment = unit.equipment.map((e) => {
         // normalize weapons
-        let weapon = {
+        const weapon = {
           name: e.label,
           range: e.range > 0 ? e.range : undefined,
           attacks: e.attacks,
           rules: e.specialRules.map(sr => sr.name),
         };
-        e.specialRules.forEach(sr => {
+        e.specialRules.forEach((sr) => {
           if (sr.rating) { weapon[sr.key] = sr.rating; }
         });
         return weapon;
       });
-      let calculatableUnit = {
+      const calculatableUnit = {
         name: unit.name,
         models: unit.size,
         quality: unit.quality,
@@ -301,12 +344,12 @@ export default {
         rules: unit.specialRules.map(sr => sr.name),
         equipment,
       };
-      unit.specialRules.forEach(sr => {
+      unit.specialRules.forEach((sr) => {
         if (sr.rating) {
           calculatableUnit[sr.key] = sr.rating;
         }
       });
-      unit.specialRules = unit.specialRules.map(sr => {
+      unit.specialRules = unit.specialRules.map((sr) => {
         return {
           ...sr,
           key: sr.key.replace('-skirmish', ''),
@@ -316,20 +359,12 @@ export default {
         ? this.$oprPointCalculator.unitCost(calculatableUnit)
         : undefined;
       if (this.costMode === 'automatic') {
-        unit.cost = Math.round(this.calculatedCost/5)*5;
+        unit.cost = Math.round(this.calculatedCost / 5) * 5;
       }
       return this.calculatedCost;
     }
-  },
-  filters: {
-    costString: (cost) => {
-      if (cost === 0) return 'free';
-      if (cost > 0) return `+${cost}pts`;
-      if (cost < 0) return `${cost}pts`;
-      return '?';
-    },
   }
-}
+};
 </script>
 
 <style scoped>

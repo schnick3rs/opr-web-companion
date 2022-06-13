@@ -6,10 +6,10 @@ import * as armyBookService from './armyBooks/army-book-service';
 const router = new Router();
 
 router.get('/migrate/equipment-label-to-name', async (request, response) => {
-  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
-  if (isAdmin === false) {
+  if (roles.includes('admin') === false) {
     response.status(403).json({ message: 'Not Allowed.' });
     return;
   }
@@ -45,10 +45,10 @@ router.get('/migrate/equipment-label-to-name', async (request, response) => {
 });
 
 router.get('/migrate/upgrades-add-relation-ids', async (request, response) => {
-  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await userAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
-  if (isAdmin === false) {
+  if (roles.includes('admin') === false) {
     response.status(403).json({ message: 'Not Allowed.' });
     return;
   }

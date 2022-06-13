@@ -18,7 +18,6 @@
         </v-tabs>
       </v-col>
     </v-row>
-
     <nuxt-child />
   </div>
 </template>

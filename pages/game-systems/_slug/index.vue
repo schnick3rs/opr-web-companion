@@ -107,11 +107,6 @@ export default {
       ],
     };
   },
-  computed: {
-    isAdmin() {
-      return this.$store.state.auth?.user?.isAdmin;
-    },
-  },
   methods: {
     initDownload() {
       this.downloadInProgress = true;

@@ -35,6 +35,7 @@ export async function getAllUsers() {
       'username, ' +
       'enabled, ' +
       'uuid, ' +
+      'roles, ' +
       'is_opa "isOpa", ' +
       'is_super_admin "isAdmin", ' +
       'created_at "createdAt", ' +
@@ -50,6 +51,7 @@ export async function getUserByUuid(uuid) {
       'username, ' +
       'enabled, ' +
       'uuid, ' +
+      'roles, ' +
       'is_opa "isOpa", ' +
       'is_super_admin "isAdmin", ' +
       'created_at "createdAt", ' +
@@ -62,17 +64,21 @@ export async function getUserByUuid(uuid) {
 export function enrichScope(base) {
   const user = {
     ...base,
-    roles: [],
     scope: [],
     patreon: new Date(base.patreonActiveUntil) > new Date(),
   };
-  if (user.isOpa) { user.roles.push('opa'); }
-  if (user.isOpa || user.isAdmin) { user.roles.push('staff'); }
-  if (user.patreon) { user.roles.push('patreon'); }
+  // if (user.isOpa) { user.roles.push('opa'); }
+  // if (user.isOpa || user.isAdmin) { user.roles.push('staff'); }
+  // if (user.patreon) { user.roles.push('patreon'); }
+  if (user.patreon) { user.roles.push('army-books'); }
 
-  if (user.isOpa) { user.scope.push('creators'); }
-  if (user.isOpa || user.isAdmin) { user.scope.push('special-rules'); }
-  if (user.isOpa || user.isAdmin || user.patreon) { user.scope.push('army-books'); }
+  // if (user.isOpa) { user.scope.push('creators'); }
+  // if (user.isOpa || user.isAdmin) { user.scope.push('accounts'); }
+  // if (user.isOpa || user.isAdmin) { user.scope.push('special-rules'); }
+  // if (user.isOpa || user.isAdmin || user.patreon) { user.scope.push('army-books'); }
+
+  user.roles = [...new Set(user.roles)];
+  user.scope = [...user.roles];
 
   return user;
 }
