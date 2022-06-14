@@ -30,57 +30,41 @@ export async function getAllUsersWithoutHash(email) {
 
 export async function getAllUsers() {
   const { rows: users } = await pool.query(
-    'SELECT ' +
-      'id, ' +
-      'username, ' +
-      'enabled, ' +
-      'uuid, ' +
-      'roles, ' +
-      'is_opa "isOpa", ' +
-      'is_super_admin "isAdmin", ' +
-      'created_at "createdAt", ' +
-      'patreon_active_until "patreonActiveUntil" ' +
-    'FROM opr_companion.user_accounts');
-  return users.map(user => enrichScope(user));
+    `SELECT
+      id,
+      username,
+      enabled,
+      uuid,
+      created_at "createdAt",
+      patreon_active_until "patreonActiveUntil",
+      patreon_active_until > now() "patreon",
+      case when patreon_active_until > now()
+          then (select array_agg(DISTINCT e) from unnest(array_append(roles, 'army-books')) e)
+          else roles
+          end as roles
+    FROM opr_companion.user_accounts`);
+  return users;
 }
 
 export async function getUserByUuid(uuid) {
   const { rows } = await pool.query(
-    'SELECT ' +
-      'id, ' +
-      'username, ' +
-      'enabled, ' +
-      'uuid, ' +
-      'roles, ' +
-      'is_opa "isOpa", ' +
-      'is_super_admin "isAdmin", ' +
-      'created_at "createdAt", ' +
-      'patreon_active_until "patreonActiveUntil" ' +
-    'FROM opr_companion.user_accounts ' +
-    'WHERE uuid = $1', [uuid]);
-  return enrichScope(rows[0]);
-}
-
-export function enrichScope(base) {
-  const user = {
-    ...base,
-    scope: [],
-    patreon: new Date(base.patreonActiveUntil) > new Date(),
-  };
-  // if (user.isOpa) { user.roles.push('opa'); }
-  // if (user.isOpa || user.isAdmin) { user.roles.push('staff'); }
-  // if (user.patreon) { user.roles.push('patreon'); }
-  if (user.patreon) { user.roles.push('army-books'); }
-
-  // if (user.isOpa) { user.scope.push('creators'); }
-  // if (user.isOpa || user.isAdmin) { user.scope.push('accounts'); }
-  // if (user.isOpa || user.isAdmin) { user.scope.push('special-rules'); }
-  // if (user.isOpa || user.isAdmin || user.patreon) { user.scope.push('army-books'); }
-
-  user.roles = [...new Set(user.roles)];
-  user.scope = [...user.roles];
-
-  return user;
+    `SELECT
+      id,
+      username,
+      enabled,
+      uuid,
+      created_at "createdAt",
+      patreon_active_until "patreonActiveUntil",
+      patreon_active_until > now() "patreon",
+      case when patreon_active_until > now()
+          then (select array_agg(DISTINCT e) from unnest(array_append(roles, 'army-books')) e)
+          else roles
+          end as roles
+    FROM opr_companion.user_accounts
+    WHERE uuid = $1`,
+    [uuid]
+  );
+  return rows[0];
 }
 
 export async function updateUserEmailHash(user) {
