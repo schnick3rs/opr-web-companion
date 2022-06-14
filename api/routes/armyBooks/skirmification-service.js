@@ -60,6 +60,8 @@ export function skirmifyRulesText(battleText) {
 }
 
 export function skirmify(armyBook) {
+  const originalPageCount = Math.max.apply(Math, armyBook.units.map(unit => unit.splitPageNumber).filter(page => !isNaN(page)));
+
   armyBook.units = armyBook.units.map((unit) => {
     const originalUnit = CalcHelper.normalizeUnit(unit);
 
@@ -146,6 +148,16 @@ export function skirmify(armyBook) {
     .filter(unit => unit.specialRules.every(sr => sr.key !== 'artillery')) // discard units with rule 'artillery'
   ;
 
+  if (originalPageCount > 2) {
+    console.info('Army Book has many pages, thus we split units into two pages for skirmifiy', originalPageCount);
+    const unitCount = armyBook.units.length || 0;
+    const firstPageUnitCount = Math.ceil(unitCount / 2);
+    armyBook.units = armyBook.units.map((unit, index) => {
+      unit.splitPageNumber = index >= firstPageUnitCount ? 2 : 1;
+      return unit;
+    });
+  }
+
   // re-Sort units
   armyBook.units = unitService.sortUnitsSkirmish(armyBook.units);
 
@@ -180,9 +192,9 @@ export function skirmify(armyBook) {
         return !otherUpgrades.includes(upgrade);
       });
       if (missing) {
-        console.warn('merge upgrades', unit.upgrades);
+        // console.warn('merge upgrades', unit.upgrades);
       } else {
-        console.warn('all fine', unit.upgrades);
+        // console.info('all fine', unit.upgrades);
       }
     }
     return unit;
@@ -208,11 +220,11 @@ export function skirmify(armyBook) {
             const onlySingleUses = usingUnits.every((unit) => {
               const unitEquip = unit.equipment.find((equipment) => {
                 const name = equipment.label || equipment.name;
-                console.info('### Checking ->', unit.name, 'having -> ', name);
+                // console.info('### Checking ->', unit.name, 'having -> ', name);
                 return name === remove;
               });
               if (unitEquip) {
-                console.info('### ', unit.name, 'has', unitEquip.label, 'count', unitEquip.count);
+                // console.info('### ', unit.name, 'has', unitEquip.label, 'count', unitEquip.count);
                 return !(unitEquip.count > 1);
               } else {
                 return true;
