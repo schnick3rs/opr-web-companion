@@ -15,6 +15,7 @@ const unitHasTough = (unit) => {
 
 export const sortUnitsSkirmish = (units) => {
   const unitz = [...units];
+  // eslint-disable-next-line array-callback-return
   unitz.sort((a, b) => {
     // sort by IS HERO
     if (unitHasHero(a) && !unitHasHero(b)) { return -1; }
