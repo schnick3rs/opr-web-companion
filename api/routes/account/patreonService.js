@@ -75,8 +75,7 @@ export async function fetchPatreonIdentityData(token, query) {
       const { data } = e.response;
       console.error(JSON.stringify(data));
     }
-
-    console.error('Failed to get patreon identity', JSON.stringify(e));
+    console.error('Failed to get patreon data:', JSON.stringify(e));
   }
   return null;
 }
@@ -86,7 +85,7 @@ export async function fetchPatreonUserData(token) {
     'fields[user]': 'email,is_email_verified,thumb_url',
   });
   const data = await fetchPatreonIdentityData(token, query);
-  console.info('patreon identity user data:', data);
+  // console.info('patreon identity user data:', data);
   return data;
 }
 
@@ -123,6 +122,8 @@ export async function isActiveOnePageRulesMember(token) {
       const hasAnyActiveTier = entitledTiers.length >= 1;
 
       return isActivePatron && hasAnyActiveTier;
+    } else {
+      console.warn('Data does not contain includes values.');
     }
   } catch (e) {
     console.error(e);

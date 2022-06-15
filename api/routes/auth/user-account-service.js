@@ -98,6 +98,16 @@ export async function updateUserResetPassword(email, token, password) {
   );
 }
 
+export async function removePatreon(userId) {
+  await pool.query(
+    `UPDATE opr_companion.user_accounts SET
+       patreon_active_until = null,
+       patreon_refresh_token = null
+     WHERE id = $1`,
+    [userId]
+  );
+}
+
 export async function createUser(username, email, password) {
   const emailHash = await hashEmail(email);
   const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);

@@ -1,5 +1,6 @@
 import Router from 'express-promise-router';
 import * as patreonService from './patreonService';
+import * as userAccountService from '../auth/user-account-service';
 
 const router = new Router();
 
@@ -55,24 +56,17 @@ router.get('/patreon', async (request, response) => {
   console.info('Patreon connection code ->', code);
 
   if (!code) {
-    const message = 'Connection to Patreon failed.';
+    const message = 'Patreon connection failed!';
     response.status(400).json({ message });
     return;
   }
 
   try {
-    const patreonTokenRes = await patreonService.getPatreonOauthTokensFromCode(
-      code
-    );
-
     // eslint-disable-next-line camelcase
-    const { access_token, refresh_token } = patreonTokenRes;
+    const { access_token, refresh_token } = await patreonService.getPatreonOauthTokensFromCode(code);
 
     // TODO: Error handling?
-    await patreonService.setUserPatreonRefreshToken(
-      request.me.userId,
-      refresh_token
-    );
+    await patreonService.setUserPatreonRefreshToken(request.me.userId, refresh_token);
 
     const patreonUserData = await patreonService.fetchPatreonUserData(access_token);
     if (patreonUserData) {
@@ -91,6 +85,15 @@ router.get('/patreon', async (request, response) => {
     console.error(e);
     response.status(500).json({ message: 'Error calling Patreon API' });
   }
+});
+
+/**
+ * delete patron access
+ */
+router.delete('/patreon', async (request, response) => {
+  const { id } = await userAccountService.getUserByUuid(request.me.userUuid);
+  userAccountService.removePatreon(id);
+  response.status(204).json();
 });
 
 export default router;

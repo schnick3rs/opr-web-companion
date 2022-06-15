@@ -31,28 +31,58 @@
         />
       </v-col>
       <v-col cols="8">
-        <v-alert
-          :color="$auth.user.patreon ? 'success' : 'info'"
-          :icon="$auth.user.patreon ? 'mdi-power-plug' : 'mdi-power-plug-off'"
-          prominent
-          text
-        >
-          <a
-            :href="$auth.user.patreon ? '' : patreonConnectUrl"
-          >
-            {{ $auth.user.patreon ? 'Connected with patreon' : 'Connect with Patreon' }}
-          </a>
-        </v-alert>
-        <div>
-          We request the following access when connecting to patreon:
-          <v-checkbox input-value="true" disabled label="pledges" hint="to confirm sufficient pledge level with OPR" persistent-hint />
-          <v-checkbox input-value="true" disabled label="email address" hint="to confirm your WebApp email matches your Patreon email" persistent-hint />
-          <v-checkbox label="public profile" hint="(optional) to access your thumbnail" persistent-hint />
-        </div>
+        <v-card :disabled="loading">
+          <v-card-title>Patreon</v-card-title>
+          <v-card-subtitle>
+            Patreon integration
+            <v-chip v-if="$auth.user.patreon" x-small label color="success">
+              Connected
+            </v-chip>
+          </v-card-subtitle>
+          <v-card-text>
+            <span class="text-subtitle-2">Permissions</span>
+            <ul style="list-style: none; padding-left: 0;">
+              <li v-for="(item, index) in scopes" :key="index">
+                <v-icon v-if="$auth.user.patreon" color="success" class="mr-2">
+                  mdi-checkbox-marked-outline
+                </v-icon>
+                <v-icon v-else color="primary" class="mr-2">
+                  mdi-checkbox-blank-outline
+                </v-icon>
+                {{ item }}
+              </li>
+            </ul>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              v-if="$auth.user.patreon"
+              color="error"
+              outlined
+              block
+              small
+              @click="deautherizePatreon"
+              :loading="loading"
+            >
+              Deautherize
+            </v-btn>
+            <v-btn
+              v-else
+              color="primary"
+              outlined
+              :href="patreonConnectUrl"
+              small
+              block
+            >
+              Connect with patreon
+            </v-btn>
+          </v-card-actions>
+        </v-card>
       </v-col>
     </v-row>
 
-    {{ $auth.user }}
+    <div class="elevation-2">
+      <pre>{{ $auth.user }}</pre>
+    </div>
   </v-container>
 </template>
 
@@ -77,6 +107,12 @@ export default {
         { text: '', to: '/', exact: true },
         { text: 'Account', to: '/account', exact: true },
       ],
+      scopes: [
+        'Access your username, email',
+        'Know your OPR Pledge level and subscription status',
+        'Access your avatar',
+      ],
+      loading: false,
     };
   },
   head() {
@@ -90,10 +126,27 @@ export default {
       url.searchParams.append('response_type', 'code');
       url.searchParams.append('client_id', this.$config.patreonClientId);
       url.searchParams.append('redirect_uri', `${this.$config.patreonRedirectBase}/api/account/patreon`);
-      url.searchParams.append('scope', 'identity identity.memberships identity[email]');
-      return url;
+      const scope = [
+        'identity',
+        'identity[email]',
+        /*
+         * @see https://docs.patreon.com/#get-api-oauth2-v2-identity
+         * "If you request memberships and DON’T have the identity.memberships scope, you will receive data about the user’s membership to your campaign. If you DO have the scope, you will receive data about all of the user’s memberships, to all the campaigns they’re members of."
+         */
+        'identity.memberships',
+      ];
+      url.searchParams.append('scope', scope.join(' '));
+      return url.toString();
     }
-  }
+  },
+  methods: {
+    async deautherizePatreon() {
+      this.loading = true;
+      await this.$axios.delete('/api/account/patreon');
+      await this.$auth.fetchUser();
+      this.loading = false;
+    },
+  },
 };
 </script>
 
