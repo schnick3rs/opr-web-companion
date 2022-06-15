@@ -2,6 +2,14 @@ import querystring from 'querystring';
 import axios from 'axios';
 import { pool } from '../../db';
 
+export function getEmail(patreonUserData) {
+  return patreonUserData.data.attributes.email;
+}
+
+export function getThumbnailUrl(patreonUserData) {
+  return patreonUserData.data.attributes.thumb_url;
+}
+
 const config = {
   patreonClientId: process.env.PATREON_CLIENT_ID,
   patreonClientSecret: process.env.PATREON_CLIENT_SECRET,
@@ -29,7 +37,7 @@ export async function getPatreonOauthTokensFromRefresh(refreshToken) {
 
 async function getPatreonOauthTokens(oauthData) {
   try {
-    const res = await axios({
+    const { data } = await axios({
       method: 'POST',
       url: 'https://www.patreon.com/api/oauth2/token',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -40,7 +48,7 @@ async function getPatreonOauthTokens(oauthData) {
       }),
     });
 
-    return res.data;
+    return data;
   } catch (e) {
     console.error('Oauth token call fail', e);
   }
@@ -51,35 +59,48 @@ async function getPatreonOauthTokens(oauthData) {
 // eslint-disable-next-line no-unused-vars
 async function fetchIdentity() {}
 
-export async function isActiveOnePageRulesMember(token) {
-  async function getMemberships() {
-    try {
-      const query = querystring.stringify({
-        include: 'memberships,memberships.currently_entitled_tiers',
-        'fields[member]': 'patron_status',
-      });
-      const membershipsResponse = await axios({
-        url: 'https://www.patreon.com/api/oauth2/v2/identity?' + query,
-        method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      });
-      return membershipsResponse;
-    } catch (e) {
-      if (e.response) {
-        const { data } = e.response;
-        console.error(JSON.stringify(data));
-      }
-
-      console.error('Failed to get patreon identity', JSON.stringify(e));
+export async function fetchPatreonIdentityData(token, query) {
+  try {
+    const { data } = await axios({
+      url: 'https://www.patreon.com/api/oauth2/v2/identity?' + query,
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    });
+    // console.debug('membershipsResponse.data', data);
+    return data;
+  } catch (e) {
+    if (e.response) {
+      const { data } = e.response;
+      console.error(JSON.stringify(data));
     }
-    return null;
-  }
 
-  const { data } = await getMemberships();
+    console.error('Failed to get patreon identity', JSON.stringify(e));
+  }
+  return null;
+}
+
+export async function fetchPatreonUserData(token) {
+  const query = querystring.stringify({
+    'fields[user]': 'email,is_email_verified,thumb_url',
+  });
+  const data = await fetchPatreonIdentityData(token, query);
+  console.info('patreon identity user data:', data);
+  return data;
+}
+
+export async function isActiveOnePageRulesMember(token) {
+  const query = querystring.stringify({
+    include: 'memberships,memberships.currently_entitled_tiers',
+    'fields[member]': 'patron_status',
+    'fields[user]': 'email,is_email_verified,thumb_url',
+  });
+  const data = await fetchPatreonIdentityData(token, query);
 
   try {
+    console.info('Patreon Member id ->', data.data.id);
+    console.info('Patreon Member data:', data.data.attributes);
     if (data.included) {
       const oprCampaign = data.included
         .filter(item => item.type === 'member')
@@ -90,13 +111,18 @@ export async function isActiveOnePageRulesMember(token) {
         return false;
       }
 
+      console.info('OPR campaign data:', oprCampaign);
+
       const patronStatus = oprCampaign.attributes.patron_status;
+      console.info('OPR campaign status ->', patronStatus);
+
       const entitledTiers = oprCampaign.relationships.currently_entitled_tiers.data;
+      console.info('OPR campaign tier data:', entitledTiers);
 
       const isActivePatron = patronStatus === 'active_patron';
-      const hasActiveTier = entitledTiers.length >= 1;
+      const hasAnyActiveTier = entitledTiers.length >= 1;
 
-      return isActivePatron && hasActiveTier;
+      return isActivePatron && hasAnyActiveTier;
     }
   } catch (e) {
     console.error(e);

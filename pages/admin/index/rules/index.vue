@@ -28,7 +28,7 @@ export default {
   name: 'AdminRulesIndex',
   components: { OprBreadcrumbsRow },
   layout: 'admin',
-  middleware: 'isSpecialRules',
+  middleware: 'isAdmin',
   asyncData() {
     return {
     };

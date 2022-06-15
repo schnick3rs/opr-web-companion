@@ -45,11 +45,14 @@ router.get('/patreon-refresh', async (request, response) => {
   response.status(200).json({ isActive, activeUntil });
 });
 
+/**
+ * example call http://localhost:3000/api/account/patreon?code=cUlv9gyg0WGHB44vALbf2CFwvkZWlR&state=None
+ */
 router.get('/patreon', async (request, response) => {
   const { code } = request.query;
 
-  console.info('Patreon connection for user', request.me);
-  console.info('Patreon connection...', code);
+  console.info('Patreon connection for user:', request.me);
+  console.info('Patreon connection code ->', code);
 
   if (!code) {
     const message = 'Connection to Patreon failed.';
@@ -71,9 +74,12 @@ router.get('/patreon', async (request, response) => {
       refresh_token
     );
 
-    const isActive = await patreonService.isActiveOnePageRulesMember(
-      access_token
-    );
+    const patreonUserData = await patreonService.fetchPatreonUserData(access_token);
+    if (patreonUserData) {
+      // const patreonEmail = patreonService.getEmail(patreonUserData);
+    }
+
+    const isActive = await patreonService.isActiveOnePageRulesMember(access_token);
 
     const activeUntil = isActive ? getActiveUntil() : null;
     console.info('Users patreon is considered active until ', activeUntil);

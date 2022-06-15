@@ -41,7 +41,7 @@
         </template>
         <template #item.patreon="{ item }">
           <td>
-            <v-icon color="error" :disabled="!item.patreon">mdi-patreon</v-icon>
+            <v-icon color="error" :disabled="!item.patreon" :title="item.patreonActiveUntil">mdi-patreon</v-icon>
           </td>
         </template>
       </v-data-table>
@@ -83,6 +83,7 @@ export default {
     },
   },
   layout: 'admin',
+  middleware: 'isAdmin',
   async asyncData({ $axios }) {
     const { data: users } = await $axios('/api/users');
     return {
