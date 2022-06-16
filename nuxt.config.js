@@ -132,5 +132,6 @@ module.exports = {
 
   serverMiddleware: [
     '~/api/express', // handles /api/** calls
+    '~/server-middleware/final_error_handler',
   ],
 };
