@@ -108,9 +108,8 @@ export default {
         { text: 'Account', to: '/account', exact: true },
       ],
       scopes: [
-        'Access your username, email',
+        'Access your username, email and avatar',
         'Know your OPR Pledge level and subscription status',
-        'Access your avatar',
       ],
       loading: false,
     };
@@ -133,7 +132,7 @@ export default {
          * @see https://docs.patreon.com/#get-api-oauth2-v2-identity
          * "If you request memberships and DON’T have the identity.memberships scope, you will receive data about the user’s membership to your campaign. If you DO have the scope, you will receive data about all of the user’s memberships, to all the campaigns they’re members of."
          */
-        'identity.memberships',
+        // 'identity.memberships',
       ];
       url.searchParams.append('scope', scope.join(' '));
       return url.toString();

@@ -1,6 +1,6 @@
 import Router from 'express-promise-router';
-import * as patreonService from './patreonService';
 import * as userAccountService from '../auth/user-account-service';
+import * as patreonService from './patreonService';
 
 const router = new Router();
 
@@ -23,18 +23,15 @@ router.get('/patreon-refresh', async (request, response) => {
     return;
   }
 
+  // userAccountService.refreshPatreon(request.me.userId)
+
   // eslint-disable-next-line camelcase
   const { access_token, refresh_token } =
     await patreonService.getPatreonOauthTokensFromRefresh(refreshToken);
 
-  await patreonService.setUserPatreonRefreshToken(
-    request.me.userId,
-    refresh_token
-  );
+  await patreonService.setUserPatreonRefreshToken(request.me.userId, refresh_token);
 
-  const isActive = await patreonService.isActiveOnePageRulesMember(
-    access_token
-  );
+  const isActive = await patreonService.isActiveOnePageRulesMember(access_token);
 
   console.log('User is Patreon =', isActive);
 
