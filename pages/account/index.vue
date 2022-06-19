@@ -44,10 +44,10 @@
             <ul style="list-style: none; padding-left: 0;">
               <li v-for="(item, index) in scopes" :key="index">
                 <v-icon v-if="$auth.user.patreon" color="success" class="mr-2">
-                  mdi-checkbox-marked-outline
+                  mdi-checkbox-marked-circle-outline
                 </v-icon>
-                <v-icon v-else color="primary" class="mr-2">
-                  mdi-checkbox-blank-outline
+                <v-icon v-else class="mr-2">
+                  mdi-checkbox-blank-circle-outline
                 </v-icon>
                 {{ item }}
               </li>
