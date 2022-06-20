@@ -60,8 +60,8 @@
               outlined
               block
               small
-              @click="deautherizePatreon"
               :loading="loading"
+              @click="deautherizePatreon"
             >
               Deautherize
             </v-btn>

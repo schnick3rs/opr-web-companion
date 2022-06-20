@@ -10,6 +10,15 @@ export function getThumbnailUrl(patreonUserData) {
   return patreonUserData.data.attributes.thumb_url;
 }
 
+export function getActiveUntil() {
+  const now = new Date();
+  if (now.getMonth() === 11) {
+    return new Date(now.getFullYear() + 1, 0, 4);
+  } else {
+    return new Date(now.getFullYear(), now.getMonth() + 1, 4);
+  }
+}
+
 const config = {
   patreonClientId: process.env.PATREON_CLIENT_ID,
   patreonClientSecret: process.env.PATREON_CLIENT_SECRET,
@@ -22,16 +31,14 @@ export async function getPatreonOauthTokensFromCode(code) {
     grant_type: 'authorization_code',
     redirect_uri: 'http://localhost:3000/api/account/patreon',
   };
-
   return await getPatreonOauthTokens(oauthData);
 }
 
 export async function getPatreonOauthTokensFromRefresh(refreshToken) {
   const oauthData = {
-    refresh_token: refreshToken,
     grant_type: 'refresh_token',
+    refresh_token: refreshToken,
   };
-
   return await getPatreonOauthTokens(oauthData);
 }
 
@@ -133,18 +140,18 @@ export async function isActiveOnePageRulesMember(token) {
 
 export async function getUserPatreonRefreshToken(userId) {
   // Save refresh token against the user?
-  const res = await pool.query(
+  const { rows } = await pool.query(
     'SELECT patreon_refresh_token FROM opr_companion.user_accounts WHERE id = $1',
     [userId]
   );
-  return res.rows[0].patreon_refresh_token;
+  return rows[0].patreon_refresh_token;
 }
 
-export async function setUserPatreonRefreshToken(userId, refreshToken) {
+export async function setUserPatreonRefreshToken(uuid, refreshToken) {
   // Save refresh token against the user?
   await pool.query(
-    'UPDATE opr_companion.user_accounts SET patreon_refresh_token = $2 WHERE id = $1',
-    [userId, refreshToken]
+    'UPDATE opr_companion.user_accounts SET patreon_refresh_token = $2 WHERE uuid = $1',
+    [uuid, refreshToken]
   );
 }
 
@@ -157,10 +164,4 @@ export async function getUserPatreonActive(userId) {
   return res.rows[0].patreon_refresh_token;
 }
 
-export async function setUserPatreonActive(userId, activeUntil) {
-  // Save refresh token against the user?
-  await pool.query(
-    'UPDATE opr_companion.user_accounts SET patreon_active_until = $2 WHERE id = $1',
-    [userId, activeUntil]
-  );
-}
+

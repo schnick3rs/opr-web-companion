@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
 import pbkdf2Hmac from 'pbkdf2-hmac';
+import * as patreonService from '../account/patreon-service';
 
 import { pool } from '../../db';
 if (process.env.NODE_ENV !== 'production') {
@@ -95,6 +96,53 @@ export async function updateUserResetPassword(email, token, password) {
     'SET password = $1, password_reset_token = null ' +
     'WHERE password_reset_token = $2 AND email_hashed = $3',
     [passwordHash, token, emailHash]
+  );
+}
+
+export async function getPatreonData(uuid) {
+  // Save refresh token against the user?
+  const { rows } = await pool.query(
+    `SELECT
+        patreon_refresh_token AS "patreonRefreshToken",
+        patreon_active_until AS "patreonActiveUntil",
+        patreon_scope AS "patreonScope",
+        patreon_thumb_url AS "patreonThumbUrl"
+     FROM opr_companion.user_accounts
+     WHERE uuid = $1`,
+    [uuid]
+  );
+  return rows[0];
+}
+
+export async function refreshPatreonToken(userUuid) {
+  const { patreonRefreshToken: currentRefreshToken } = await getPatreonData(userUuid);
+
+  if (!currentRefreshToken) {
+    console.warn('No refresh token found for user:', userUuid);
+    return;
+  }
+
+  // eslint-disable-next-line camelcase
+  const { access_token: accessToken, refresh_token: refreshToken } =
+    await patreonService.getPatreonOauthTokensFromRefresh(currentRefreshToken);
+
+  await patreonService.setUserPatreonRefreshToken(userUuid, refreshToken);
+
+  const isActive = await patreonService.isActiveOnePageRulesMember(accessToken);
+
+  console.info('User is Patreon =', isActive);
+
+  const activeUntil = isActive ? patreonService.getActiveUntil() : null;
+  console.info('Users patreon is considered active until ', activeUntil);
+
+  await setUserPatreonActive(userUuid, activeUntil);
+}
+
+export async function setUserPatreonActive(uuid, activeUntil) {
+  // Save refresh token against the user?
+  await pool.query(
+    'UPDATE opr_companion.user_accounts SET patreon_active_until = $2 WHERE uuid = $1',
+    [uuid, activeUntil]
   );
 }
 

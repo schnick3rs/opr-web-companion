@@ -51,12 +51,34 @@ router.post('/user-account', async (request, response) => {
   }
 });
 
+/**
+ * returns the user data of the logged in user that is used for the frontend handling and display
+ */
 router.get('/user', async (request, response) => {
   const { userUuid } = request.me;
   if (userUuid) {
-    const { username, uuid, createdAt, roles, patreon } = await userAccountService.getUserByUuid(userUuid);
-    response.status(200).json({ user: { username, uuid, createdAt, roles, scope: roles, patreon } });
-    return;
+    const { username, uuid, createdAt, roles, patreon, patreonActiveUntil } = await userAccountService.getUserByUuid(userUuid);
+    /**
+     * When fetching the user for the frontend, we check if there was a former patron duration
+     * and if it is now inactive, if so, we try to refresh the token.
+     */
+    if (patreonActiveUntil && new Date(patreonActiveUntil) < new Date()) {
+      console.info('Patron outdated, refreshing token:', userUuid, patreonActiveUntil);
+      await userAccountService.refreshPatreonToken(userUuid);
+      const userData = await userAccountService.getUserByUuid(userUuid);
+      const user = {
+        username: userData.username,
+        uuid: userData.uuid,
+        createdAt: userData.createdAt,
+        roles: userData.roles,
+        scope: userData.roles,
+        patreon: userData.patreon,
+      };
+      response.status(200).json({ user });
+    } else {
+      response.status(200).json({ user: { username, uuid, createdAt, roles, scope: roles, patreon } });
+      return;
+    }
   }
   response.status(403).json();
 });

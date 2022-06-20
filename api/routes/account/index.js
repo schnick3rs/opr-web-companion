@@ -1,6 +1,6 @@
 import Router from 'express-promise-router';
 import * as userAccountService from '../auth/user-account-service';
-import * as patreonService from './patreonService';
+import * as patreonService from './patreon-service';
 
 const router = new Router();
 
@@ -14,9 +14,7 @@ function getActiveUntil() {
 }
 
 router.get('/patreon-refresh', async (request, response) => {
-  const refreshToken = await patreonService.getUserPatreonRefreshToken(
-    request.me.userId
-  );
+  const refreshToken = await patreonService.getUserPatreonRefreshToken(request.me.userId);
 
   if (!refreshToken) {
     response.status(401).json({ message: 'User has no refresh token' });
@@ -48,6 +46,7 @@ router.get('/patreon-refresh', async (request, response) => {
  */
 router.get('/patreon', async (request, response) => {
   const { code } = request.query;
+  const { userId, userUuid } = request.me;
 
   console.info('Patreon connection for user:', request.me);
   console.info('Patreon connection code ->', code);
@@ -63,7 +62,7 @@ router.get('/patreon', async (request, response) => {
     const { access_token, refresh_token } = await patreonService.getPatreonOauthTokensFromCode(code);
 
     // TODO: Error handling?
-    await patreonService.setUserPatreonRefreshToken(request.me.userId, refresh_token);
+    await patreonService.setUserPatreonRefreshToken(userUuid, refresh_token);
 
     const patreonUserData = await patreonService.fetchPatreonUserData(access_token);
     if (patreonUserData) {
@@ -75,7 +74,7 @@ router.get('/patreon', async (request, response) => {
     const activeUntil = isActive ? getActiveUntil() : null;
     console.info('Users patreon is considered active until ', activeUntil);
 
-    await patreonService.setUserPatreonActive(request.me.userId, activeUntil);
+    await userAccountService.setUserPatreonActive(userUuid, activeUntil);
 
     response.status(200).redirect('/account');
   } catch (e) {
