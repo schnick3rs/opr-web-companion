@@ -213,7 +213,7 @@ const applyUpgrade = (unit, section, option) => {
   });
 
   if (section.variant === 'model') {
-    console.info('Add Model, purge equipment', section);
+    // console.info('Add Model, purge equipment', section);
     unit.equipment = [];
   }
 
