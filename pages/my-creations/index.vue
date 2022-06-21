@@ -118,7 +118,6 @@
           block outlined large
           color="primary"
           @click="recalculateArmyBooks"
-          disabled
         >
           <v-icon left>mdi-file-multiple</v-icon>
           Calculon!
