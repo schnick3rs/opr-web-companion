@@ -1,10 +1,10 @@
 // @ts-ignore
 import {query} from '../config/database';
-import {ISpecialRule} from "../models/DbInterfaces";
+import {ISimpleGameSystem, ISpecialRule} from "../models/DbInterfaces";
 
 export default class GameSystemService {
 
-  public static async findAll(): Promise<any[]> {
+  public static async findAll(): Promise<ISimpleGameSystem[]> {
     let sql = `SELECT
         game_systems.id,
         game_systems.slug,
@@ -31,7 +31,7 @@ export default class GameSystemService {
     return await query(sql);
   }
 
-  public static async findById(id: number): Promise<any> {
+  public static async findById(id: number): Promise<ISimpleGameSystem> {
     let sql = `SELECT
         game_systems.id,
         game_systems.slug,
@@ -47,7 +47,7 @@ export default class GameSystemService {
     return rows[0];
   }
 
-  public static async findBySlug(slug: String): Promise<any> {
+  public static async findBySlug(slug: String): Promise<ISimpleGameSystem> {
     let sql = `SELECT
         game_systems.id,
         game_systems.slug,
@@ -63,7 +63,7 @@ export default class GameSystemService {
     return rows[0];
   }
 
-  public static async findSpecialRules(slug: String): Promise<ISpecialRule> {
+  public static async findSpecialRules(slug: String): Promise<ISpecialRule[]> {
     let sql = `SELECT
         special_rules.*
       FROM opr_companion.game_systems

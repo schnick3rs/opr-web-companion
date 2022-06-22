@@ -1,6 +1,7 @@
 import Router from 'express-promise-router';
 import GameSystemService from '../../services/gameSystemService';
 
+// @ts-ignore
 const router = new Router();
 
 router.get('/', async (request, response) => {
