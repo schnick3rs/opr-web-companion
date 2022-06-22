@@ -16,6 +16,7 @@
             color="white"
             class="mb-0"
           />
+          {{ recalcInProgressCurrent }} / {{ recalcInProgressMax }} done
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -480,6 +481,8 @@ export default {
       search: '',
       recalcInProgress: false,
       recalcInProgressMessage: '',
+      recalcInProgressCurrent: 0,
+      recalcInProgressMax: 0,
       selectedGameSystems: [],
       showNewArmyBookDialog: false,
       newArmyBookForm: {
@@ -687,10 +690,13 @@ export default {
     async recalculateArmyBooks() {
       this.recalcInProgressMessage = 'Loading ...';
       this.recalcInProgress = true;
+      this.recalcInProgressCurrent = 0;
+      this.recalcInProgressMax = this.armyBookSets.length;
       for (const armyBook of this.armyBookSets) {
         this.recalcInProgressMessage = `Recalculate '${armyBook.name} ...`;
         try {
-          await this.$axios.post(`/api/army-books/${armyBook.uid}/calculate`);
+          const response = await this.$axios.post(`/api/army-books/${armyBook.uid}/calculate`);
+          this.recalcInProgressCurrent++;
         } catch (e) {
           console.error(`Could not recalc ${armyBook.name} -> ${e.message}`, e);
         }

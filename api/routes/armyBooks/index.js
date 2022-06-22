@@ -6,7 +6,7 @@ import Zip from 'adm-zip';
 import calc from 'opr-point-calculator-lib';
 import { CalcHelper } from 'opr-army-book-helper';
 import { DataParsingService } from 'opr-data-service';
-import * as gameSystemService from '../gameSystems/game-system-service';
+import GameSystemService from '../../services/gameSystemService';
 import * as userAccountService from '../auth/user-account-service';
 import * as armyBookService from './army-book-service';
 import * as skirmificationService from './skirmification-service';
@@ -32,7 +32,7 @@ router.get('/', cors(), async (request, response) => {
   const { gameSystemSlug, factionName, filters } = request.query;
 
   // all original army books for this system
-  const gameSystem = await gameSystemService.getGameSystemBySlug(gameSystemSlug);
+  const gameSystem = await GameSystemService.findBySlug(gameSystemSlug);
   let onlyOfficials = null;
   if (filters) {
     onlyOfficials = filters.includes('official');
@@ -50,7 +50,7 @@ router.get('/zip', async (request, response) => {
   const { gameSystemSlug } = request.query;
 
   // all original army books for this system
-  const gameSystem = await gameSystemService.getGameSystemBySlug(gameSystemSlug);
+  const gameSystem = await GameSystemService.findBySlug(gameSystemSlug);
   if (!gameSystem) {
     response.status(400).json({ message: `no gamesystem found for [${gameSystemSlug}]` });
     return;
@@ -262,7 +262,7 @@ router.get('/:armyBookUid~:gameSystemId', cors(), async (request, response) => {
     }
 
     // add flavor
-    const gameSystem = await gameSystemService.getGameSystemById(gameSystemId);
+    const gameSystem = await GameSystemService.findById(gameSystemId);
     if (gameSystem) {
       armyBook.gameSystemId = gameSystem.id;
       armyBook.gameSystemSlug = gameSystem.slug;
@@ -338,7 +338,7 @@ router.get('/:armyBookUid/pdf', cors(), async (request, response) => {
   const armyBook = await armyBookService.getArmyBookPublicOrOwner(unflavoredArmyBookUid, userId);
 
   if (gameSystemId) {
-    const gameSystem = await gameSystemService.getGameSystemById(gameSystemId);
+    const gameSystem = await GameSystemService.findById(gameSystemId);
     if (gameSystem) {
       armyBook.gameSystemId = gameSystem.id;
       armyBook.gameSystemSlug = gameSystem.slug;
