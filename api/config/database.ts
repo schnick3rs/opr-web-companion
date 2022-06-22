@@ -23,11 +23,11 @@ try {
 }
 
 export async function query(text, values = []) {
-  return await pool.query(text, values);
+  const { rows } = await pool.query(text, values);
+  return rows;
 }
 
 export async function map(text, values = [], func) {
-  console.debug('query:', text, values);
   const { rows } = await pool.query(text, values);
   return rows.map(row => func(row));
 }
