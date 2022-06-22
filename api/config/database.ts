@@ -28,7 +28,6 @@ export async function query(text, values = []) {
 }
 
 export async function map(text, values = [], func) {
-  console.debug('query:', text, values);
   const { rows } = await pool.query(text, values);
   return rows.map(row => func(row));
 }

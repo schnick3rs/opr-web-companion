@@ -1,5 +1,6 @@
 // @ts-ignore
 import {query} from '../config/database';
+import {ISpecialRule} from "../models/DbInterfaces";
 
 export default class GameSystemService {
 
@@ -62,7 +63,7 @@ export default class GameSystemService {
     return rows[0];
   }
 
-  public static async findSpecialRules(slug: String): Promise<any> {
+  public static async findSpecialRules(slug: String): Promise<ISpecialRule> {
     let sql = `SELECT
         special_rules.*
       FROM opr_companion.game_systems
@@ -70,7 +71,6 @@ export default class GameSystemService {
           ON special_rules."gameSystemId" = game_systems.id
       WHERE slug = $1
       ORDER BY special_rules.name`;
-    const { rows } = await query(sql, [slug]);
-    return rows;
+    return await query(sql, [slug]);
   }
 }
