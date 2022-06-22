@@ -1,5 +1,5 @@
 // @ts-ignore
-import {query} from '../../config/database';
+import {query} from '../config/database';
 
 export default class GameSystemService {
 
