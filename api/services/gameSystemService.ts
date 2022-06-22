@@ -78,5 +78,6 @@ export default class GameSystemService {
     'ORDER BY special_rules.name ASC',
       [slug]
     );
+    return rows;
   }
 }
