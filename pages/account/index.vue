@@ -61,9 +61,9 @@
               block
               small
               :loading="loading"
-              @click="deauthorizePatreon"
+              @click="deauthorisePatreon"
             >
-              Deauthorize
+              Deauthorise
             </v-btn>
             <v-btn
               v-else
@@ -139,7 +139,7 @@ export default {
     }
   },
   methods: {
-    async deauthorizePatreon() {
+    async deauthorisePatreon() {
       this.loading = true;
       await this.$axios.delete('/api/account/patreon');
       await this.$auth.fetchUser();
