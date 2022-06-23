@@ -108,14 +108,14 @@ export async function isActiveOnePageRulesMember(token) {
     console.info('Patreon Member id ->', data.data.id);
     console.info('Patreon Member data ->', JSON.stringify(data.data.attributes));
     if (data.included) {
-      const oprCampaign = data.included
-        .filter(item => item.type === 'member')
-        .find(member => member.id === config.patreonCreatorId);
+      const oprCampaign = data.included.filter(item => item.type === 'member')[0];
 
       // user is not an OPR member
       if (!oprCampaign) {
-        console.info('No OPR Campaign found in included -> ', JSON.stringify(data.included));
+        console.warn('No (OPR) Campaign found in included -> ', JSON.stringify(data.included));
         return false;
+      } else {
+        console.info('Campaign found in included -> ', JSON.stringify(data.included));
       }
 
       console.info('OPR campaign data ->', JSON.stringify(oprCampaign));
