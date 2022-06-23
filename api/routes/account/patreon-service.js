@@ -106,7 +106,7 @@ export async function isActiveOnePageRulesMember(token) {
 
   try {
     console.info('Patreon Member id ->', data.data.id);
-    console.info('Patreon Member data:', data.data.attributes);
+    console.info('Patreon Member data ->', JSON.stringify(data.data.attributes));
     if (data.included) {
       const oprCampaign = data.included
         .filter(item => item.type === 'member')
@@ -114,16 +114,17 @@ export async function isActiveOnePageRulesMember(token) {
 
       // user is not an OPR member
       if (!oprCampaign) {
+        console.info('No OPR Campaign found in included -> ', JSON.stringify(data.included));
         return false;
       }
 
-      console.info('OPR campaign data:', oprCampaign);
+      console.info('OPR campaign data ->', JSON.stringify(oprCampaign));
 
       const patronStatus = oprCampaign.attributes.patron_status;
       console.info('OPR campaign status ->', patronStatus);
 
       const entitledTiers = oprCampaign.relationships.currently_entitled_tiers.data;
-      console.info('OPR campaign tier data:', entitledTiers);
+      console.info('OPR campaign tier data ->', JSON.stringify(entitledTiers));
 
       const isActivePatron = patronStatus === 'active_patron';
       const hasAnyActiveTier = entitledTiers.length >= 1;
