@@ -127,6 +127,7 @@ export async function isActiveOnePageRulesMember(token) {
       console.info('OPR campaign tier data ->', JSON.stringify(entitledTiers));
 
       const isActivePatron = patronStatus === 'active_patron';
+      console.info('POR Campaign, found entitled tiers ->', entitledTiers.length);
       const hasAnyActiveTier = entitledTiers.length >= 1;
 
       return isActivePatron && hasAnyActiveTier;
