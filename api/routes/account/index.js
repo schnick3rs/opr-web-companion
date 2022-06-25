@@ -1,20 +1,11 @@
 import Router from 'express-promise-router';
 import * as userAccountService from '../auth/user-account-service';
-import * as patreonService from './patreon-service';
+import PatreonService from '../../services/patreonService';
 
 const router = new Router();
 
-function getActiveUntil() {
-  const now = new Date();
-  if (now.getMonth() === 11) {
-    return new Date(now.getFullYear() + 1, 0, 4);
-  } else {
-    return new Date(now.getFullYear(), now.getMonth() + 1, 4);
-  }
-}
-
 router.get('/patreon-refresh', async (request, response) => {
-  const refreshToken = await patreonService.getUserPatreonRefreshToken(request.me.userId);
+  const refreshToken = await userAccountService.getUserPatreonRefreshToken(request.me.userId);
 
   if (!refreshToken) {
     response.status(401).json({ message: 'User has no refresh token' });
@@ -25,18 +16,18 @@ router.get('/patreon-refresh', async (request, response) => {
 
   // eslint-disable-next-line camelcase
   const { access_token, refresh_token } =
-    await patreonService.getPatreonOauthTokensFromRefresh(refreshToken);
+    await PatreonService.getPatreonOauthTokensFromRefresh(refreshToken);
 
-  await patreonService.setUserPatreonRefreshToken(request.me.userId, refresh_token);
+  await userAccountService.setUserPatreonRefreshToken(request.me.userId, refresh_token);
 
-  const isActive = await patreonService.isActiveOnePageRulesMember(access_token);
+  const isActive = await PatreonService.isActiveOnePageRulesMember(access_token);
 
   console.log('User is Patreon =', isActive);
 
-  const activeUntil = isActive ? getActiveUntil() : null;
+  const activeUntil = isActive ? PatreonService.computeComingActiveUntilDate() : null;
   console.info('Users patreon is considered active until ', activeUntil);
 
-  await patreonService.setUserPatreonActive(request.me.userId, activeUntil);
+  await userAccountService.setUserPatreonActive(request.me.userId, activeUntil);
 
   response.status(200).json({ isActive, activeUntil });
 });
@@ -46,9 +37,9 @@ router.get('/patreon-refresh', async (request, response) => {
  */
 router.get('/patreon', async (request, response) => {
   const { code } = request.query;
-  const { userId, userUuid } = request.me;
+  const { userUuid } = request.me;
 
-  console.info('Patreon connection for user:', request.me);
+  console.info('Patreon connection for user ->', JSON.stringify(request.me));
   console.info('Patreon connection code ->', code);
 
   if (!code) {
@@ -59,21 +50,32 @@ router.get('/patreon', async (request, response) => {
 
   try {
     // eslint-disable-next-line camelcase
-    const { access_token, refresh_token } = await patreonService.getPatreonOauthTokensFromCode(code);
+    const { access_token, refresh_token } = await PatreonService.getPatreonOauthTokensFromCode(code);
 
     // TODO: Error handling?
-    await patreonService.setUserPatreonRefreshToken(userUuid, refresh_token);
+    await userAccountService.setUserPatreonRefreshToken(userUuid, refresh_token);
 
-    const patreonUserData = await patreonService.fetchPatreonUserData(access_token);
+    const patreonUserData = await PatreonService.fetchPatreonUserData(access_token);
     if (patreonUserData) {
+      console.info('fetched user data ->', patreonUserData);
+      const userByPatreon = await userAccountService.getUserByEmail(patreonUserData.data.attributes.email);
+      if (!userByPatreon) {
+        response.status(403).json({ message: 'No user found for given patreon email' });
+        return;
+      }
       // const patreonEmail = patreonService.getEmail(patreonUserData);
+      if (userByPatreon.uuid === userUuid) {
+        // --
+      } else {
+        response.status(403).json({ message: 'Email did not match' });
+        return;
+      }
     }
 
-    const isActive = await patreonService.isActiveOnePageRulesMember(access_token);
+    const isActive = await PatreonService.isActiveOnePageRulesMember(access_token);
 
-    const activeUntil = isActive ? getActiveUntil() : null;
+    const activeUntil = isActive ? PatreonService.computeComingActiveUntilDate() : null;
     console.info('Users patreon is considered active until ', activeUntil);
-
     await userAccountService.setUserPatreonActive(userUuid, activeUntil);
 
     response.status(200).redirect('/account');

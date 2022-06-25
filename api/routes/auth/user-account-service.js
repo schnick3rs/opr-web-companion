@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
 import pbkdf2Hmac from 'pbkdf2-hmac';
-import * as patreonService from '../account/patreon-service';
+import PatreonService from '../../services/patreonService';
 
 import { pool } from '../../db';
 if (process.env.NODE_ENV !== 'production') {
@@ -124,18 +124,35 @@ export async function refreshPatreonToken(userUuid) {
 
   // eslint-disable-next-line camelcase
   const { access_token: accessToken, refresh_token: refreshToken } =
-    await patreonService.getPatreonOauthTokensFromRefresh(currentRefreshToken);
+    await PatreonService.getPatreonOauthTokensFromRefresh(currentRefreshToken);
 
-  await patreonService.setUserPatreonRefreshToken(userUuid, refreshToken);
+  await setUserPatreonRefreshToken(userUuid, refreshToken);
 
-  const isActive = await patreonService.isActiveOnePageRulesMember(accessToken);
+  const isActive = await PatreonService.isActiveOnePageRulesMember(accessToken);
 
   console.info('User is Patreon =', isActive);
 
-  const activeUntil = isActive ? patreonService.getActiveUntil() : null;
+  const activeUntil = isActive ? PatreonService.computeComingActiveUntilDate() : null;
   console.info('Users patreon is considered active until ', activeUntil);
 
   await setUserPatreonActive(userUuid, activeUntil);
+}
+
+export async function getUserPatreonRefreshToken(userId) {
+  // Save refresh token against the user?
+  const { rows } = await pool.query(
+    'SELECT patreon_refresh_token FROM opr_companion.user_accounts WHERE id = $1',
+    [userId]
+  );
+  return rows[0].patreon_refresh_token;
+}
+
+export async function setUserPatreonRefreshToken(uuid, refreshToken) {
+  // Save refresh token against the user?
+  await pool.query(
+    'UPDATE opr_companion.user_accounts SET patreon_refresh_token = $2 WHERE uuid = $1',
+    [uuid, refreshToken]
+  );
 }
 
 export async function setUserPatreonActive(uuid, activeUntil) {
