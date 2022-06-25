@@ -60,14 +60,14 @@ router.get('/patreon', async (request, response) => {
       console.info('fetched user data ->', patreonUserData);
       const userByPatreon = await userAccountService.getUserByEmail(patreonUserData.data.attributes.email);
       if (!userByPatreon) {
-        response.status(403).json({ message: 'No user found for given patreon email' });
+        response.status(403).redirect('/account?error=mail');
         return;
       }
       // const patreonEmail = patreonService.getEmail(patreonUserData);
       if (userByPatreon.uuid === userUuid) {
         // --
       } else {
-        response.status(403).json({ message: 'Email did not match' });
+        response.status(403).redirect('/account?error=mail');
         return;
       }
     }
