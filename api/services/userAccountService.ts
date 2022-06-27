@@ -170,7 +170,7 @@ export default class UserAccountService {
     const emailHash = await this.hashEmail(email);
     const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
     const uuid = nanoid(11);
-    const { rows } = await query(
+    const rows = await query(
       'INSERT INTO opr_companion.user_accounts (email_hashed, password, username, uuid, enabled) VALUES ($1, $2, $3, $4, $5) RETURNING uuid',
       [emailHash, passwordHash, username, uuid, true],
     );

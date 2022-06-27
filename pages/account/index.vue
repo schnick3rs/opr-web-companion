@@ -79,10 +79,6 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <div class="elevation-2">
-      <pre>{{ $auth.user }}</pre>
-    </div>
   </v-container>
 </template>
 
