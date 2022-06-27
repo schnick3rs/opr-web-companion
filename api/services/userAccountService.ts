@@ -24,8 +24,25 @@ export default class UserAccountService {
   }
 
   private static async getUserByHashedEmail(hashedEmail): Promise<IFullUser> {
-    return await queryOne(
-      'SELECT * FROM opr_companion.user_accounts WHERE email_hashed = $1',
+    return await queryOne(`
+      SELECT
+        id,
+        username,
+        enabled,
+        uuid,
+        created_at AS "createdAt",
+        password,
+        email_hashed AS "emailHashed",
+        password_reset_token AS "passwordResetToken",
+        password_reset_token_expire AS "passwordResetTokenExpire",
+        patreon_refresh_token AS "patreonRefreshToken",
+        patreon_active_until AS "patreonActiveUntil",
+        roles,
+        patreon_scope AS "patreonScope",
+        patreon_thumb_url AS "patreonThumbUrl"
+      FROM opr_companion.user_accounts
+      WHERE email_hashed = $1
+      `,
       [hashedEmail]
     );
   }
@@ -37,9 +54,9 @@ export default class UserAccountService {
       username,
       enabled,
       uuid,
-      created_at "createdAt",
-      patreon_active_until "patreonActiveUntil",
-      patreon_active_until > now() "patreon",
+      created_at AS "createdAt",
+      patreon_active_until AS "patreonActiveUntil",
+      patreon_active_until > now() AS "patreon",
       case when patreon_active_until > now()
           then (select array_agg(DISTINCT e) from unnest(array_append(roles, 'army-books')) e)
           else roles
@@ -54,9 +71,9 @@ export default class UserAccountService {
       username,
       enabled,
       uuid,
-      created_at "createdAt",
-      patreon_active_until "patreonActiveUntil",
-      patreon_active_until > now() "patreon",
+      created_at AS "createdAt",
+      patreon_active_until AS "patreonActiveUntil",
+      patreon_active_until > now() AS "patreon",
       case when patreon_active_until > now()
           then (select array_agg(DISTINCT e) from unnest(array_append(roles, 'army-books')) e)
           else roles
@@ -67,7 +84,7 @@ export default class UserAccountService {
     );
   }
 
-  public static async createNewPasswordResetRequest(user): Promise<string> {
+  public static async createNewPasswordResetRequest(user: any): Promise<string> {
     const token = nanoid(64);
     await query(
       'UPDATE opr_companion.user_accounts ' +
@@ -78,7 +95,7 @@ export default class UserAccountService {
     return token;
   }
 
-  public static async updateUserResetPassword(email, token, password) {
+  public static async updateUserResetPassword(email: string, token: string, password: string) {
     const emailHash = await this.hashEmail(email);
     const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
     await query(
@@ -89,7 +106,7 @@ export default class UserAccountService {
     );
   }
 
-  public static async getPatreonData(uuid): Promise<any> {
+  public static async getPatreonData(uuid: string): Promise<any> {
     // Save refresh token against the user?
     return await queryOne(
       `SELECT
@@ -103,7 +120,7 @@ export default class UserAccountService {
     );
   }
 
-  public static async refreshPatreonToken(userUuid) {
+  public static async refreshPatreonToken(userUuid: string) {
     const { patreonRefreshToken: currentRefreshToken } = await this.getPatreonData(userUuid);
 
     if (!currentRefreshToken) {
@@ -127,7 +144,7 @@ export default class UserAccountService {
     await this.setUserPatreonActive(userUuid, activeUntil);
   }
 
-  public static async getUserPatreonRefreshToken(userId): Promise<string> {
+  public static async getUserPatreonRefreshToken(userId: number): Promise<string> {
     // Save refresh token against the user?
     const rows = await queryOne(
       'SELECT patreon_refresh_token FROM opr_companion.user_accounts WHERE id = $1',
@@ -136,7 +153,7 @@ export default class UserAccountService {
     return rows.patreon_refresh_token;
   }
 
-  public static async setUserPatreonRefreshToken(uuid, refreshToken) {
+  public static async setUserPatreonRefreshToken(uuid: string, refreshToken: string) {
     // Save refresh token against the user?
     await query(
       'UPDATE opr_companion.user_accounts SET patreon_refresh_token = $2 WHERE uuid = $1',
@@ -144,7 +161,7 @@ export default class UserAccountService {
     );
   }
 
-  public static async setUserPatreonActive(uuid, activeUntil) {
+  public static async setUserPatreonActive(uuid: string, activeUntil: Date) {
     // Save refresh token against the user?
     await query(
       'UPDATE opr_companion.user_accounts SET patreon_active_until = $2 WHERE uuid = $1',
@@ -152,7 +169,7 @@ export default class UserAccountService {
     );
   }
 
-  public static async removePatreon(userId) {
+  public static async removePatreon(userId: number) {
     await query(
       `UPDATE opr_companion.user_accounts SET
        patreon_active_until = null,
@@ -162,7 +179,7 @@ export default class UserAccountService {
     );
   }
 
-  public static async createUser(username, email, password) {
+  public static async createUser(username: string, email: string, password: string): Promise<string> {
     const emailHash = await this.hashEmail(email);
     const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
     const uuid = nanoid(11);
@@ -173,28 +190,28 @@ export default class UserAccountService {
     return rows.uuid;
   }
 
-  public static buf2hex(buffer): string { // buffer is an ArrayBuffer
+  public static buf2hex(buffer: ArrayBuffer): string { // buffer is an ArrayBuffer
     // @ts-ignore
     return [...new Uint8Array(buffer)]
       .map(x => x.toString(16).padStart(2, '0'))
       .join('');
   }
 
-  public static async hashEmail(email): Promise<string> {
+  public static async hashEmail(email: string): Promise<string> {
     const hashedEmail = await pbkdf2Hmac(email, EMAIL_SALT, 1000, 128, 'SHA-512');
     return this.buf2hex(hashedEmail);
   }
 
-  public static validateEmail(email): boolean {
+  public static validateEmail(email: string): boolean {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
   }
 
-  public static validatePassword(password): boolean {
+  public static validatePassword(password: string): boolean {
     return password && password.length > 0;
   }
 
-  public static validatePasswordConstrains(password): boolean {
+  public static validatePasswordConstrains(password: string): boolean {
     const re = /^.{8,}$/;
     return re.test(String(password).toLowerCase());
   }

@@ -5,22 +5,23 @@ export interface IPublicUser {
   username: string;
   enabled: boolean;
   uuid: string;
-  created_at: Date;
+  createdAt: Date;
   roles: string[];
-  patreon_thumb_url: string;
+  patreonThumbUrl: string;
 }
 
 export interface IPrivateUser extends IPublicUser {
-  patreon_active_until: Date;
+  patreonActiveUntil: Date;
+  patreon: boolean;
 }
 
 export interface IFullUser extends IPrivateUser {
   password: string;
-  email_hashed: string;
-  password_reset_token: string;
-  password_reset_token_expire: string;
-  patreon_refresh_token: string;
-  patreon_scope: string;
+  emailHashed: string;
+  passwordResetToken: string;
+  passwordResetTokenExpire: string;
+  patreonRefreshToken: string;
+  patreonScope: string;
 }
 
 export interface ISpecialRule {
