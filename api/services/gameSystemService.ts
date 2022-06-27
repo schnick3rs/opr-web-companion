@@ -47,7 +47,7 @@ export default class GameSystemService {
     return rows[0];
   }
 
-  public static async findBySlug(slug: String): Promise<ISimpleGameSystem> {
+  public static async findBySlug(slug: string): Promise<ISimpleGameSystem> {
     let sql = `SELECT
         game_systems.id,
         game_systems.slug,
@@ -63,7 +63,7 @@ export default class GameSystemService {
     return rows[0];
   }
 
-  public static async findSpecialRules(slug: String): Promise<ISpecialRule[]> {
+  public static async findSpecialRules(slug: string): Promise<ISpecialRule[]> {
     let sql = `SELECT
         special_rules.*
       FROM opr_companion.game_systems

@@ -28,7 +28,7 @@ class PatreonApi {
     return null;
   }
 
-  public static async getIdentityData(token: String, params: URLSearchParams): Promise<any> {
+  public static async getIdentityData(token: string, params: URLSearchParams): Promise<any> {
     try {
       const { data } = await axios.get(
         'https://www.patreon.com/api/oauth2/v2/identity',
@@ -66,13 +66,13 @@ export default class PatreonService {
     return await PatreonApi.getOauthTokens(params);
   }
 
-  public static async fetchPatreonUserData(token: String): Promise<any> {
+  public static async fetchPatreonUserData(token: string): Promise<any> {
     const params = new URLSearchParams();
     params.append('fields[user]','email,is_email_verified,thumb_url');
     return await PatreonApi.getIdentityData(token, params);
   }
 
-  public static async fetchPatreonMembershipData(token: String): Promise<any> {
+  public static async fetchPatreonMembershipData(token: string): Promise<any> {
     const params = new URLSearchParams();
     params.append('include', 'memberships,memberships.currently_entitled_tiers');
     params.append('fields[member]', 'patron_status');
@@ -80,7 +80,7 @@ export default class PatreonService {
     return await PatreonApi.getIdentityData(token, params);
   }
 
-  public static async isActiveOnePageRulesMember(token: String): Promise<boolean> {
+  public static async isActiveOnePageRulesMember(token: string): Promise<boolean> {
     const { data, included } = await this.fetchPatreonMembershipData(token);
 
     try {

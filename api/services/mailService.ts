@@ -9,12 +9,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 const API_KEY = process.env.SENDGRID_API_KEY;
 const FROM = process.env.MAILSERVER_FROM || 'no-reply@onepagerules.com';
+const BASE = process.env.PATREON_REDIRECT_BASE || 'https://webapp.onepagerules.com';
 
 // const mailgun = require('mailgun-js')({apiKey: API_KEY, domain: DOMAIN});
 
 export default class MailService {
 
-  public static async sendPasswordResetMail(to: String, username: String, resetToken: String): Promise<boolean> {
+  public static async sendPasswordResetMail(to: string, username: string, resetToken: string): Promise<boolean> {
     try {
       await axios.post(
         'https://api.sendgrid.com/v3/mail/send',
@@ -31,7 +32,7 @@ export default class MailService {
                 <div style="font-family: Tahoma, sans-serif">
                   <h1>Reset your password to access OPR WebApp</h1>
                   <p>Hi ${username},</p>
-                  <p>did you request a password reset for the OPR Web App? If so use the following link to <a href="https://webapp.onepagerules.com/auth/reset-password?token=${resetToken}">change your password.</a></p>
+                  <p>did you request a password reset for the OPR Web App? If so use the following link to <a href="${BASE}/auth/reset-password?token=${resetToken}">change your password.</a></p>
                   <p>Kind regards,<br>Your OPR Team</p>
                 </div>
             `,
