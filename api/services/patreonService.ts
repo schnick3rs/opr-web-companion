@@ -47,7 +47,7 @@ class PatreonApi {
 
 export default class PatreonService {
 
-  public static async getPatreonOauthTokensFromCode(code): Promise<any> {
+  public static async getPatreonOauthTokensFromCode(code: string): Promise<any> {
     const params = new URLSearchParams();
     params.append('grant_type', 'authorization_code');
     params.append('code', code);
@@ -57,7 +57,7 @@ export default class PatreonService {
     return await PatreonApi.getOauthTokens(params);
   }
 
-  public static async getPatreonOauthTokensFromRefresh(refreshToken): Promise<any> {
+  public static async getPatreonOauthTokensFromRefresh(refreshToken: string): Promise<any> {
     const params = new URLSearchParams();
     params.append('grant_type', 'refresh_token');
     params.append('refresh_token', refreshToken);

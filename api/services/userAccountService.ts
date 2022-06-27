@@ -147,10 +147,10 @@ export default class UserAccountService {
   public static async getUserPatreonRefreshToken(userId: number): Promise<string> {
     // Save refresh token against the user?
     const rows = await queryOne(
-      'SELECT patreon_refresh_token FROM opr_companion.user_accounts WHERE id = $1',
+      'SELECT patreon_refresh_token AS "patreonRefreshToken" FROM opr_companion.user_accounts WHERE id = $1',
       [userId]
     );
-    return rows.patreon_refresh_token;
+    return rows.patreonRefreshToken;
   }
 
   public static async setUserPatreonRefreshToken(uuid: string, refreshToken: string) {
@@ -183,11 +183,11 @@ export default class UserAccountService {
     const emailHash = await this.hashEmail(email);
     const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
     const uuid = nanoid(11);
-    const rows = await queryOne(
+    const rows = await query(
       'INSERT INTO opr_companion.user_accounts (email_hashed, password, username, uuid, enabled) VALUES ($1, $2, $3, $4, $5) RETURNING uuid',
       [emailHash, passwordHash, username, uuid, true],
     );
-    return rows.uuid;
+    return rows[0].uuid;
   }
 
   public static buf2hex(buffer: ArrayBuffer): string { // buffer is an ArrayBuffer
