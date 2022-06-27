@@ -40,11 +40,9 @@ router.get('/patreon', async (request, response) => {
   const { userUuid } = request.me;
 
   console.info('Patreon connection for user ->', JSON.stringify(request.me));
-  console.info('Patreon connection code ->', code);
 
   if (!code) {
-    const message = 'Patreon connection failed!';
-    response.status(400).json({ message });
+    response.status(400).redirect('/account?error=deny');
     return;
   }
 
