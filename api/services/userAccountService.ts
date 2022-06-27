@@ -7,6 +7,7 @@ import pbkdf2Hmac from 'pbkdf2-hmac';
 import PatreonService from './patreonService';
 
 import {query, queryOne} from '../config/database';
+import {IFullUser, IPrivateUser} from "../models/DbInterfaces";
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
@@ -17,23 +18,19 @@ const PASSWORD_SALT_ROUNDS = 12;
 
 export default class UserAccountService {
 
-  public static async getUserByEmail(email) {
+  public static async getUserByEmail(email): Promise<IFullUser> {
     const hashedEmail = await this.hashEmail(email);
     return this.getUserByHashedEmail(hashedEmail);
   }
 
-  public static async getUserByHashedEmail(hashedEmail) {
+  private static async getUserByHashedEmail(hashedEmail): Promise<IFullUser> {
     return await queryOne(
       'SELECT * FROM opr_companion.user_accounts WHERE email_hashed = $1',
       [hashedEmail]
     );
   }
 
-  public static async getAllUsersWithoutHash(email) {
-    return await query('SELECT * FROM opr_companion.user_accounts WHERE email_hashed IS NULL');
-  }
-
-  public static async getAllUsers() {
+  public static async getAllUsers(): Promise<IPrivateUser[]> {
     return await query(
       `SELECT
       id,
@@ -50,7 +47,7 @@ export default class UserAccountService {
     FROM opr_companion.user_accounts`);
   }
 
-  public static async getUserByUuid(uuid) {
+  public static async getUserByUuid(uuid): Promise<IPrivateUser> {
     return await queryOne(
       `SELECT
       id,
@@ -70,7 +67,7 @@ export default class UserAccountService {
     );
   }
 
-  public static async createNewPasswordResetRequest(user) {
+  public static async createNewPasswordResetRequest(user): Promise<string> {
     const token = nanoid(64);
     await query(
       'UPDATE opr_companion.user_accounts ' +
@@ -92,9 +89,9 @@ export default class UserAccountService {
     );
   }
 
-  public static async getPatreonData(uuid) {
+  public static async getPatreonData(uuid): Promise<any> {
     // Save refresh token against the user?
-    const { rows } = await query(
+    return await queryOne(
       `SELECT
         patreon_refresh_token AS "patreonRefreshToken",
         patreon_active_until AS "patreonActiveUntil",
@@ -104,7 +101,6 @@ export default class UserAccountService {
      WHERE uuid = $1`,
       [uuid]
     );
-    return rows[0];
   }
 
   public static async refreshPatreonToken(userUuid) {
@@ -131,13 +127,13 @@ export default class UserAccountService {
     await this.setUserPatreonActive(userUuid, activeUntil);
   }
 
-  public static async getUserPatreonRefreshToken(userId) {
+  public static async getUserPatreonRefreshToken(userId): Promise<string> {
     // Save refresh token against the user?
-    const { rows } = await query(
+    const rows = await queryOne(
       'SELECT patreon_refresh_token FROM opr_companion.user_accounts WHERE id = $1',
       [userId]
     );
-    return rows[0].patreon_refresh_token;
+    return rows.patreon_refresh_token;
   }
 
   public static async setUserPatreonRefreshToken(uuid, refreshToken) {
@@ -170,14 +166,14 @@ export default class UserAccountService {
     const emailHash = await this.hashEmail(email);
     const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
     const uuid = nanoid(11);
-    const rows = await query(
+    const rows = await queryOne(
       'INSERT INTO opr_companion.user_accounts (email_hashed, password, username, uuid, enabled) VALUES ($1, $2, $3, $4, $5) RETURNING uuid',
       [emailHash, passwordHash, username, uuid, true],
     );
-    return rows[0].uuid;
+    return rows.uuid;
   }
 
-  public static buf2hex(buffer) { // buffer is an ArrayBuffer
+  public static buf2hex(buffer): string { // buffer is an ArrayBuffer
     // @ts-ignore
     return [...new Uint8Array(buffer)]
       .map(x => x.toString(16).padStart(2, '0'))
@@ -189,16 +185,16 @@ export default class UserAccountService {
     return this.buf2hex(hashedEmail);
   }
 
-  public static validateEmail(email) {
+  public static validateEmail(email): boolean {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
   }
 
-  public static validatePassword(password) {
+  public static validatePassword(password): boolean {
     return password && password.length > 0;
   }
 
-  public static validatePasswordConstrains(password) {
+  public static validatePasswordConstrains(password): boolean {
     const re = /^.{8,}$/;
     return re.test(String(password).toLowerCase());
   }

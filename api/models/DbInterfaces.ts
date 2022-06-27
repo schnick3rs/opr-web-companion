@@ -1,4 +1,28 @@
 
+
+export interface IPublicUser {
+  id: number;
+  username: string;
+  enabled: boolean;
+  uuid: string;
+  created_at: Date;
+  roles: string[];
+  patreon_thumb_url: string;
+}
+
+export interface IPrivateUser extends IPublicUser {
+  patreon_active_until: Date;
+}
+
+export interface IFullUser extends IPrivateUser {
+  password: string;
+  email_hashed: string;
+  password_reset_token: string;
+  password_reset_token_expire: string;
+  patreon_refresh_token: string;
+  patreon_scope: string;
+}
+
 export interface ISpecialRule {
   id: number;
   gameSystemId: number;
