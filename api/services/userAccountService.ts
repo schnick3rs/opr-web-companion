@@ -7,7 +7,7 @@ import pbkdf2Hmac from 'pbkdf2-hmac';
 import PatreonService from './patreonService';
 
 import {query, queryOne} from '../config/database';
-import {IFullUser, IPrivateUser} from "../models/DbInterfaces";
+import {IFullUser, IPrivateUser} from '../models/DbInterfaces';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
