@@ -74,8 +74,7 @@ export default {
         this.loading = false;
       } catch (e) {
         this.$ga.event('User Account', 'create', 'Error', 1);
-        // eslint-disable-next-line no-unused-vars
-        const { status, data } = e.response;
+        const { data } = e.response;
         this.message = data.message;
         this.hasErrors = true;
         this.loading = false;
