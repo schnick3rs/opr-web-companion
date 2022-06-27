@@ -180,7 +180,7 @@ export default class UserAccountService {
       .join('');
   }
 
-  public static async hashEmail(email): Promise<String> {
+  public static async hashEmail(email): Promise<string> {
     const hashedEmail = await pbkdf2Hmac(email, EMAIL_SALT, 1000, 128, 'SHA-512');
     return this.buf2hex(hashedEmail);
   }
