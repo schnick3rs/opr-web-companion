@@ -1,6 +1,6 @@
 import Router from 'express-promise-router';
 import PatreonService from '../../services/patreonService';
-import UserAccountService from '../../services/UserAccountService';
+import UserAccountService from '../../services/userAccountService';
 
 const router = new Router();
 
