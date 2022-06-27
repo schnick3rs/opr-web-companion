@@ -2,8 +2,8 @@ import Router from 'express-promise-router';
 
 import bcrypt from 'bcryptjs';
 import { sign } from '../authProvider';
-import * as userAccountService from './user-account-service';
-import { sendPasswordResetMail } from './mail-service';
+import UserAccountService from '../../services/userAccountService';
+import MailService from '../../services/mailService';
 
 const router = new Router();
 
@@ -19,13 +19,13 @@ router.post('/user-account', async (request, response) => {
   const trimmedUsername = username.trim();
   const trimmedMail = email.toLowerCase().trim();
 
-  if (!userAccountService.validateEmail(trimmedMail)) {
+  if (!UserAccountService.validateEmail(trimmedMail)) {
     const message = `Input ${trimmedMail} ist not a valid email.`;
     response.status(400).json({ message });
     return;
   }
 
-  const user = await userAccountService.getUserByEmail(email);
+  const user = await UserAccountService.getUserByEmail(email);
   if (user) {
     const message = `An user with email:${email} already exists.`;
     response.status(400).json({ message });
@@ -33,14 +33,14 @@ router.post('/user-account', async (request, response) => {
   }
 
   const trimmedPassword = password.toLowerCase().trim();
-  if (!userAccountService.validatePasswordConstrains(trimmedPassword)) {
+  if (!UserAccountService.validatePasswordConstrains(trimmedPassword)) {
     const message = 'Password does not fulfill constrains.';
     response.status(400).json({ message });
     return;
   }
 
   try {
-    const uuid = await userAccountService.createUser(trimmedUsername, trimmedMail, trimmedPassword);
+    const uuid = await UserAccountService.createUser(trimmedUsername, trimmedMail, trimmedPassword);
     console.log(`Created new user ${email}::${uuid}.`);
     response.status(200).json({ email, uuid });
     return;
@@ -57,15 +57,15 @@ router.post('/user-account', async (request, response) => {
 router.get('/user', async (request, response) => {
   const { userUuid } = request.me;
   if (userUuid) {
-    const { username, uuid, createdAt, roles, patreon, patreonActiveUntil } = await userAccountService.getUserByUuid(userUuid);
+    const { username, uuid, createdAt, roles, patreon, patreonActiveUntil } = await UserAccountService.getUserByUuid(userUuid);
     /**
      * When fetching the user for the frontend, we check if there was a former patron duration
      * and if it is now inactive, if so, we try to refresh the token.
      */
     if (patreonActiveUntil && new Date(patreonActiveUntil) < new Date()) {
       console.info('Patron outdated, refreshing token:', userUuid, patreonActiveUntil);
-      await userAccountService.refreshPatreonToken(userUuid);
-      const userData = await userAccountService.getUserByUuid(userUuid);
+      await UserAccountService.refreshPatreonToken(userUuid);
+      const userData = await UserAccountService.getUserByUuid(userUuid);
       const user = {
         username: userData.username,
         uuid: userData.uuid,
@@ -87,14 +87,14 @@ router.post('/reset-password-request', async (request, response) => {
   const { email } = request.body;
 
   const trimmedMail = email.toLowerCase().trim();
-  if (!userAccountService.validateEmail(trimmedMail)) {
+  if (!UserAccountService.validateEmail(trimmedMail)) {
     const message = `Input ${trimmedMail} ist not a valid email.`;
     console.warn(message);
     response.status(400).json({ message });
     return;
   }
 
-  const user = await userAccountService.getUserByEmail(trimmedMail);
+  const user = await UserAccountService.getUserByEmail(trimmedMail);
   if (!user) {
     const message = `No user found for email:${trimmedMail}.`;
     console.warn(message);
@@ -102,23 +102,27 @@ router.post('/reset-password-request', async (request, response) => {
     return;
   }
 
-  const resetToken = await userAccountService.createNewPasswordResetRequest(user);
+  const resetToken = await UserAccountService.createNewPasswordResetRequest(user);
   if (!resetToken) {
     const message = `No token created for email:${trimmedMail}.`;
     console.warn(message);
     response.status(401).json({ message });
     return;
   }
-  sendPasswordResetMail(trimmedMail, resetToken);
+  const success = await MailService.sendPasswordResetMail(trimmedMail, user.username, resetToken);
 
-  response.status(204).json({});
+  if (success) {
+    response.status(204).json({});
+  } else {
+    response.status(400).json({ message: 'Could not send password reset mail.' });
+  }
 });
 
 router.post('/reset-password', async (request, response) => {
   const { email, password, token } = request.body;
 
   const trimmedMail = email.toLowerCase().trim();
-  if (!userAccountService.validateEmail(trimmedMail)) {
+  if (!UserAccountService.validateEmail(trimmedMail)) {
     const message = `Input ${trimmedMail} ist not a valid email.`;
     console.warn(message);
     response.status(400).json({ message });
@@ -126,13 +130,13 @@ router.post('/reset-password', async (request, response) => {
   }
 
   const trimmedPassword = password.toLowerCase().trim();
-  if (!userAccountService.validatePasswordConstrains(trimmedPassword)) {
+  if (!UserAccountService.validatePasswordConstrains(trimmedPassword)) {
     const message = 'Password does not fulfill constrains.';
     response.status(400).json({ message });
     return;
   }
 
-  await userAccountService.updateUserResetPassword(trimmedMail, token, trimmedPassword);
+  await UserAccountService.updateUserResetPassword(trimmedMail, token, trimmedPassword);
   response.status(200).json({});
 });
 
@@ -140,7 +144,7 @@ router.post('/login', async (request, response) => {
   const { email, password } = request.body;
 
   const trimmedMail = email.toLowerCase().trim();
-  if (!userAccountService.validateEmail(trimmedMail)) {
+  if (!UserAccountService.validateEmail(trimmedMail)) {
     const message = `Input ${trimmedMail} ist not a valid email.`;
     console.warn(message);
     response.status(400).json({ message });
@@ -148,14 +152,14 @@ router.post('/login', async (request, response) => {
   }
 
   const trimmedPassword = password.toLowerCase().trim();
-  if (!userAccountService.validatePassword(trimmedPassword)) {
+  if (!UserAccountService.validatePassword(trimmedPassword)) {
     const message = 'Password does not fullfill constains.';
     console.warn(message);
     response.status(400).json({ message });
     return;
   }
 
-  const user = await userAccountService.getUserByEmail(trimmedMail);
+  const user = await UserAccountService.getUserByEmail(trimmedMail);
   if (!user) {
     const message = `No user found for email:${trimmedMail}.`;
     console.warn(message);

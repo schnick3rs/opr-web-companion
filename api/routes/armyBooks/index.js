@@ -7,7 +7,7 @@ import calc from 'opr-point-calculator-lib';
 import { CalcHelper } from 'opr-army-book-helper';
 import { DataParsingService } from 'opr-data-service';
 import GameSystemService from '../../services/gameSystemService';
-import * as userAccountService from '../auth/user-account-service';
+import UserAccountService from '../../services/userAccountService';
 import * as armyBookService from './army-book-service';
 import * as skirmificationService from './skirmification-service';
 import * as pdfService from './pdf-service';
@@ -156,7 +156,7 @@ router.post('/detachment', async (request, response) => {
 });
 
 router.post('/import', async (request, response) => {
-  const { roles } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await UserAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to upload
   if (roles.includes('admin') === false) {
@@ -402,7 +402,7 @@ router.get('/:armyBookUid/ownership', async (request, response) => {
 });
 
 router.post('/:armyBookUid/calculate', async (request, response) => {
-  const { roles } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await UserAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
   if (roles.includes('admin') === false) {
