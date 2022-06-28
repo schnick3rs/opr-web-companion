@@ -1,14 +1,16 @@
-import axios from "axios";
+// @ts-ignore
+import dotenv from 'dotenv';
+import axios from 'axios';
+
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 const config = {
   patreonClientId: process.env.PATREON_CLIENT_ID,
   patreonClientSecret: process.env.PATREON_CLIENT_SECRET,
   patreonRedirectBase: process.env.PATREON_REDIRECT_BASE,
 };
-
-const patreon = axios.create({
-  baseURL: 'https://www.patreon.com/api/oauth2',
-});
 
 class PatreonApi {
 
