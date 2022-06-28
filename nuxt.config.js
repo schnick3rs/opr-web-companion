@@ -53,6 +53,8 @@ module.exports = {
 
   publicRuntimeConfig: {
     oprPointCalculatorEnabled: process.env.POINT_CALCULATOR_ENABLED || false,
+    patreonClientId: process.env.PATREON_CLIENT_ID,
+    patreonRedirectBase: process.env.PATREON_REDIRECT_BASE,
   },
 
   /*

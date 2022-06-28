@@ -7,7 +7,7 @@ import calc from 'opr-point-calculator-lib';
 import { CalcHelper } from 'opr-army-book-helper';
 import { DataParsingService } from 'opr-data-service';
 import GameSystemService from '../../services/gameSystemService';
-import * as userAccountService from '../auth/user-account-service';
+import UserAccountService from '../../services/userAccountService';
 import * as armyBookService from './army-book-service';
 import * as skirmificationService from './skirmification-service';
 import * as pdfService from './pdf-service';
@@ -156,10 +156,10 @@ router.post('/detachment', async (request, response) => {
 });
 
 router.post('/import', async (request, response) => {
-  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await UserAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to upload
-  if (isAdmin === false) {
+  if (roles.includes('admin') === false) {
     response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
@@ -402,10 +402,10 @@ router.get('/:armyBookUid/ownership', async (request, response) => {
 });
 
 router.post('/:armyBookUid/calculate', async (request, response) => {
-  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await UserAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
-  if (isAdmin === false) {
+  if (roles.includes('admin') === false) {
     response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }

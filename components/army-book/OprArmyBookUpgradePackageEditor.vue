@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <v-card v-if="loading">
       <v-card-title>
         <v-progress-circular
@@ -8,7 +7,7 @@
           style="margin: 0 auto;"
           indeterminate
           color="orange lighten-2"
-        ></v-progress-circular>
+        />
       </v-card-title>
     </v-card>
 
@@ -18,19 +17,28 @@
     >
       <v-card-title>
         <input v-model="upgradePackageHint" class="input">
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           v-if="showPointCalcOptions"
+          color="primary"
+          small
+          outlined
+          class="mr-1"
           @click="estimateAllUpgradeOptionCosts()"
-          color="primary" small outlined class="mr-1"
         >
-          <v-icon left>mdi-auto-fix</v-icon> recalculate
+          <v-icon left>
+            mdi-auto-fix
+          </v-icon> recalculate
         </v-btn>
         <v-btn
+          color="primary"
+          small
+          outlined
           @click="savePackage()"
-          color="primary" small outlined
         >
-          <v-icon left>mdi-content-save</v-icon> save
+          <v-icon left>
+            mdi-content-save
+          </v-icon> save
         </v-btn>
       </v-card-title>
 
@@ -40,35 +48,41 @@
           <v-chip
             v-for="unity in unitsUtilizingUpgradePackage"
             :key="unity.name"
-            label small close
+            label
+            small
+            close
             @click:close="removeUpgradePackageFromUnit(unity)"
           >
-            {{unity.name}}
+            {{ unity.name }}
           </v-chip>
-          <v-menu bottom offset-y v-if="unitsNotUtilizingPackage.length > 0">
-            <template v-slot:activator="{ on, attrs }">
+          <v-menu v-if="unitsNotUtilizingPackage.length > 0" bottom offset-y>
+            <template #activator="{ on, attrs }">
               <v-chip
-                v-bind="attrs" v-on="on"
+                v-bind="attrs"
                 class="mr-2"
-                small label outlined
+                small
+                label
+                outlined
                 color="success"
+                v-on="on"
               >
                 ADD UNIT
               </v-chip>
             </template>
             <v-list dense>
               <v-list-item
-                v-for="(unit) in unitsNotUtilizingPackage" :key="unit.id"
+                v-for="(unit) in unitsNotUtilizingPackage"
+                :key="unit.id"
                 @click="addUpgradePackageToUnit(unit)"
               >
-                <v-list-item-title >{{ unit.name }}</v-list-item-title>
+                <v-list-item-title>{{ unit.name }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
         </v-chip-group>
       </v-card-subtitle>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <template v-for="(section, sectionIndex) in upgradePackage.sections">
         <opr-army-book-upgrade-section-card-text
@@ -77,8 +91,8 @@
           :upgrade-package-id="upgradePackageId"
           :upgrade-package-section-count="upgradePackage.sections.length"
           :section-index="sectionIndex"
-        ></opr-army-book-upgrade-section-card-text>
-        <v-divider></v-divider>
+        />
+        <v-divider />
       </template>
 
       <v-card-actions class="justify-center">
@@ -87,7 +101,9 @@
           color="success"
           @click="openUpgradeSectionDialog"
         >
-          <v-icon left>mdi-bookmark-plus-outline</v-icon>
+          <v-icon left>
+            mdi-bookmark-plus-outline
+          </v-icon>
           Add upgrade section...
         </v-btn>
         <v-dialog
@@ -109,10 +125,13 @@
                     v-model="upgradeSectionEditor.label"
                     label="Label"
                     :rules="[rules.required]"
-                    outlined dense autofocus
-                    persistent-hint hint="Write a valid string..."
+                    outlined
+                    dense
+                    autofocus
+                    persistent-hint
+                    hint="Write a valid string..."
                     @keypress.enter="addUpgradeSection()"
-                  ></v-text-field>
+                  />
                 </v-col>
                 <v-col :cols="12">
                   <p>Examples:</p>
@@ -133,25 +152,25 @@
         <opa-army-book-upgrade-section-builder
           :army-book-id="armyBookId"
           :upgrade-package-id="upgradePackageId"
-        ></opa-army-book-upgrade-section-builder>
+        />
       </v-card-text>
 
-      <template v-if="isAdmin">
-        <v-divider></v-divider>
-        <v-card-text style="overflow: auto"><pre>{{upgradePackage}}</pre></v-card-text>
+      <template v-if="$auth.hasScope('admin')">
+        <v-divider />
+        <v-card-text style="overflow: auto">
+          <pre>{{ upgradePackage }}</pre>
+        </v-card-text>
       </template>
-
     </v-card>
-
   </div>
 </template>
 
 <script>
-import OprDialog from "~/components/shared/OprDialog";
-import OprArmyBookUpgradeSectionCardText from "./OprArmyBookUpgradeSectionCardText";
-import OpaArmyBookUpgradeSectionBuilder from "./OprArmyBookUpgradeSectionBuilder";
-import OprUtils from "~/mixins/OprUtils";
 import { ArmyBook } from 'opr-army-book-helper';
+import OprArmyBookUpgradeSectionCardText from './OprArmyBookUpgradeSectionCardText';
+import OpaArmyBookUpgradeSectionBuilder from './OprArmyBookUpgradeSectionBuilder';
+import OprDialog from '~/components/shared/OprDialog';
+import OprUtils from '~/mixins/OprUtils';
 
 export default {
   name: 'OprArmyBookUpgradePackageEditor',
@@ -160,7 +179,26 @@ export default {
     OprArmyBookUpgradeSectionCardText,
     OprDialog,
   },
-  mixins: [ OprUtils ],
+  filters: {
+    simpleWeaponString (weapon) {
+      const perks = [];
+      if (weapon.range > 0) {
+        perks.push(`${weapon.range}"`);
+      }
+      perks.push(`A${weapon.attacks}`);
+      if (weapon.specialRules.length > 0) {
+        perks.push(weapon.specialRules);
+      }
+      return `${weapon.label} (${perks.join(', ')})`;
+    },
+    costString: (cost) => {
+      if (cost === 0) { return 'free'; }
+      if (cost > 0) { return `+${cost}pts`; }
+      if (cost < 0) { return `${cost}pts`; }
+      return '?';
+    },
+  },
+  mixins: [OprUtils],
   props: {
     armyBookId: String,
     upgradePackageId: String,
@@ -195,14 +233,8 @@ export default {
     elevation() {
       return this.$vuetify.breakpoint.xsOnly ? '0' : undefined;
     },
-    isAdmin() {
-      return this.$store.state.auth?.user?.isAdmin;
-    },
-    hasPointCalcRights() {
-      return this.isAdmin;
-    },
     showPointCalcOptions() {
-      return this.$config.oprPointCalculatorEnabled && this.hasPointCalcRights;
+      return this.$config.oprPointCalculatorEnabled;
     },
     armyBook() {
       return this.$store.getters['armyBooks/armyBook'](this.armyBookId);
@@ -235,18 +267,18 @@ export default {
     combinedSpecialRules() {
       let rules = [];
       if (this.commonSpecialRules) {
-        rules = [ ...this.commonSpecialRules ];
+        rules = [...this.commonSpecialRules];
       }
       if (this.armyBookSpecialRules) {
-        rules = [ ...rules, ...this.armyBookSpecialRules ];
+        rules = [...rules, ...this.armyBookSpecialRules];
       }
       return rules;
     },
     unitSpecialRules() {
-      return this.combinedSpecialRules.filter((rule) => rule.forUnit);
+      return this.combinedSpecialRules.filter(rule => rule.forUnit);
     },
     weaponSpecialRulesOptions() {
-      return this.combinedSpecialRules.filter((rule) => rule.forWeapon);
+      return this.combinedSpecialRules.filter(rule => rule.forWeapon);
     },
     upgradePackageHint: {
       get() {
@@ -272,7 +304,7 @@ export default {
   },
   methods: {
     async loadArmyBookAndAssets() {
-      const { data } = await this.$axios.get(`/api/content/special-rules`);
+      const { data } = await this.$axios.get('/api/content/special-rules');
       this.commonSpecialRules = data;
     },
     addUpgradePackageToUnit(unit) {
@@ -280,22 +312,22 @@ export default {
       const unitId = unit.id;
       const upgradePackageUid = this.upgradePackageId;
       this.$store.commit('armyBooks/unitAddUpgradePackage', { armyBookUid, unitId, upgradePackageUid });
-      this.$store.dispatch('armyBooks/updateUnit',{ armyBookUid, unitId });
+      this.$store.dispatch('armyBooks/updateUnit', { armyBookUid, unitId });
     },
     removeUpgradePackageFromUnit(unit) {
       const armyBookUid = this.armyBookId;
       const unitId = unit.id;
       const upgradePackageUid = this.upgradePackageId;
       this.$store.commit('armyBooks/unitRemoveUpgradePackage', { armyBookUid, unitId, upgradePackageUid });
-      this.$store.dispatch('armyBooks/updateUnit',{ armyBookUid, unitId });
+      this.$store.dispatch('armyBooks/updateUnit', { armyBookUid, unitId });
     },
-    openUpgradeSectionDialog(){
+    openUpgradeSectionDialog() {
       this.upgradeSectionEditor.label = '';
       this.showUpgradeSectionDialog = true;
     },
     saveDebounced(delay = 1000) {
       clearTimeout(this._timerId);
-      this._timerId = setTimeout(() => {this.savePackage()}, delay);
+      this._timerId = setTimeout(() => { this.savePackage(); }, delay);
     },
     savePackage() {
       const armyBookUid = this.armyBookId;
@@ -308,16 +340,17 @@ export default {
       const upgradePackageUid = this.upgradePackageId;
       let { label } = this.upgradeSectionEditor;
       if (label.endsWith(':')) {
-        label = label.slice(0,-1).trim();
+        label = label.slice(0, -1).trim();
       }
       const section = ArmyBook.UpgradeSection.FromString(label);
 
+      // eslint-disable-next-line no-constant-condition
       if (section && false) {
-        // XXX we disable complex strings for now
+        // TODO we disable complex strings for now
         const commitLoad = { armyBookUid, upgradePackageUid, section };
         this.$store.commit('armyBooks/addUpgradePackageSection', commitLoad);
       } else {
-        console.info(`No valid section string, use the string as fallback.`);
+        console.info('No valid section string, use the string as fallback.');
         const simpleSection = { label, options: [] };
         const commitLoad = { armyBookUid, upgradePackageUid, section: simpleSection };
         this.$store.commit('armyBooks/addUpgradePackageSection', commitLoad);
@@ -342,19 +375,19 @@ export default {
      * parses the input and adds it to the options gains
      */
     calculateUnitCost(unit) {
-      const equipment = unit.equipment.map(e => {
-        //const rules = e.specialRules.map(sr => this.parseSpecialRuleString(sr));
-        let weapon = {
+      const equipment = unit.equipment.map((e) => {
+        // const rules = e.specialRules.map(sr => this.parseSpecialRuleString(sr));
+        const weapon = {
           range: e.range > 0 ? e.range : undefined,
           attacks: e.attacks,
           rules: e.specialRules.map(sr => sr.name),
         };
-        e.specialRules.forEach(sr => {
+        e.specialRules.forEach((sr) => {
           if (sr.rating) { weapon[sr.key] = sr.rating; }
         });
         return weapon;
       });
-      let calculatableUnit = {
+      const calculatableUnit = {
         name: unit.name,
         models: unit.size,
         quality: unit.quality,
@@ -362,16 +395,16 @@ export default {
         rules: unit.specialRules.map(sr => sr.name),
         equipment,
       };
-      unit.specialRules.forEach(sr => {
+      unit.specialRules.forEach((sr) => {
         if (sr.rating) {
           calculatableUnit[sr.key] = sr.rating;
         }
-      })
+      });
       this.calculatedCost = this.$oprPointCalculator
         ? this.$oprPointCalculator.unitCost(calculatableUnit)
         : undefined;
       if (this.costMode === 'automatic') {
-        unit.cost = Math.round(this.calculatedCost/5)*5;
+        unit.cost = Math.round(this.calculatedCost / 5) * 5;
       }
       return this.calculatedCost;
     },
@@ -379,31 +412,12 @@ export default {
       if (this.$oprPointCalculator) {
         const payload = { armyBookUid: this.armyBookId, upgradePackageUid: this.upgradePackageId };
         this.$store.dispatch('armyBooks/recalculateUpgradeCosts', payload);
-        } else {
+      } else {
         console.info('Point Calculator Feature disabled.');
       }
     }
-  },
-  filters: {
-    simpleWeaponString: function (weapon) {
-      const perks = [];
-      if (weapon.range > 0) {
-        perks.push(`${weapon.range}"`);
-      }
-      perks.push(`A${weapon.attacks}`);
-      if(weapon.specialRules.length > 0) {
-        perks.push(weapon.specialRules);
-      }
-      return `${weapon.label} (${perks.join(', ')})`;
-    },
-    costString: (cost) => {
-      if (cost === 0) return 'free';
-      if (cost > 0) return `+${cost}pts`;
-      if (cost < 0) return `${cost}pts`;
-      return '?';
-    },
   }
-}
+};
 
 </script>
 

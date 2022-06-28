@@ -13,6 +13,7 @@
               v-model="userInfo.username"
               outlined dense
               label="Username"
+              name="Username"
               required
               persistent-hint hint="Displayed publicly"
               :rules="usernameRules"
@@ -24,6 +25,7 @@
               v-model="userInfo.email"
               outlined dense
               label="Email"
+              name="Email"
               :rules="emailRules"
               persistent-hint hint="Keept private, used for sign in"
               required
@@ -37,6 +39,7 @@
               persistent-hint hint="Use only (at least 12) alphanumeric characters"
               outlined dense
               label="Password"
+              name="Password"
               :rules="passwordRules"
               :type="showPasswordPlain ? 'text' : 'password'"
               :append-icon="showPasswordPlain ? 'mdi-eye' : 'mdi-eye-off'"

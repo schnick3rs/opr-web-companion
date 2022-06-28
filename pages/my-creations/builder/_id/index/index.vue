@@ -1,21 +1,26 @@
 <template>
   <v-container>
-
     <v-btn
-      color="primary" outlined
+      color="primary"
+      outlined
       class="mt-2 mb-2"
       @click="createNewUnit()"
     >
-      <v-icon left>mdi-account-plus</v-icon>
+      <v-icon left>
+        mdi-account-plus
+      </v-icon>
       new Unit
     </v-btn>
 
     <v-btn
-      color="success" outlined
+      color="success"
+      outlined
       class="mt-2 mb-2"
       @click="openSyncUnitDialog"
     >
-      <v-icon left>mdi-dna</v-icon>
+      <v-icon left>
+        mdi-dna
+      </v-icon>
       inherit from other books
     </v-btn>
 
@@ -36,7 +41,7 @@
             size="64"
             style="margin: 0 auto;"
             indeterminate
-          ></v-progress-circular>
+          />
         </div>
         <v-container v-else>
           <v-row>
@@ -44,22 +49,22 @@
               <v-autocomplete
                 label="Parent army books"
                 hint="Type and select army book the pick units from"
-                @input="fetchParentArmyBookUnits"
                 :items="inheritanceEditor.armyBooks"
                 item-text="name"
                 item-value="uid"
                 return-object
                 outlined
-              ></v-autocomplete>
+                @input="fetchParentArmyBookUnits"
+              />
             </v-col>
             <v-col :cols="12">
               <v-autocomplete
+                v-model="inheritanceEditor.units"
                 :disabled="!inheritanceEditor.parentArmyBook"
                 :loading="inheritanceEditor.parentArmyBook && inheritanceEditor.parentArmyBookUnits.length <= 0"
                 label="Units to sync"
                 hint="Type and select army book the pick units from"
-                v-model="inheritanceEditor.units"
-                :items="this.inheritanceEditor.parentArmyBookUnits"
+                :items="inheritanceEditor.parentArmyBookUnits"
                 item-text="name"
                 item-value="uid"
                 return-object
@@ -67,8 +72,7 @@
                 multiple
                 small-chips
                 deletable-chips
-              >
-              </v-autocomplete>
+              />
             </v-col>
           </v-row>
         </v-container>
@@ -77,11 +81,10 @@
 
     <v-row>
       <v-col :cols="12" :md="6">
-
-        <v-pagination v-if="false" v-show="maxPageCount" v-model="pageModel" :length="maxPageCount"></v-pagination>
+        <v-pagination v-if="false" v-show="maxPageCount" v-model="pageModel" :length="maxPageCount" />
 
         <draggable v-model="units" dragable=".item" handle=".handle">
-          <template v-for="(unit, index) in units">
+          <template v-for="(unit) in units">
             <v-list-item
               :key="unit.id"
               three-line
@@ -96,8 +99,10 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{unit.name}} [{{unit.size}}]
-                  <v-icon small v-show="!!unit.sync">mdi-dna</v-icon>
+                  {{ unit.name }} [{{ unit.size }}]
+                  <v-icon v-show="!!unit.sync" small>
+                    mdi-dna
+                  </v-icon>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   {{ unit.equipment.map((e) => e.label || e.name).join(', ') }}
@@ -107,21 +112,29 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action style="display: flex; flex-direction: row; align-content: center; align-items: center;">
-                <div><v-list-item-action-text>{{unit.cost}}pts</v-list-item-action-text></div>
+                <div><v-list-item-action-text>{{ unit.cost }}pts</v-list-item-action-text></div>
                 <div>
                   <v-menu bottom left offset-y>
-                    <template v-slot:activator="{ on, attrs }">
+                    <template #activator="{ on, attrs }">
                       <v-btn icon color="primary" v-bind="attrs" v-on="on">
                         <v-icon>mdi-dots-vertical</v-icon>
                       </v-btn>
                     </template>
                     <v-list>
                       <v-list-item @click.stop="cloneUnit(unit.id)">
-                        <v-list-item-icon><v-icon color="primary">mdi-plus-box-multiple</v-icon></v-list-item-icon>
+                        <v-list-item-icon>
+                          <v-icon color="primary">
+                            mdi-plus-box-multiple
+                          </v-icon>
+                        </v-list-item-icon>
                         <v-list-item-content><v-list-item-title>Duplicate</v-list-item-title></v-list-item-content>
                       </v-list-item>
                       <v-list-item @click.stop="deleteUnit(unit.id)">
-                        <v-list-item-icon><v-icon color="error">mdi-delete</v-icon></v-list-item-icon>
+                        <v-list-item-icon>
+                          <v-icon color="error">
+                            mdi-delete
+                          </v-icon>
+                        </v-list-item-icon>
                         <v-list-item-content><v-list-item-title>Remove</v-list-item-title></v-list-item-content>
                       </v-list-item>
                     </v-list>
@@ -140,7 +153,9 @@
           class="mt-2 mb-2"
           @click="reOrderButtonLocked = !reOrderButtonLocked"
         >
-          <v-icon left>mdi-lock</v-icon>
+          <v-icon left>
+            mdi-lock
+          </v-icon>
           Re-order Units by default algorithm
         </v-btn>
         <v-btn
@@ -151,7 +166,9 @@
           class="mt-2 mb-2"
           @click="reOrderUnits()"
         >
-          <v-icon left>mdi-lock-open</v-icon>
+          <v-icon left>
+            mdi-lock-open
+          </v-icon>
           Re-order Units by default algorithm
         </v-btn>
 
@@ -159,41 +176,38 @@
 
         <v-btn
           block
-          color="primary" outlined
+          color="primary"
+          outlined
           class="mt-2 mb-2"
-          @click="resetPageSplit()"
           disabled
+          @click="resetPageSplit()"
         >
           Reset page splits (not yet)
         </v-btn>
-
       </v-col>
 
-      <v-col :cols="12" :md="6" v-if="selectedUnitId">
-
+      <v-col v-if="selectedUnitId" :cols="12" :md="6">
         <opr-army-book-unit-editor
           :army-book-id="armyBookId"
           :unit-id="selectedUnitId"
-        ></opr-army-book-unit-editor>
-
+        />
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
 <script>
-import {adjectives, uniqueNamesGenerator} from 'unique-names-generator';
-const OprArmyBookUnitEditor = () => import(/* webpackChunkName: "OprArmyBookUnitEditor" */ "~/components/army-book/OprArmyBookUnitEditor");
-const OprDialog = () => import(/* webpackChunkName: "OprDialog" */ "~/components/shared/OprDialog");
+import { adjectives, uniqueNamesGenerator } from 'unique-names-generator';
+const OprArmyBookUnitEditor = () => import(/* webpackChunkName: "OprArmyBookUnitEditor" */ '~/components/army-book/OprArmyBookUnitEditor');
+const OprDialog = () => import(/* webpackChunkName: "OprDialog" */ '~/components/shared/OprDialog');
 
 export default {
-  name: 'units',
+  name: 'Units',
   components: {
     OprArmyBookUnitEditor,
     OprDialog,
   },
-  async asyncData({ params }) {
+  asyncData({ params }) {
     return {
       armyBookId: params.id,
     };
@@ -234,8 +248,39 @@ export default {
       }
     };
   },
+  computed: {
+    units: {
+      get() {
+        return this.$store.getters['armyBooks/units'](this.armyBookId);
+      },
+      set(items) {
+        console.info(items);
+        const itemIds = items.map((item, index) => {
+          if (!item) {
+            console.info('item undefined at index', index);
+          }
+          return item.id;
+        });
+        const { armyBookId } = this;
+        this.$store.commit('armyBooks/unitsSetOrder', { armyBookId, items: itemIds });
+        // this.$store.commit('armyBooks/LOADING', { status: true, message: 'reorder units...' });
+        this.$store.commit('armyBooks/updateUnits', { armyBookUid: armyBookId });
+        // this.$store.commit('armyBooks/LOADING', { status: false });
+      },
+    },
+    maxPageCount() {
+      if (this.units) {
+        const pages = this.units.map(unit => unit.splitPageNumber).filter(page => !isNaN(page));
+        return Math.max(...pages);
+      }
+      return 1;
+    },
+    armyBookGameSystemSlug() {
+      return this.$store.getters['armyBooks/armyBookGameSystemSlug'](this.armyBookId);
+    },
+  },
   methods: {
-    createNewUnit(){
+    createNewUnit() {
       const armyBookUid = this.armyBookId;
       const name = this.generateRandomUnitName();
       const quality = Math.ceil(this.median(this.units.map(u => u.quality))) || 4;
@@ -248,10 +293,10 @@ export default {
     },
     generateRandomUnitName() {
       const eel = ['Eel'];
-      const champ = ['Boy','Brother','Sister','Warrior','Veteran','Champion','Rookie','Pal'];
-      const squad = ['Squad','Brothers','Sisters','Warriors','Veterans','Gang','Mob','Boyz'];
+      const champ = ['Boy', 'Brother', 'Sister', 'Warrior', 'Veteran', 'Champion', 'Rookie', 'Pal'];
+      // const squad = ['Squad', 'Brothers', 'Sisters', 'Warriors', 'Veterans', 'Gang', 'Mob', 'Boyz'];
       const config = {
-        dictionaries: [ adjectives, eel, champ ],
+        dictionaries: [adjectives, eel, champ],
         separator: ' ',
         style: 'capital',
         length: 3,
@@ -269,11 +314,11 @@ export default {
       this.showSyncUnitDialog = true;
       this.inheritanceEditor.syncUnitDialogLoading = true;
       const gameSystemSlug = this.armyBookGameSystemSlug;
-      this.$axios.get('/api/army-books/', {params: { gameSystemSlug }})
-      .then(({data}) => {
-        this.inheritanceEditor.armyBooks = data;
-        this.inheritanceEditor.syncUnitDialogLoading = false;
-      });
+      this.$axios.get('/api/army-books/', { params: { gameSystemSlug } })
+        .then(({ data }) => {
+          this.inheritanceEditor.armyBooks = data;
+          this.inheritanceEditor.syncUnitDialogLoading = false;
+        });
     },
     async fetchParentArmyBookUnits(armyBook) {
       this.inheritanceEditor.parentArmyBook = armyBook;
@@ -289,19 +334,19 @@ export default {
           parentArmyBookId: this.inheritanceEditor.parentArmyBook.uid,
           unitId: unit.id,
           sync: true,
-        }
+        };
       });
       const payload = { armyBookUid: this.armyBookId, units };
       this.$store.dispatch('armyBooks/inheritUnits', payload);
       this.closeSyncUnitDialog();
     },
-    cloneUnit(unitId){
+    cloneUnit(unitId) {
       this.selectedUnitId = undefined;
       const armyBookUid = this.armyBookId;
       this.$store.dispatch('armyBooks/cloneUnit', { armyBookUid, unitId })
         .then(unit => this.openUnitEditor(unit));
     },
-    deleteUnit(unitId){
+    deleteUnit(unitId) {
       this.selectedUnitId = undefined;
       const armyBookUid = this.armyBookId;
       this.$store.dispatch('armyBooks/deleteUnit', { armyBookUid, unitId });
@@ -311,55 +356,22 @@ export default {
     },
     resetPageSplit() {
     },
-    median(values){
-      if(values.length ===0) return 0;
+    median(values) {
+      if (values.length === 0) { return 0; }
 
-      values.sort(function(a,b){
-        return a-b;
+      values.sort(function(a, b) {
+        return a - b;
       });
 
-      let half = Math.floor(values.length / 2);
+      const half = Math.floor(values.length / 2);
 
-      if (values.length % 2)
-        return values[half];
+      if (values.length % 2) { return values[half]; }
 
       return (values[half - 1] + values[half]) / 2.0;
     },
-  },
-  computed: {
-    units: {
-      get() {
-        return this.$store.getters['armyBooks/units'](this.armyBookId);
-      },
-      set(items) {
-        console.info(items)
-        const itemIds = items.map((item, index) => {
-          if (!item) {
-            console.info('item undefined at index', index);
-          }
-          return item.id;
-        });
-        const {armyBookId} = this;
-        this.$store.commit('armyBooks/unitsSetOrder', {armyBookId, items: itemIds});
-        //this.$store.commit('armyBooks/LOADING', { status: true, message: 'reorder units...' });
-        this.$store.commit('armyBooks/updateUnits', {armyBookUid: armyBookId});
-        //this.$store.commit('armyBooks/LOADING', { status: false });
-      },
-    },
-    maxPageCount() {
-      if (this.units) {
-        const pages = this.units.map((unit) => unit.splitPageNumber).filter((page) => !isNaN(page));
-        return Math.max(...pages);
-      }
-      return 1;
-    },
-    armyBookGameSystemSlug() {
-      return this.$store.getters['armyBooks/armyBookGameSystemSlug'](this.armyBookId);
-    },
   }
-}
+};
 </script>
-
 
 <style scoped lang="scss">
 .selected {

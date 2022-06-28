@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <v-dialog
       v-model="vuexLoading"
       persistent
@@ -14,22 +13,25 @@
             style="margin: 0 auto;"
             indeterminate
             color="orange lighten-2"
-          ></v-progress-linear>
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
 
-    <opr-breadcrumbs-row :items="breadcrumbItems"></opr-breadcrumbs-row>
+    <opr-breadcrumbs-row :items="breadcrumbItems" />
 
     <template v-if="isOwner">
       <v-row v-show="showPointCalcOptions" dense>
         <v-col>
           <v-btn
             v-if="showPointCalcOptions"
-            small color="info"
+            small
+            color="info"
             @click="recalculateArmyBook()"
           >
-            <v-icon left>mdi-auto-fix</v-icon>
+            <v-icon left>
+              mdi-auto-fix
+            </v-icon>
             CALC Army Book
           </v-btn>
         </v-col>
@@ -45,16 +47,17 @@
               exact
               :to="`/my-creations/builder/${armyBookId}/${child.to}`"
             >
-              <v-icon left small>{{child.icon}}</v-icon>
+              <v-icon left small>
+                {{ child.icon }}
+              </v-icon>
               {{ child.label }}
             </v-tab>
-
           </v-tabs>
         </v-col>
       </v-row>
 
       <v-row>
-        <nuxt-child></nuxt-child>
+        <nuxt-child />
       </v-row>
     </template>
 
@@ -71,18 +74,18 @@
         </v-col>
       </v-row>
     </template>
-
   </v-container>
 </template>
 
 <script>
-const OprBreadcrumbsRow = () => import(/* webpackChunkName: "OprBreadcrumbsRow" */ "~/components/shared/OprBreadcrumbsRow");
+const OprBreadcrumbsRow = () => import(/* webpackChunkName: "OprBreadcrumbsRow" */ '~/components/shared/OprBreadcrumbsRow');
 
 export default {
-  name: 'index',
+  name: 'Index',
   components: {
     OprBreadcrumbsRow,
   },
+  middleware: 'isArmyBooks',
   async asyncData({ $axios, params }) {
     const armyBookId = params.id;
     let isOwner = false;
@@ -113,7 +116,7 @@ export default {
     };
   },
   head() {
-    const title = `${this.armyBookName}`
+    const title = `${this.armyBookName}`;
     return {
       title,
     };
@@ -140,11 +143,8 @@ export default {
     vuexLoadingMessage() {
       return this.$store.getters['armyBooks/loadingMessage'];
     },
-    hasPointCalcRights() {
-      return this.$store.state.auth?.user?.isAdmin;
-    },
     showPointCalcOptions() {
-      return this.$config.oprPointCalculatorEnabled && this.hasPointCalcRights;
+      return this.$config.oprPointCalculatorEnabled;
     },
     armyBookName() {
       return this.$store.getters['armyBooks/armyBookName'](this.armyBookId);
@@ -160,7 +160,7 @@ export default {
     armyBookId: {
       handler(armyBookUid) {
         if (armyBookUid && this.isOwner) {
-          this.$store.dispatch('armyBooks/loadOne', {armyBookUid});
+          this.$store.dispatch('armyBooks/loadOne', { armyBookUid });
         }
       },
       immediate: true,

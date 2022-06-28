@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-row justify-sm="center">
-
       <v-dialog
         v-model="vuexLoading"
         persistent
@@ -15,7 +14,7 @@
               style="margin: 0 auto;"
               indeterminate
               color="primary"
-            ></v-progress-linear>
+            />
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -29,11 +28,13 @@
           item-value="id"
           return-object
           label="Game System"
-          dense outlined
+          dense
+          outlined
           required
-          persistent-hint hint="Which game system is this build for?"
+          persistent-hint
+          hint="Which game system is this build for?"
           @change="fetchArmyBooks(gameSystem)"
-        ></v-select>
+        />
       </v-col>
 
       <!-- parent army book -->
@@ -44,19 +45,20 @@
           item-text="name"
           item-value="uid"
           label="Parent Book"
-          dense outlined
+          dense
+          outlined
           required
           @change="fetchArmyBook"
         >
-          <template v-slot:item="{ item }">
+          <template #item="{ item }">
             <template>
               <v-list-item-avatar>
                 <img :src="item.coverImagePath || `/img/army-books/${item.name.toLowerCase().replace(/\W/gm, '-')}.png`">
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title v-text="item.name"></v-list-item-title>
-                <v-list-item-subtitle v-text="item.hint"></v-list-item-subtitle>
-                <v-list-item-subtitle v-if="item.factionName" v-text="item.factionName"></v-list-item-subtitle>
+                <v-list-item-title v-text="item.name" />
+                <v-list-item-subtitle v-text="item.hint" />
+                <v-list-item-subtitle v-if="item.factionName" v-text="item.factionName" />
               </v-list-item-content>
             </template>
           </template>
@@ -68,12 +70,14 @@
         <v-text-field
           v-model="name"
           label="Name"
-          dense outlined
+          dense
+          outlined
           required
-          persistent-hint hint="A shot name describing the army book"
+          persistent-hint
+          hint="A shot name describing the army book"
           append-icon="mdi-dice-6"
           @click:append="rerollRandomArmyName"
-        ></v-text-field>
+        />
       </v-col>
 
       <!-- army book one-line-hint -->
@@ -81,18 +85,21 @@
         <v-text-field
           v-model="hint"
           label="Hint (recommended)"
-          dense outlined
-          persistent-hint hint="One sentence describing the army"
-        ></v-text-field>
+          dense
+          outlined
+          persistent-hint
+          hint="One sentence describing the army"
+        />
       </v-col>
-
     </v-row>
 
     <v-row justify-sm="center">
       <v-col cols="4">
         <h4>
           Select units for cloning
-          <v-btn x-small color="success" :disabled="loadingParent" @click="toggleCloneSelect">Select all</v-btn>
+          <v-btn x-small color="success" :disabled="loadingParent" @click="toggleCloneSelect">
+            Select all
+          </v-btn>
         </h4>
         <v-card tile>
           <v-list style="height: 400px; overflow-y: scroll;">
@@ -106,17 +113,17 @@
                 size="64"
                 style="margin: 0 auto;"
                 indeterminate
-              ></v-progress-circular>
+              />
               <v-list-item v-for="unit in clonableUnits" :key="unit.id" two-line>
                 <v-list-item-content>
-                  <v-list-item-title v-text="`${unit.name} [${unit.size}]`"></v-list-item-title>
+                  <v-list-item-title v-text="`${unit.name} [${unit.size}]`" />
                   <v-list-item-subtitle>
                     {{ unit.equipment.map((e) => e.label).join(', ') }},
                     {{ unit.specialRules.map((e) => e.name).join(', ') }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-list-item-action-text>{{unit.cost}}pts</v-list-item-action-text>
+                  <v-list-item-action-text>{{ unit.cost }}pts</v-list-item-action-text>
                 </v-list-item-action>
               </v-list-item>
             </v-list-item-group>
@@ -130,9 +137,11 @@
           <v-btn
             x-small
             color="success"
-            @click="toggleSyncSelect"
             :disabled="loadingParent"
-          >Select all</v-btn>
+            @click="toggleSyncSelect"
+          >
+            Select all
+          </v-btn>
         </h4>
         <v-card tile>
           <v-list style="height: 400px; overflow-y: scroll;">
@@ -142,19 +151,23 @@
               size="64"
               style="margin: 0 auto;"
               indeterminate
-            ></v-progress-circular>
+            />
             <v-list-item-group
               v-model="unitsToSync"
               multiple
             >
               <v-list-item v-for="unit in syncableUnits" :key="unit.id">
-                <template v-slot:default="{ active }">
+                <template #default="{ active }">
                   <v-list-item-content>
-                    <v-list-item-title v-text="unit.name"></v-list-item-title>
+                    <v-list-item-title v-text="unit.name" />
                   </v-list-item-content>
                   <v-list-item-action>
-                    <v-icon v-if="active">mdi-sync</v-icon>
-                    <v-icon v-else>mdi-sync-off</v-icon>
+                    <v-icon v-if="active">
+                      mdi-sync
+                    </v-icon>
+                    <v-icon v-else>
+                      mdi-sync-off
+                    </v-icon>
                   </v-list-item-action>
                 </template>
               </v-list-item>
@@ -164,24 +177,25 @@
       </v-col>
 
       <v-col cols="4" offset="4">
-        <v-btn block color="primary" @click="createArmyWithClones">Create army and open editor</v-btn>
+        <v-btn block color="primary" @click="createArmyWithClones">
+          Create army and open editor
+        </v-btn>
       </v-col>
-
     </v-row>
   </div>
 </template>
 
 <script>
-import {adjectives, uniqueNamesGenerator} from "unique-names-generator";
+import { adjectives, uniqueNamesGenerator } from 'unique-names-generator';
 
 export default {
-  name: 'index',
+  name: 'Index',
   async asyncData({ $axios }) {
     const { data } = await $axios.get('/api/game-systems/');
     const gameSystems = data.filter(gs => gs.armyBookBuilderEnabled);
     return {
       gameSystems,
-    }
+    };
   },
   data() {
     return {
@@ -196,24 +210,55 @@ export default {
       unitsToSync: [],
     };
   },
+  computed: {
+    vuexLoading() {
+      return this.$store.getters['armyBooks/loading'];
+    },
+    vuexLoadingMessage() {
+      return this.$store.getters['armyBooks/loadingMessage'];
+    },
+    gameSystemOptions() {
+      if (this.gameSystems) {
+        return this.gameSystems
+          .filter(system => system.armyBookBuilderEnabled);
+      }
+      return [];
+    },
+    loadingParent() {
+      return this.parentArmyBook && (!this.clonableUnits || this.clonableUnits.length <= 0);
+    },
+    clonableUnits() {
+      if (this.parentArmyBook) {
+        return this.parentArmyBook.units;
+      }
+      return [];
+    },
+    syncableUnits() {
+      if (this.parentArmyBook) {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        return this.unitsToClone.sort().map(index => this.parentArmyBook.units[index]);
+      }
+      return [];
+    },
+  },
   methods: {
     generateRandomArmyName(name = 'Eels') {
-      const adjective = uniqueNamesGenerator({ dictionaries: [ adjectives ], style: 'capital', length: 1 });
+      const adjective = uniqueNamesGenerator({ dictionaries: [adjectives], style: 'capital', length: 1 });
       return `${adjective} ${name}`;
     },
     generateRandomArmyHint() {
-      const adjective = uniqueNamesGenerator({ dictionaries: [ adjectives, adjectives ], length: 2, separator: ' and ' });
+      const adjective = uniqueNamesGenerator({ dictionaries: [adjectives, adjectives], length: 2, separator: ' and ' });
       return `Those ${this.name} are ${adjective}.`;
     },
-    rerollRandomArmyName(){
+    rerollRandomArmyName() {
       this.name = this.generateRandomArmyName(this.parentArmyBook?.name);
       this.hint = this.generateRandomArmyHint();
     },
-    async fetchArmyBooks({slug}) {
+    async fetchArmyBooks({ slug }) {
       this.unitsToClone = [];
       this.unitsToSync = [];
       this.parentArmyBook = undefined;
-      const { data } = await this.$axios.get('/api/army-books/', {params: {gameSystemSlug: slug}});
+      const { data } = await this.$axios.get('/api/army-books/', { params: { gameSystemSlug: slug } });
       this.armyBooks = data;
     },
     async fetchArmyBook(armyBookId) {
@@ -243,38 +288,8 @@ export default {
         this.$router.push(`/my-creations/builder/${armyBookUid}`);
       });
     }
-  },
-  computed: {
-    vuexLoading() {
-      return this.$store.getters['armyBooks/loading'];
-    },
-    vuexLoadingMessage() {
-      return this.$store.getters['armyBooks/loadingMessage'];
-    },
-    gameSystemOptions() {
-      if (this.gameSystems) {
-        return this.gameSystems
-          .filter(system => system.armyBookBuilderEnabled)
-      }
-      return [];
-    },
-    loadingParent() {
-      return this.parentArmyBook && (!this.clonableUnits || this.clonableUnits.length <= 0);
-    },
-    clonableUnits() {
-      if (this.parentArmyBook) {
-        return this.parentArmyBook.units;
-      }
-      return [];
-    },
-    syncableUnits() {
-      if (this.parentArmyBook) {
-        return this.unitsToClone.sort().map(index => this.parentArmyBook.units[index]) ;
-      }
-      return [];
-    },
   }
-}
+};
 </script>
 
 <style scoped>

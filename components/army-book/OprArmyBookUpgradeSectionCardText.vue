@@ -4,58 +4,70 @@
   >
     <div v-if="sectionEditor.show">
       <v-text-field
+        v-model="sectionEditor.label"
         autofocus
         dense
         outlined
-        v-model="sectionEditor.label"
         hide-details
         @blur="saveLabelEditor(sectionEditor.label)"
         @keypress.enter="saveLabelEditor(sectionEditor.label)"
         @keydown.esc="cancelLabelEditor"
-      ></v-text-field>
+      />
     </div>
-    <h4 class="text-center" v-else>
+    <h4 v-else class="text-center">
       <v-icon
         :disabled="sectionIndex === 0"
-        @click="moveUpgradeSection(sectionIndex, sectionIndex-1)"
         color="primary"
-      >mdi-arrow-up-bold-circle-outline</v-icon>
+        @click="moveUpgradeSection(sectionIndex, sectionIndex-1)"
+      >
+        mdi-arrow-up-bold-circle-outline
+      </v-icon>
       <v-icon
         :disabled="sectionIndex >= upgradePackageSectionCount-1"
-        @click="moveUpgradeSection(sectionIndex, sectionIndex+1)"
         color="primary"
-      >mdi-arrow-down-bold-circle-outline</v-icon>
+        @click="moveUpgradeSection(sectionIndex, sectionIndex+1)"
+      >
+        mdi-arrow-down-bold-circle-outline
+      </v-icon>
       <span @click="openLabelEditor(section, sectionIndex)">{{ section.label }}:</span>
-      <v-icon v-if="!parsedSectionLabel" color="warning">mdi-alert</v-icon>
-      <v-icon v-else v-show="false" color="success">mdi-check-circle</v-icon>
+      <v-icon v-if="!parsedSectionLabel" color="warning">
+        mdi-alert
+      </v-icon>
+      <v-icon v-else v-show="false" color="success">
+        mdi-check-circle
+      </v-icon>
       <v-hover v-slot="{ hover }">
-        <v-icon v-if="hover" color="error" small @click="removeUpgradeSection(sectionIndex)">mdi-delete-empty</v-icon>
-        <v-icon v-else small>mdi-delete</v-icon>
+        <v-icon v-if="hover" color="error" small @click="removeUpgradeSection(sectionIndex)">
+          mdi-delete-empty
+        </v-icon>
+        <v-icon v-else small>
+          mdi-delete
+        </v-icon>
       </v-hover>
     </h4>
     <v-simple-table dense class="mb-2">
-      <template v-slot:default>
+      <template #default>
         <tbody>
-        <template v-for="(option, optionIndex) in section.options">
-          <opr-army-book-upgrade-option-row
-            :key="`${optionIndex}-${option.label}-${option.cost}`"
-            :army-book-id="armyBookId"
-            :upgrade-package-id="upgradePackageId"
-            :section-index="sectionIndex"
-            :option="option"
-            :option-count="section.options.length"
-            :option-index="optionIndex"
-          ></opr-army-book-upgrade-option-row>
-        </template>
-        <tr>
-          <td colspan="7">
-            <opr-army-book-upgrade-option-builder
+          <template v-for="(option, optionIndex) in section.options">
+            <opr-army-book-upgrade-option-row
+              :key="`${optionIndex}-${option.label}-${option.cost}`"
               :army-book-id="armyBookId"
               :upgrade-package-id="upgradePackageId"
               :section-index="sectionIndex"
+              :option="option"
+              :option-count="section.options.length"
+              :option-index="optionIndex"
             />
-          </td>
-        </tr>
+          </template>
+          <tr>
+            <td colspan="7">
+              <opr-army-book-upgrade-option-builder
+                :army-book-id="armyBookId"
+                :upgrade-package-id="upgradePackageId"
+                :section-index="sectionIndex"
+              />
+            </td>
+          </tr>
         </tbody>
       </template>
     </v-simple-table>
@@ -63,9 +75,9 @@
 </template>
 
 <script>
-import OprArmyBookUpgradeOptionRow from "./OprArmyBookUpgradeOptionRow";
-import OprArmyBookUpgradeOptionBuilder from "./OprArmyBookUpgradeOptionBuilder";
 import { ArmyBook } from 'opr-army-book-helper';
+import OprArmyBookUpgradeOptionRow from './OprArmyBookUpgradeOptionRow';
+import OprArmyBookUpgradeOptionBuilder from './OprArmyBookUpgradeOptionBuilder';
 
 export default {
   name: 'OprArmyBookUpgradeSectionCardText',
@@ -88,9 +100,6 @@ export default {
     };
   },
   computed: {
-    hasPointCalcRights() {
-      return this.$store.state.auth?.user?.isAdmin;
-    },
     sectionCode() {
       return {
         ...this.section,
@@ -155,7 +164,7 @@ export default {
       this.savePackage();
     },
   },
-}
+};
 </script>
 
 <style scoped>

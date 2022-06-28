@@ -22,12 +22,17 @@ try {
   console.error(e);
 }
 
-export async function query(text, values = []) {
+export async function query(text, values = []): Promise<any> {
   const { rows } = await pool.query(text, values);
   return rows;
 }
 
-export async function map(text, values = [], func) {
+export async function queryOne(text, values = []): Promise<any> {
+  const { rows } = await pool.query(text, values);
+  return rows[0];
+}
+
+export async function map(text, values = [], func): Promise<any> {
   const { rows } = await pool.query(text, values);
   return rows.map(row => func(row));
 }

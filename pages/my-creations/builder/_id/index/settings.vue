@@ -3,11 +3,10 @@
     <v-row>
       <v-col :cols="12" :md="6">
         <v-row>
-
           <v-col :cols="12">
             <v-chip-group
-              multiple
               v-model="armyBookEnabledGameSystems"
+              multiple
               active-class="info"
             >
               <v-chip
@@ -21,54 +20,58 @@
                     :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
                   />
                 </v-avatar>
-                {{ gameSystem.aberration}}
+                {{ gameSystem.aberration }}
               </v-chip>
             </v-chip-group>
           </v-col>
 
           <v-col :cols="12">
             <v-text-field
-              outlined dense
               v-model="armyBookVersionString"
-              persistent-hint hint="e.g. v1.2, draft, wip"
+              outlined
+              dense
+              persistent-hint
+              hint="e.g. v1.2, draft, wip"
               label="Version"
-            ></v-text-field>
+            />
           </v-col>
 
           <v-col :cols="12">
             <v-checkbox
-              inset dense
               v-model="armyBookIsPublic"
+              inset
+              dense
               label="Public"
               hint="Enable to make this visible to others"
               persistent-hint
-            ></v-checkbox>
+            />
           </v-col>
 
           <v-col :cols="12">
             <v-checkbox
-              inset dense
               v-model="armyBookIsLive"
+              inset
+              dense
               label="Ready for play"
               hint="Enable to show it is ready to play"
               persistent-hint
-            ></v-checkbox>
+            />
           </v-col>
 
           <v-col :cols="12">
             <v-checkbox
-              inset dense
               v-model="armyBookIsOfficial"
+              inset
+              dense
               label="Official Armybook"
               hint="Enable to mark this as an official OPR army book"
               persistent-hint
-            ></v-checkbox>
+            />
           </v-col>
-
         </v-row>
       </v-col>
 
-      <v-col :cols="12" :md="6" v-if="armyBookEnabledGameSystems">
+      <v-col v-if="armyBookEnabledGameSystems" :cols="12" :md="6">
         <v-card>
           <v-list>
             <v-list-item
@@ -82,10 +85,10 @@
                   alt="Avatar"
                   :src="`/img/game-systems/${gameSystem.slug}-avatar.jpg`"
                   :class="{ 'img--greyscale': !armyBookEnabledGameSystems.includes(gameSystem.id) }"
-                />
+                >
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title>{{ gameSystem.shortname}}</v-list-item-title>
+                <v-list-item-title>{{ gameSystem.shortname }}</v-list-item-title>
               </v-list-item-content>
               <v-list-item-action style="display: inline;">
                 <v-btn icon color="primary" @click="shareViaWebShare(gameSystem.id)">
@@ -107,14 +110,13 @@
         </v-card>
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
 <script>
 
 export default {
-  name: 'settings',
+  name: 'SettingsTab',
   async asyncData({ $axios, params }) {
     const { data } = await $axios.get('/api/game-systems/');
     return {
@@ -122,34 +124,15 @@ export default {
       gameSystems: data.filter(system => system.armyBookBuilderEnabled),
     };
   },
-  methods: {
-    saveDebounced() {
-      clearTimeout(this._timerId);
-      this._timerId = setTimeout(() => {this.save()}, 500);
-    },
-    save() {
-      this.$store.dispatch('armyBooks/updateGeneralInformation', { armyBookUid: this.armyBookId });
-    },
-    shareViaWebShare(gameSystemId) {
-      navigator.share({
-        title: this.armyBookName,
-        text: this.armyBookHint,
-        url: `/army-books/view/${this.armyBookId}~${gameSystemId}/print`
-      })
-    },
-  },
   computed: {
-    hasPointCalcRights() {
-      return this.$store.state.auth?.user?.isAdmin;
-    },
     showPointCalcOptions() {
-      return this.$config.oprPointCalculatorEnabled && this.hasPointCalcRights;
+      return this.$config.oprPointCalculatorEnabled;
     },
     gameSystemOptions() {
       if (this.gameSystems) {
         return this.gameSystems
           .filter(system => system.armyBookBuilderEnabled)
-          .map(system => {
+          .map((system) => {
             return {
               text: system.fullname,
               value: system.id,
@@ -190,7 +173,7 @@ export default {
         return this.$store.getters['armyBooks/armyBookIsPublic'](this.armyBookId);
       },
       set(value) {
-        this.$store.commit('armyBooks/setArmyBookIsPublic', {id: this.armyBookId, value});
+        this.$store.commit('armyBooks/setArmyBookIsPublic', { id: this.armyBookId, value });
         this.saveDebounced();
       },
     },
@@ -213,7 +196,23 @@ export default {
       },
     },
   },
-}
+  methods: {
+    saveDebounced() {
+      clearTimeout(this._timerId);
+      this._timerId = setTimeout(() => { this.save(); }, 500);
+    },
+    save() {
+      this.$store.dispatch('armyBooks/updateGeneralInformation', { armyBookUid: this.armyBookId });
+    },
+    shareViaWebShare(gameSystemId) {
+      navigator.share({
+        title: this.armyBookName,
+        text: this.armyBookHint,
+        url: `/army-books/view/${this.armyBookId}~${gameSystemId}/print`
+      });
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

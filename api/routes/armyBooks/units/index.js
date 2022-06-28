@@ -3,7 +3,7 @@ import { applyPatch } from 'rfc6902';
 import calc from 'opr-point-calculator-lib';
 import { ArmyBookHelper, CalcHelper } from 'opr-army-book-helper';
 import * as armyBookService from '../army-book-service';
-import * as userAccountService from '../../auth/user-account-service';
+import UserAccountService from '../../../services/userAccountService';
 import * as unitService from './unit-service';
 
 const router = new Router({ mergeParams: true });
@@ -52,10 +52,10 @@ router.post('/sort', async (request, response) => {
 });
 
 router.post('/calculate', async (request, response) => {
-  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await UserAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
-  if (isAdmin === false) {
+  if (roles.includes('admin') === false) {
     response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
@@ -243,10 +243,10 @@ router.delete('/:unitId', async (request, response) => {
 });
 
 router.get('/:unitId/calculate', async (request, response) => {
-  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await UserAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
-  if (isAdmin === false) {
+  if (roles.includes('admin') === false) {
     response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
@@ -268,10 +268,10 @@ router.get('/:unitId/calculate', async (request, response) => {
 });
 
 router.patch('/:unitId/calculate', async (request, response) => {
-  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await UserAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
-  if (isAdmin === false) {
+  if (roles.includes('admin') === false) {
     response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }
@@ -320,10 +320,10 @@ router.patch('/:unitId/calculate', async (request, response) => {
 });
 
 router.patch('/:unitId/resync', async (request, response) => {
-  const { isAdmin } = await userAccountService.getUserByUuid(request.me.userUuid);
+  const { roles } = await UserAccountService.getUserByUuid(request.me.userUuid);
 
   // only admins are allowed to recalculate
-  if (isAdmin === false) {
+  if (roles.includes('admin') === false) {
     response.status(403).json({ message: 'Your account does not allow to import army books.' });
     return;
   }

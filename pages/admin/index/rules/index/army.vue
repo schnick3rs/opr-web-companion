@@ -1,12 +1,12 @@
 <template>
-
+  <span></span>
 </template>
 
 <script>
 export default {
-  name: "army",
+  name: 'army',
   layout: 'admin',
-}
+};
 </script>
 
 <style scoped>
