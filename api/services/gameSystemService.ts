@@ -1,5 +1,5 @@
 // @ts-ignore
-import {query} from '../config/database';
+import {query, queryOne} from '../config/database';
 import {ISimpleGameSystem, ISpecialRule} from "../models/DbInterfaces";
 
 export default class GameSystemService {
@@ -28,7 +28,7 @@ export default class GameSystemService {
           GROUP BY game_system_id
         ) AS ab ON ab.game_system_id = game_systems.id
       ORDER BY sort_order`;
-    return await query(sql);
+    return await query<ISimpleGameSystem>(sql);
   }
 
   public static async findById(id: number): Promise<ISimpleGameSystem> {
@@ -43,8 +43,7 @@ export default class GameSystemService {
         game_systems."armyBookBuilderEnabled"
       FROM opr_companion.game_systems
       WHERE id = $1`;
-    const rows = await query(sql, [id]);
-    return rows[0];
+    return await queryOne<ISimpleGameSystem>(sql, [id]);
   }
 
   public static async findBySlug(slug: string): Promise<ISimpleGameSystem> {
@@ -59,8 +58,7 @@ export default class GameSystemService {
         game_systems."armyBookBuilderEnabled"
       FROM opr_companion.game_systems
       WHERE slug = $1`;
-    const rows = await query(sql, [slug]);
-    return rows[0];
+    return await queryOne<ISimpleGameSystem>(sql, [slug]);
   }
 
   public static async findSpecialRules(slug: string): Promise<ISpecialRule[]> {
@@ -71,6 +69,6 @@ export default class GameSystemService {
           ON special_rules."gameSystemId" = game_systems.id
       WHERE slug = $1
       ORDER BY special_rules.name`;
-    return await query(sql, [slug]);
+    return await query<ISpecialRule>(sql, [slug]);
   }
 }

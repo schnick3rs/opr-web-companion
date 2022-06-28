@@ -48,7 +48,7 @@ export default class UserAccountService {
   }
 
   public static async getAllUsers(): Promise<IPrivateUser[]> {
-    return await query(
+    return await query<IPrivateUser>(
       `SELECT
       id,
       username,
@@ -65,7 +65,7 @@ export default class UserAccountService {
   }
 
   public static async getUserByUuid(uuid): Promise<IPrivateUser> {
-    return await queryOne(
+    return await queryOne<IPrivateUser>(
       `SELECT
       id,
       username,
@@ -108,7 +108,7 @@ export default class UserAccountService {
 
   public static async getPatreonData(uuid: string): Promise<any> {
     // Save refresh token against the user?
-    return await queryOne(
+    return await queryOne<any>(
       `SELECT
         patreon_refresh_token AS "patreonRefreshToken",
         patreon_active_until AS "patreonActiveUntil",
@@ -146,7 +146,7 @@ export default class UserAccountService {
 
   public static async getUserPatreonRefreshToken(userId: number): Promise<string> {
     // Save refresh token against the user?
-    const rows = await queryOne(
+    const rows = await queryOne<any>(
       'SELECT patreon_refresh_token AS "patreonRefreshToken" FROM opr_companion.user_accounts WHERE id = $1',
       [userId]
     );
@@ -183,7 +183,7 @@ export default class UserAccountService {
     const emailHash = await this.hashEmail(email);
     const passwordHash = bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
     const uuid = nanoid(11);
-    const rows = await query(
+    const rows = await query<any>(
       'INSERT INTO opr_companion.user_accounts (email_hashed, password, username, uuid, enabled) VALUES ($1, $2, $3, $4, $5) RETURNING uuid',
       [emailHash, passwordHash, username, uuid, true],
     );
