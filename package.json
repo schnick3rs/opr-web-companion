@@ -25,14 +25,14 @@
     "adm-zip": "^0.5.9",
     "bcryptjs": "^2.4.3",
     "contentful": "^9.1.32",
-    "core-js": "^3.23.3",
+    "core-js": "^3.23.5",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-promise-router": "^4.1.1",
     "jsonwebtoken": "^8.5.1",
-    "marked": "^4.0.17",
+    "marked": "^4.0.18",
     "nanoid": "^4.0.0",
     "nuxt": "^2.15.8",
     "opr-army-book-helper": "file:libs/opr-army-book-helper",
@@ -48,14 +48,14 @@
     "vuex-persistedstate": "^3.2.1"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.17.0",
+    "@babel/eslint-parser": "^7.18.9",
     "@nuxtjs/eslint-config": "^8.0.0",
     "@nuxtjs/eslint-module": "^3.1.0",
     "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/vuetify": "^1.12.3",
-    "eslint": "^8.19.0",
+    "eslint": "^8.20.0",
     "eslint-plugin-nuxt": "^3.2.0",
     "eslint-plugin-vuetify": "^1.1.0",
-    "sass-loader": "^10.3.0"
+    "sass-loader": "^10.3.1"
   }
 }
